@@ -1,0 +1,88 @@
+#This file adds a Guacamole https://guacamole.apache.org Server to your stack.
+#To be useful, you will need a working VNC or RDP server or servers for it to connect to.
+#The VNC or RDP servers do not have to be running on the local machine to be accessed
+#via Guacamole.  The admin console address will be https://guac.yourDynamicDomain.duckdns.org/#/settings/
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - guacamole
+  guacamole:
+    image: guacamole/guacamole:latest
+    container_name: guacamole
+    networks:
+      - guacamole
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=guacamole_db
+      - MYSQL_USER=guacamole_user
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - GUACD_HOSTNAME=guacd
+      - MYSQL_HOSTNAME=guacamole-db
+    expose:
+      - "8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=guacamole"
+      - "traefik.frontend.rule=Host:guac.yourDynamicDomain.duckdns.org; AddPrefix:/guacamole"
+      - "traefik.docker.network=guacamole"
+      - "traefik.port=8080"
+      - com.centurylinklabs.watchtower.enable="true"
+    depends_on:
+      - guacamole-db
+      - guacd
+
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    networks:
+      - guacamole
+    labels:
+      - "traefik.enable=false"
+    restart: always
+    expose:
+      - "4882"
+
+  guacamole-db:
+    image: mariadb:latest
+    container_name: guacamole-db
+    environment:
+      - MYSQL_DATABASE=guacamole_db
+      - MYSQL_USER=guacamole_user
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+    volumes:
+      - "guacamole-db:/var/lib/mysql"
+      - "guac-db-init-script:/docker-entrypoint-initdb.d"
+    restart: unless-stopped
+    networks:
+      - guacamole
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    depends_on:
+      - init-db-script
+
+  init-db-script:
+    image: guacamole/guacamole:latest
+    container_name: init_guac_script
+    environment:
+      - MYSQL_DATABASE=guacamole_db
+      - MYSQL_USER=guacamole_user
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+    entrypoint: '/bin/bash -c "/opt/guacamole/bin/initdb.sh --mysql > /mnt/initdb.sql" '
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="false"
+    volumes:
+      - "guac-db-init-script:/mnt"
+    networks:
+      - guacamole
+
+networks:
+  guacamole:
+
+volumes:
+  guacamole-db:
+  guac-db-init-script:
+

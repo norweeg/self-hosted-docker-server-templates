@@ -1,0 +1,78 @@
+#This adds a Slack-like chat server, Rocket.Chat https://rocket.chat/ to your stack
+
+version: '3.5'
+
+services:
+  reverse-proxy:
+    networks:
+      - rocketchat
+  rocketchat:
+    image: rocketchat/rocket.chat:latest
+    restart: unless-stopped
+    container_name: rocketchat
+    volumes:
+      - rocketchat-uploads:/app/uploads
+      - rocketchat-hubot-scripts:/home/hubot/scripts
+    environment:
+      - PORT=3000
+      - ROOT_URL=https://chat.yourDynamicDomain.duckdns.org
+      - MONGO_URL=mongodb://rocketchat-mongo:27017/rocketchat
+      - MONGO_OPLOG_URL=mongodb://rocketchat-mongo:27017/local
+#      - MAIL_URL=smtp://smtp.email
+#      - HTTP_PROXY=http://proxy.domain.com
+#      - HTTPS_PROXY=http://proxy.domain.com
+    depends_on:
+      - rocketchat-mongo-init-replica
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=rocketchat"
+      - "traefik.frontend.rule=Host: chat.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=rocketchat"
+      - "traefik.port=3000"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - rocketchat
+
+  rocketchat-mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    container_name: rocketchat-mongo
+    volumes:
+      - rocketchat-db:/data/db
+      #- ./data/dump:/dump
+      - rocketchat-configdb:/data/configdb
+    command: mongod --smallfiles --oplogSize 128 --replSet rs0 --bind_ip_all
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    expose:
+      - 27017
+    networks:
+      - rocketchat
+
+  # this container's job is just run the command to initialize the replica set.
+  # it will run the command and remove himself (it will not stay running)
+  rocketchat-mongo-init-replica:
+    image: mongo:latest
+    command: 'mongo mongo/rocketchat --eval "rs.initiate({ _id: ''rs0'', members: [ { _id: 0, host: ''mongo:27017'' } ]})"'
+    volumes:
+      - rocketchat-db:/data/db
+      - rocketchat-configdb:/data/configdb
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="false"
+    depends_on:
+      - rocketchat-mongo
+    networks:
+      - rocketchat
+
+networks:
+  rocketchat:
+
+volumes:
+  rocketchat-db:
+  rocketchat-configdb:
+  rocketchat-uploads:
+  rocketchat-hubot-scripts:
