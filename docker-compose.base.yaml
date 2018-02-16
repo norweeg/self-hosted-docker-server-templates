@@ -1,0 +1,190 @@
+#The Docker Compose file defines how different services provided by containerized docker servers relate to one-another,
+#how each should be configured, and in what order they should be started.  For more information about this file's
+#function and syntax, refer to https://docs.docker.com/compose/compose-file/
+
+#**********************************************************************************************************************
+#NOTE:Do not use tabs to indent in this file.  The use of spaces instead of tabs is INTENTIONAL and SYNTACTICALLY
+#REQUIRED to differentiate between sections.  It is not just for looks!
+#**********************************************************************************************************************
+
+#This file requires you have already downloaded
+#Docker https://www.docker.com/community-edition
+#and
+#Docker Compose https://docs.docker.com/compose/install/
+#Note: Docker compose is already bundled with Docker for Windows and Docker for Mac.  For Linux systems, please do
+#not use the docker/docker-compose packages provided by your distro.  They are often extremely out-of-date and will not
+#be compatible with most applications or this file.  Follow the installation instructions provided on the above sites.
+#Also note: Docker for Windows depends on Microsoft Hyper-V, which is only available in Windows Professional and
+#Enterprise versions and not available in Home versions.  If you wish to setup a Docker server, but only have Windows
+#Home editions, I recommend you either repurpose an old, 64-bit capable PC and install Linux on it, or buy a
+#Raspberry Pi and setup Docker on it.  This file assumes you are on an x86_64 architecture.  It would need to be
+#rewritten to build the services from scratch (using the container's Dockerfile i.e. a recipe of how to build the
+#container image) on the Raspberry Pi's ARMv7 processor architecture where/*IF* a pre-built ARM build is not available
+#for a particular service.  You could also run Docker on a Linux Virtual Machine in Oracle VirtualBox, however, this
+#negates the advantage of using lightweight, OS-level virtualization that doesn't require reserving memory for the VM
+#and emulating hardware and also adds complexity for getting ports forwarded from your router, to your machine, to
+#your virtual machine, to your service.  You could try running Docker for Linux on Windows using the Windows
+#Subsystem for Linux https://docs.microsoft.com/en-us/windows/wsl/install-win10 regardless of your Windows version,
+#but I have no idea if that will work.
+
+#The version section is mandatory.  It tells docker-compose which syntax version to use
+version: '3.5'
+
+#The services section is where you define which services your application will use.  Some applications are packaged
+#as a single container that contains everything necessary to run your application, others are more modular requiring
+#a separate database server from the application or web server, for example.  You can find available containers on
+#https://store.docker.com.  Most (but not all) are 100% free.  Some are 'official' meaning they are published by the
+#organization or team who wrote the code for the application, others are unofficial, community builds maintained by
+#other users/developers.  Quality of unofficial containers cannot always be guaranteed
+
+services:
+#Free Dynamic DNS services provided by duckDNS.  https://www.duckdns.org/
+#You must register with DuckDNS and set up a subdomain before filling out this section.
+#This service provides you with a domain name which always points to your home server, even if your home
+#ip address changes.  Your domain will be a subdomain of duckdns.org.  See https://www.duckdns.org/faqs.jsp for more
+#info, inluding how to use duckDNS with a custom domain name (purchased separately)
+  dynamic-dns: #Our name for the service we are defining, used to reference it by name w/in compose file(s)
+    image: linuxserver/duckdns:latest #which container from the docker store to use
+    container_name: duckdns #optional, but recommended, otherwise defaults to a generated name
+    environment: #configuration options defined by environment variables go here
+      - SUBDOMAINS=yourDynamicDomainName #replace with the domain you registered.
+      - TOKEN=yourDuckDNStoken #the token duckDNS provides you for domain updates
+    #Container metadata can be put in labels.  This is sometimes used to communicate information to other containers
+    #or services e.g. to docker compose about what other services depend on this service, or to traefik reverse
+    #proxy about how or if to proxy requests to this service
+    labels:
+      - "traefik.enable=false" #tells traefik reverse proxy to ignore this container, do not proxy requests to it
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: always #if this container stops for any reason, docker will restart it automatically
+    networks:
+      - default
+
+#A reverse proxy takes all requests it receives and, based on predfined rules, forwards the request to the appropriate
+#destination.  Since we may be hosting many servers with different names, but all competing for HTTP ports 80 and 8080
+#and HTTPS port 443, we put a reverse proxy in front of them to handle the requests on their behalf.  NGinX is a
+#popular reverse proxy, but we will use Traefik https://traefik.io/ because it is easier to use, native to Docker,
+#can be configured automatically, and will respond to changes in the environment as services are added or
+#removed instead of hanging.  Traefik supports LetsEncrypt https://letsencrypt.org out-of-the-box and can
+#automatically obtain and manage free, secure certificats for securing HTTPS connections
+  reverse-proxy:
+    image: traefik:latest
+    restart: unless-stopped #Docker will automatically restart this container unless you intentionally stopped it
+    container_name: traefik
+    ports:
+    #The ports section defines which ports on the host machine (left) are connected to which ports on the service's
+    #container (right)
+      - 80:80
+      - 443:443
+      - 8080:8080 #admin web UI port
+    labels:
+      - com.centurylinklabs.watchtower.enable="true" #enables watchtower for auto updates
+    volumes:
+    #allows traefik to monitor for changes and to read labels (Mac/Linux ONLY).
+      - /var/run/docker.sock:/var/run/docker.sock  ###Comment this line out in Windows, make sure to update traefik.toml
+      - ./configs/traefik.toml:/etc/traefik/traefik.toml #traefik config file
+    #The following section allows you to deifne services which must be started before this service can start
+    depends_on:
+      - dynamic-dns
+    networks:
+    #containers will default to the default bridge network if none is specified, but I want this container on both
+      - default
+      - docker-gui-network
+#Optional: this service will watch specified containers (defaults to all containers) and automatically recreate them
+#with an updated image if it detects that the upstream image has been updated.  Pros: you don't have to do it manually
+#Cons: You don't control the updates anymore, even if they happen quickly and seamlessly, but if an update breaks
+#something, you'll have to manually recreate the container with the specific version you wanted by replacing the tag
+#(to the right of : in the image line) with the tag corresponding to the version you want.  My recommendation is to
+#use it for everything, but if you want to change that, change all com.centurylinklabs.watchtower.enable labels to
+#"false"
+  auto-updater:
+    image: v2tec/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true" #Yes, it can watch and update itself
+    #Docker images are a base file system with deltas (changes) representing the steps to go from a base to the
+    #finished product overlayed on top of it.  As such, changes you make to data in an image is really happening
+    #in yet another delta layer on top of the rest.  This layer is considered temporary and really only something
+    #you use if you're building your own image from an existing one as a base.  Any data you need to persist
+    #should be stored in a Docker volume.  Docker volums can either be named storage locations that can be defined
+    #here in the compose file, or bind mounts to directories on the host machine both of which you can use
+    #to store data that persists between runs of a container and can be shared between multipe containers.
+    #see https://docs.docker.com/compose/compose-file/#volumes for more information
+    volumes:
+      #allows watchtower to monitor for changes and to read labels
+      - /var/run/docker.sock:/var/run/docker.sock ###Comment this line out in Windows
+###    environment: #uncomment this line in windows
+###      - "DOCKER_HOST=npipe:////./pipe/docker_engine" #uncomment this line in windows
+###      - "DOCKER_HOST=tcp://localhost:2375" #alternative to the last line.  Pick only 1!
+    #The following section allows us to override the default container entrypoint.  The entrypoint is the default
+    #command that is run inside the container when it starts
+    entrypoint:
+      - /watchtower #this by itself is the default entrypoint, we are adding additonal arguments
+      - --label-enable #enables monitoring based on label
+      - --cleanup #removes old image after update to prevent accumulation of old, orphaned images
+    networks:
+      - default
+
+#If you want email notifications when watchtower does something, uncomment the following section and update with your
+#settings
+#    environment:
+#      - WATCHTOWER_NOTIFICATIONS=email
+#      - WATCHTOWER_NOTIFICATION_EMAIL_FROM=fromaddress@gmail.com
+#      - WATCHTOWER_NOTIFICATION_EMAIL_TO=toaddress@gmail.com
+#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.gmail.com
+#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=fromaddress@gmail.com
+#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=app_password
+
+
+  docker-gui:
+    image: portainer/portainer:latest
+    ports:
+      #by mapping this port to the host, we are also making this service available even if
+      #traefik is not running at http://localhost:9000 on your host pc or
+      #http://yourhostPCsnetworkname:9000 from other PCs on your network
+      #note that it is an insecure http connection.  Comment out the ports section if
+      #you do not trust the other devices on your network to not spy on you
+      - "9000:9000"
+    container_name: portainer
+    labels:
+      #tells Traefik to proxy requests to this container
+      - "traefik.enable=true"
+      #the rule traefik will use to match a request to this service
+      #in this case, the hostname of the requested source matches what you put here
+      - "traefik.frontend.rule=Host:portainer.yourDynamicDomain.duckdns.org"
+      #tells traefik the name of the container it will send requests to when it finds
+      #the traefik must be on the on the same network (see below) to be able to route requests
+      #to it by hostname
+      - "traefik.backend=portainer"
+      #the target port of the service that traefik should forward
+      - "traefik.port=9000"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - docker-gui-network
+    volumes:
+      - portainer-data:/data #map named volume to directory in container
+      #allows portainer to control docker (Linux/Mac only)
+      - /var/run/docker.sock:/var/run/docker.sock ###Comment this line out in Windows
+    #this section allows us to modify arguments passed to the default command executed inside this container
+    #when it starts
+###    command: -d /data -H npipe:////./pipe/docker_engine #uncomment this line in windows
+###    command: -d /data -H tcp://localhost:2375 #alternative to the last line, pick only 1!
+
+#This section allows you to define networks.  We will only be using basic configuration here.  For Advanced
+#Configuration options, refer to the docker-compose file documentation linked in the header.  Networks
+#are just a way to group services that work together so that they can "talk" to each other directly and
+#reference one another by their internal hostname, which can either be explicitly named with a hostname:
+#section under the service, or allowed to default to the name: which defaults to the service's name if not
+#specified.
+networks:
+  docker-gui-network:
+    name: docker-gui-network #docker compose will generate a name if not specified
+  default: #what we will call the default network
+    external: #this network already exists and does not need to be created
+      name: "bridge" #the actual name of Docker's default network
+
+#This section is for defining name volumes, which are where a container can store data for persisting
+#between instances/runs of the container
+volumes:
+  portainer-data: #persistant storage for portainer's configuration settings
