@@ -1,0 +1,58 @@
+#This compose file adds Pydio https://pydio.com/en/pydio-8-overview to your stack
+#according to the maintainer, you will have to manually input the database hostname
+#database name, and database username/password.  Despite what it says, use the 
+#hostname pydio-db (or whatever you name the pydio-db service below).  
+#https://store.docker.com/community/images/linuxserver/pydio
+version: '3.5'
+services:
+  reverse-proxy:
+    networks: 
+      - pydio
+  pydio:
+    image: linuxserver/pydio:latest
+    container_name: pydio
+    environment:
+      - TZ=America/New_York #change this if you need to
+    volumes:
+      - "pydio-config:/config"
+      - "pydio-data:/data"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=pydio"
+      - "traefik.frontend.rule=Host:pydio.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=pydio"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - pydio
+    restart: unless-stopped
+    depends_on:
+      - pydio-db
+  pydio-db:
+    image: mariadb:latest
+    container_name: pydio-db
+    environment:
+      - MYSQL_DATABASE=pydio
+      - MYSQL_USER=pydio
+      - MYSQL_PASSWORD="yourSecureDBPassw0rd"
+      - MYSQL_ROOT_PASSWORD="yourSecureDBR00tPass"
+    volumes:
+      - "pydio-database-data:/var/lib/mysql"
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: unless-stopped
+    networks:
+      - pydio
+
+networks:
+  pydio:
+    name: pydio
+
+volumes:
+  pydio-config:
+  pydio-data:
+  pydio-database-data:
+
+
