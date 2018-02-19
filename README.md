@@ -3,10 +3,10 @@
 This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.  The templates will set up the following:
 
 * Base
-  - [DuckDNS](https://duckdns.org)
-  - [Traefik](https://traefik.io)
-  - [Portainer](https://portainer.io)
-  - [Watchtower](https://hub.docker.com/r/centurylink/watchtower/)
+  * [DuckDNS](https://duckdns.org)
+  * [Traefik](https://traefik.io)
+  * [Portainer](https://portainer.io)
+  * [Watchtower](https://hub.docker.com/r/centurylink/watchtower/)
 * [Pydio](https://pydio.com/)
 * [NextCloud](https://nextcloud.com/)
 * [Rocket.Chat](https://rocket.chat)
@@ -17,16 +17,16 @@ This repository contains what you need to get started self-hosting various servi
 
 You will need a computer, preferably running Linux, but anything will do.  Download and install Docker and Docker-compose following the instructions for your OS
 
-- [Docker](https://www.docker.com/community-edition)
-- [Docker-Compose](https://docs.docker.com/compose/install/)
+* [Docker](https://www.docker.com/community-edition)
+* [Docker-Compose](https://docs.docker.com/compose/install/)
 
 Please also, in a developer's text editor e.g. NotePad++, read through docker-compose.base.yaml as it contains detailed instructions in the form of comments.  Before starting your stack, you will need to
 
-- Register for [DuckDNS](https://www.duckdns.org/) and have your subdomain name and token ready
-- Forwarded ports 80 and 443 through your router to your host machine
-- Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
-- Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
-- If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
+* Register for [DuckDNS](https://www.duckdns.org/) and have your subdomain name and token ready
+* Forwarded ports 80 and 443 through your router to your host machine
+* Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
+* Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
+* If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
 
 ## Starting Your Stack
 
