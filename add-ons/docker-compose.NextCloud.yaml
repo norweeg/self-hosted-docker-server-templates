@@ -1,0 +1,55 @@
+#This adds NextCloud https://nextcloud.com to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - nextcloud
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    hostname: nextcloud
+    environment:
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_HOST=nextcloud-db
+    volumes:
+      - nextcloud-html:/var/www/html
+      - nextcloud-ssl:/etc/ssl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=nextcloud"
+      - "traefik.frontend.rule=Host:cloud.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=nextcloud"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - nextcloud
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-db
+  nextcloud-db:
+    image: mariadb:latest
+    container_name: nextcloud-db
+    environment:
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+    volumes:
+      - nextcloud-database:/var/lib/mysql
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
+networks:
+  nextcloud:
+
+volumes:
+  nextcloud-html:
+  nextcloud-ssl:
+  nextcloud-database:
+
