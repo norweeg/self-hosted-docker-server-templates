@@ -1,6 +1,17 @@
 # Home Docker Service Templates
 
-This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.
+This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.  The templates will set up the following:
+
+* Base
+  - [DuckDNS](https://duckdns.org)
+  - [Traefik](https://traefik.io)
+  - [Portainer](https://portainer.io)
+  - [Watchtower](https://hub.docker.com/r/centurylink/watchtower/)
+* [Pydio](https://pydio.com/)
+* [NextCloud](https://nextcloud.com/)
+* [Rocket.Chat](https://rocket.chat)
+* [Gucamole](https://guacamole.apache.org/)
+* [Bookstack](https://www.bookstackapp.com/)
 
 ## Before You Begin
 
