@@ -1,0 +1,31 @@
+#This compose file adds Heimdall Application Dashboard https://heimdall.site/ to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks: 
+      - heimdall
+  heimdall:
+    image: linuxserver/heimdall:latest
+    container_name: heimdall
+    volumes:
+      - heimdall-config:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=heimdall"
+      - "traefik.frontend.rule=Host:welcometo.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=heimdall"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - heimdall
+    restart: unless-stopped
+
+networks:
+  heimdall:
+    name: heimdall
+
+volumes:
+  heimdall-config:
+
+

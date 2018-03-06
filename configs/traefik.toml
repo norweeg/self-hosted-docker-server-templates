@@ -82,7 +82,7 @@ exposedbydefault = false
 
 [acme]
 email = "jdoe@email.com"
-storage = "acme.json"
+storage = "/etc/traefik/acme/acme.json"
 entryPoint = "https"
 OnHostRule = true
 [acme.httpChallenge]

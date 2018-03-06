@@ -82,6 +82,7 @@ services:
     #allows traefik to monitor for changes and to read labels (Mac/Linux ONLY).
       - /var/run/docker.sock:/var/run/docker.sock  ###Comment this line out in Windows, make sure to update traefik.toml
       - ./configs/traefik.toml:/etc/traefik/traefik.toml #traefik config file
+      - traefik-cert:/etc/traefik/acme/ #volume for storing LetsEncrypt cets
     #The following section allows you to deifne services which must be started before this service can start
     depends_on:
       - dynamic-dns
@@ -187,4 +188,6 @@ networks:
 #This section is for defining name volumes, which are where a container can store data for persisting
 #between instances/runs of the container
 volumes:
-  portainer-data: #persistant storage for portainer's configuration settings
+  portainer-data: #persistent storage for portainer's configuration settings
+  traefik-cert: #storage for the acme.json file that will hold your LetsEncrypt certs
+  

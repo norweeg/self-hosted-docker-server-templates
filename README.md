@@ -12,6 +12,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Rocket.Chat](https://rocket.chat)
 * [Gucamole](https://guacamole.apache.org/)
 * [Bookstack](https://www.bookstackapp.com/)
+* [Heimdall](https://heimdall.site/)
 
 ## Before You Begin
 
