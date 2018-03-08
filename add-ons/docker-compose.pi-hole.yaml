@@ -1,0 +1,57 @@
+#This compose file adds pi-hole network ad blocker https://pi-hole.net/ to your stack
+#Please note that this file is for x86-64 arch only!  Pi hole put their ARM builds in a different repository
+#diginc/pi-hole-multiarch
+
+#************************************************************************************************************#
+#THIS SERVICE, BY VIRTUE OF ACTING AS A DNS SERVER REQUIRES THE HOST SYSTEM HAVE A STATIC IP ADDRESS ON YOUR #
+#NETWORK!!! DO NOT USE THIS IF THE PC HOSTING IT DOES NOT HAVE A STATIC IP ADDRESS ON YOUR NETWORK!!!  IT    #
+#WILL NOT WORK!!!                                                                                            #
+#************************************************************************************************************#
+
+version: '3.5'
+services:
+  reverse-proxy:
+    networks: 
+      - pihole
+  pihole:
+    image: diginc/pi-hole:latest #comment out if on ARM architecture
+    #image: diginc/pi-hole-multiarch:latest #uncomment for ARM architecture
+    container_name: pihole
+    environment:
+      - "TZ=America/New_York" #default is UTC
+      - "DNS1=8.8.8.8" #this is the default value
+      - "DNS2=8.8.4.4" #this is the default value
+      - "WEBPASSWORD=yourAdminConsolePa55w0rd"
+      - "ServerIP=192.168.xxx.yyy" ###change this to your host's static ip address.  REQUIRED!!!!
+      - "IPv6=False" #Default is True
+      - "ServerIPv6=fd5b:1fc7:11c5:71b1:xxxx:xxxx:xxxx:xxxx" #your IPv6 address, if IPv6=True
+    cap_add:
+      - NET_ADMIN #optional, neededed only if running pi hole for DHCP
+    volumes:
+      - "pihole-pihole:/etc/pihole/"
+      - "pihole-dnsmasq.d:/etc/dnsmasq.d/"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=pihole"
+      - "traefik.frontend.rule=Host:pi-hole.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=pihole"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - pihole
+    restart: unless-stopped
+    ports: #mapped to host so pi hole can handle DNS queries
+      - "53:53/tcp"
+      - "53:53/udp"
+    expose: #kept internal to network for serving via traefik proxy
+      - "80"
+
+networks:
+  pihole:
+    name: pihole
+
+volumes:
+  pihole-pihole:
+  pihole-dnsmasq.d:
+
