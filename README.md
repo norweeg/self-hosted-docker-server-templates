@@ -14,6 +14,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Bookstack](https://www.bookstackapp.com/)
 * [Heimdall](https://heimdall.site/)
 * [Mastodon](https://mastodon.social/about)
+* [Airsonic]( https://airsonic.github.io/)
 
 ## Before You Begin
 
