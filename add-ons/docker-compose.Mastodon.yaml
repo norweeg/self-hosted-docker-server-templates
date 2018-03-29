@@ -1,0 +1,131 @@
+#This adds Mastodon https://mastodon.social/about to your stack
+#I used volumes, but you might want to use mount binds to a location on a large
+#drive instead.  I think redis and elastic search are RAM and/or storage intensive
+#so uncomment only the services and their volumes and dependency lines if you're 
+#confident your system can handle them.
+####################################################################################
+#make sure to edit values in configs/mastodon.env                                  #
+#there are mandatory configuration items in this file.  instructions in comments   #
+####################################################################################
+
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - mastodon-external
+  mastodon-db:
+    restart: unless-stopped
+    container_name: mastodon-db
+    image: postgres:latest
+    networks:
+      - mastodon-internal
+    volumes:
+      - mastodon-db:/var/lib/postgresql/data
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+#
+#  mastodon-redis:
+#    restart: unless-stopped
+#    container_name: mastodon-redis
+#    image: redis:latest
+#    networks:
+#      - mastodon-internal
+#    labels:
+#      - "traefik.enable=false"
+#      - com.centurylinklabs.watchtower.enable="true"
+#    volumes:
+#      - mastodon-redis:/data
+#
+#  mastodon-elasticsearch:
+#    restart: unless-stopped
+#    image: elasticsearch:latest
+#    container_name: mastodon-elasticsearch
+#    environment:
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    networks:
+#      - mastodon-internal
+#    volumes:
+#      - mastodon-elasticsearch:/usr/share/elasticsearch/data
+#    labels:
+#      - "traefik.enable=false"
+#      - com.centurylinklabs.watchtower.enable="true"
+
+  mastodon-web:
+    container_name: mastodon-web
+    image: tootsuite/mastodon:latest
+    restart: unless-stopped
+    env_file: ./configs/mastodon.env
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    networks:
+      - mastodon-external
+      - mastodon-internal
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mastodon-db
+#      - mastodon-redis
+#      - mastodon-elasticsearch
+    volumes:
+      - mastodon-assets:/mastodon/public/assets
+      - mastodon-packs:/mastodon/public/packs
+      - mastodon-system:/mastodon/public/system
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=mastodon-web"
+      - "traefik.frontend.rule=Host:mastodon.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=mastodon-external"
+      - com.centurylinklabs.watchtower.enable="true"
+
+  mastodon-streaming:
+    container_name: mastodon-streaming
+    image: tootsuite/mastodon:latest
+    restart: unless-stopped
+    env_file: ./configs/mastodon.env
+    command: yarn start
+    networks:
+      - mastodon-external
+      - mastodon-internal
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mastodon-db
+#      - mastodon-redis
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+
+  mastodon-sidekiq:
+    container_name: mastodon-sidekiq
+    image: tootsuite/mastodon:latest
+    restart: unless-stopped
+    env_file: ./configs/mastodon.env
+    command: bundle exec sidekiq -q default -q mailers -q pull -q push
+    depends_on:
+      - mastodon-db
+#      - mastodon-redis
+    networks:
+      - mastodon-external
+      - mastodon-internal
+    volumes:
+      - mastodon-packs:/mastodon/public/packs
+      - mastodon-system:/mastodon/public/system
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+
+networks:
+  mastodon-external:
+    name: mastodon-external
+  mastodon-internal:
+    name: mastodon-internal
+    internal: true
+
+volumes:
+  mastodon-assets:
+  mastodon-packs:
+  mastodon-system:
+  mastodon-db:
+#  mastodon-elasticsearch:
+#  mastodon-redis:

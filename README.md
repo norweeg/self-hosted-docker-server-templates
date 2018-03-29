@@ -13,8 +13,9 @@ This repository contains what you need to get started self-hosting various servi
 * [Gucamole](https://guacamole.apache.org/)
 * [Bookstack](https://www.bookstackapp.com/)
 * [Heimdall](https://heimdall.site/)
+* [Mastodon](https://mastodon.social/about)
+* [Airsonic]( https://airsonic.github.io/)
 * [ProjectSend](https://www.projectsend.org/)
-
 ## Before You Begin
 
 You will need a computer, preferably running Linux, but anything will do.  Download and install Docker and Docker-compose following the instructions for your OS
