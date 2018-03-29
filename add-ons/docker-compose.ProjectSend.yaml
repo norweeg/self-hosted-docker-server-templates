@@ -2,7 +2,7 @@
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - projectsend
   projectsend:
     image: linuxserver/projectsend:latest
@@ -10,8 +10,8 @@ services:
     volumes:
       - projectsend-config:/config
       - projectsend-data:/data
-    environment: 
-      - MAX_UPLOAD=8000 #MB
+    environment:
+      - MAX_UPLOAD=8000 #MB default: 5000
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
@@ -23,6 +23,27 @@ services:
     networks:
       - projectsend
     restart: unless-stopped
+    depends_on:
+      - projectsend-db
+  projectsend-db:
+    image: mariadb:latest
+    container_name: projectsend-db
+    #after starting project send, go to send.yourDynamicDomain.duckdns.org/install/make-config.php
+    #to configure projectsend with the database info you provide here. The database host will be
+    #"projectsend-db", type will be either MariaDB or mySQL
+    environment:
+      - MYSQL_DATABASE=projectsend
+      - MYSQL_USER=projectsend
+      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+    volumes:
+      - projectsend-database:/var/lib/mysql
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: unless-stopped
+    networks:
+      - projectsend
 
 networks:
   projectsend:
@@ -31,3 +52,4 @@ networks:
 volumes:
   projectsend-config:
   projectsend-data:
+  projectsend-database:

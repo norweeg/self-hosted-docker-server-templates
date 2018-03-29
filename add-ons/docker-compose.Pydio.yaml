@@ -1,12 +1,12 @@
 #This compose file adds Pydio https://pydio.com/en/pydio-8-overview to your stack
 #according to the maintainer, you will have to manually input the database hostname
-#database name, and database username/password.  Despite what it says, use the 
-#hostname pydio-db (or whatever you name the pydio-db service below).  
+#database name, and database username/password.  Despite what it says, use the
+#hostname pydio-db (or whatever you name the pydio-db service below).
 #https://store.docker.com/community/images/linuxserver/pydio
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - pydio
   pydio:
     image: linuxserver/pydio:latest
@@ -24,6 +24,8 @@ services:
       - "traefik.docker.network=pydio"
       - "traefik.default.protocol=http"
       - com.centurylinklabs.watchtower.enable="true"
+    expose:
+      - "80"
     networks:
       - pydio
     restart: unless-stopped

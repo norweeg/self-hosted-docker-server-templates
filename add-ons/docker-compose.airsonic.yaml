@@ -2,7 +2,7 @@
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - airsonic
   airsonic:
     image: airsonic/airsonic
@@ -29,4 +29,4 @@ networks:
     name: airsonic
 
 volumes:
-  airsonic-data: 
+  airsonic-data:

@@ -22,6 +22,7 @@ services:
       - "traefik.backend=nextcloud"
       - "traefik.frontend.rule=Host:cloud.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=nextcloud"
+      - "traefik.frontend.headers.STSSeconds=15552000"
       - com.centurylinklabs.watchtower.enable="true"
     networks:
       - nextcloud
@@ -44,6 +45,27 @@ services:
     restart: unless-stopped
     networks:
       - nextcloud
+  office:
+    image: libreoffice/online:master
+    container_name: libreoffice-online
+    environment:
+      - domain="cloud.yourDynamicDomain.duckdns.org"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=9980"
+      - "traefik.backend=libreoffice-online"
+      - "traefik.frontend.rule=Host:office.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=nextcloud"
+      - "traefik.frontend.headers.STSSeconds=15552000"
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: unless-stopped
+    networks:
+      - nextcloud
+    cap_add: MKNOD
+    expose:
+      - "9980"
+
+
 
 networks:
   nextcloud:
