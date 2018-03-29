@@ -1,0 +1,33 @@
+#This compose file adds ProjectSend Application Dashboard https://www.projectsend.org/ to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks: 
+      - projectsend
+  projectsend:
+    image: linuxserver/projectsend:latest
+    container_name: projectsend
+    volumes:
+      - projectsend-config:/config
+      - projectsend-data:/data
+    environment: 
+      - MAX_UPLOAD=8000 #MB
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=projectsend"
+      - "traefik.frontend.rule=Host:send.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=projectsend"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - projectsend
+    restart: unless-stopped
+
+networks:
+  projectsend:
+    name: projectsend
+
+volumes:
+  projectsend-config:
+  projectsend-data:
