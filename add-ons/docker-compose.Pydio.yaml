@@ -37,8 +37,8 @@ services:
     environment:
       - MYSQL_DATABASE=pydio
       - MYSQL_USER=pydio
-      - MYSQL_PASSWORD="yourSecureDBPassw0rd"
-      - MYSQL_ROOT_PASSWORD="yourSecureDBR00tPass"
+      - MYSQL_PASSWORD=yourSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=yourSecureDBR00tPass
     volumes:
       - "pydio-database-data:/var/lib/mysql"
     labels:

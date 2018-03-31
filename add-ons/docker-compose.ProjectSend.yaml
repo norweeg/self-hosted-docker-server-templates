@@ -30,12 +30,12 @@ services:
     container_name: projectsend-db
     #after starting project send, go to send.yourDynamicDomain.duckdns.org/install/make-config.php
     #to configure projectsend with the database info you provide here. The database host will be
-    #"projectsend-db", type will be either MariaDB or mySQL
+    #"projectsend-db", type will be mySQL
     environment:
       - MYSQL_DATABASE=projectsend
       - MYSQL_USER=projectsend
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
-      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
     volumes:
       - projectsend-database:/var/lib/mysql
     labels:

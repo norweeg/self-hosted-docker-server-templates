@@ -2,7 +2,7 @@
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - bookstack
   bookstack:
     image: solidnerd/bookstack:latest
@@ -10,7 +10,7 @@ services:
     environment:
       - DB_DATABASE=bookstack
       - DB_USER=bookstack
-      - DB_PASSWORD="YourSecureDBPassw0rd"
+      - DB_PASSWORD=YourSecureDBPassw0rd
       - DB_HOST=bookstack-db
     volumes:
       - "bookstack-storage:/var/www/bookstack/public/storage"
@@ -34,8 +34,8 @@ services:
     environment:
       - MYSQL_DATABASE=bookstack
       - MYSQL_USER=bookstack
-      - MYSQL_PASSWORD="yourSecureDBPassw0rd"
-      - MYSQL_ROOT_PASSWORD="yourSecureDBR00tPass"
+      - MYSQL_PASSWORD=yourSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=yourSecureDBR00tPass
     volumes:
       - "bookstack-database-data:/var/lib/mysql"
     labels:

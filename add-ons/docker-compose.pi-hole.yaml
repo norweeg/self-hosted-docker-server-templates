@@ -11,7 +11,7 @@
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - pihole
   pihole:
     image: diginc/pi-hole:latest #comment out if on ARM architecture

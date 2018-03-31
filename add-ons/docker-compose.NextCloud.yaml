@@ -11,7 +11,7 @@ services:
     environment:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
       - MYSQL_HOST=nextcloud-db
     volumes:
       - nextcloud-html:/var/www/html
@@ -35,8 +35,8 @@ services:
     environment:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
-      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
     volumes:
       - nextcloud-database:/var/lib/mysql
     labels:

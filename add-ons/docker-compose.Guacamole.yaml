@@ -49,8 +49,8 @@ services:
     environment:
       - MYSQL_DATABASE=guacamole_db
       - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
-      - MYSQL_ROOT_PASSWORD="aSecureDBRootPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
     volumes:
       - "guacamole-db:/var/lib/mysql"
       - "guac-db-init-script:/docker-entrypoint-initdb.d"
@@ -69,7 +69,7 @@ services:
     environment:
       - MYSQL_DATABASE=guacamole_db
       - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
     entrypoint: '/bin/bash -c "/opt/guacamole/bin/initdb.sh --mysql > /mnt/initdb.sql" '
     labels:
       - "traefik.enable=false"
