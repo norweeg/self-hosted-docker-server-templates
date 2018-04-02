@@ -19,8 +19,8 @@ services:
     container_name: pihole
     environment:
       - "TZ=America/New_York" #default is UTC
-      - "DNS1=8.8.8.8" #this is the default value
-      - "DNS2=8.8.4.4" #this is the default value
+      - "DNS1=1.1.1.1" #8.8.8.8 is the default value
+      - "DNS2=1.0.0.1" #8.8.4.4 is the default value
       - "WEBPASSWORD=yourAdminConsolePa55w0rd"
       - "ServerIP=192.168.xxx.yyy" ###change this to your host's static ip address.  REQUIRED!!!!
       - "IPv6=False" #Default is True
