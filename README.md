@@ -64,16 +64,15 @@ Docker-compose can do more than just bring everything up or bring everything dow
 
 ## For more about self-hosting your own online services:
 
-* [/r/selfhosted on Reddit]{https://www.reddit.com/r/selfhosted/}
-* [/r/HomeServer on Reddit]{https://www.reddit.com/r/HomeServer/}
+* [/r/HomeServer on Reddit](https://www.reddit.com/r/HomeServer/)
+* [/r/selfhosted on Reddit](https://www.reddit.com/r/selfhosted/)
 
 ## Assorted other links of interest:
 
-* [/r/Rad_Decentralization on Reddit]{https://www.reddit.com/r/Rad_Decentralization/}
-* [/r/Privacy on Reddit]{https://www.reddit.com/r/privacy/}
-* [/r/WebApps on Reddit]{https://www.reddit.com/r/WebApps/}
-* [/r/Docker on Reddit]{https://www.reddit.com/r/docker/}
-* [/r/DevOps on Reddit]{https://www.reddit.com/r/devops/}
+* [/r/Rad_Decentralization on Reddit](https://www.reddit.com/r/Rad_Decentralization/)
+* [/r/Privacy on Reddit](https://www.reddit.com/r/privacy/)
+* [/r/WebApps on Reddit](https://www.reddit.com/r/WebApps/)
+* [/r/Docker on Reddit](https://www.reddit.com/r/docker/)
+* [/r/DevOps on Reddit](https://www.reddit.com/r/devops/)
 
-
-Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container. 
+Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container.
