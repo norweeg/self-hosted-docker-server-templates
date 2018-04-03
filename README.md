@@ -74,3 +74,6 @@ Docker-compose can do more than just bring everything up or bring everything dow
 * [/r/WebApps on Reddit]{https://www.reddit.com/r/WebApps/}
 * [/r/Docker on Reddit]{https://www.reddit.com/r/docker/}
 * [/r/DevOps on Reddit]{https://www.reddit.com/r/devops/}
+
+
+Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container. 

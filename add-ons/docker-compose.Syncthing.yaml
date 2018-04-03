@@ -1,5 +1,5 @@
 #This compose file adds Syncthing https://syncthing.net/ to your stack
-#make sure you set a password on this after you get it started
+#make sure you set a password on this after you get it started in the web GUI
 version: '3.5'
 services:
   reverse-proxy:
@@ -13,8 +13,8 @@ services:
       - PGID=${UID} #your primary GID which should equal your UID
       - UMASK_SET=022 #default, equivalent to drwxr--r--
     volumes:
-      - syncthing-config:/config
-      - /mnt/any/dir/you/want:/data
+      - syncthing-config:/config #default sync directory lives here, you'll probably want to change that
+      - /mnt/any/dir/you/want:/sync/dir/you/want #you can put any dirs you want in /sync/ and add them in the web GUI
     labels:
       - "traefik.enable=true"
       - "traefik.port=8384"
