@@ -1,0 +1,57 @@
+#This compose file adds Syncthing https://syncthing.net/ to your stack
+#make sure you set a password on this after you get it started
+version: '3.5'
+services:
+  reverse-proxy:
+    networks: 
+      - syncthing
+  syncthing:
+    image: linuxserver/syncthing:latest
+    container_name: syncthing
+    environment:
+      - PUID=${UID} #your UID
+      - PGID=${UID} #your primary GID which should equal your UID
+      - UMASK_SET=022 #default, equivalent to drwxr--r--
+    volumes:
+      - syncthing-config:/config
+      - /mnt/any/dir/you/want:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8384"
+      - "traefik.backend=syncthing"
+      - "traefik.frontend.rule=Host:syncthing.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=syncthing"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - syncthing
+    restart: unless-stopped
+    expose: #exposed only within network, reverse-proxy will proxy http requests to it
+      - "8384"
+    ports: #mapped on the host PC, syncthing will use uPnP to forward these through router, if possible
+      - "22000:22000"
+      - "21027:21027/udp"
+#Relay for use when 2 devices cannot communicate directly
+#uncomment the following to create a private relay
+#  syncthing-relay: 
+#    image: kylemanna/syncthing-relay:latest
+#    container_name: syncthing-relay
+#    labels:
+#      - "traefik.enable=false"
+#      - com.centurylinklabs.watchtower.enable="true"
+#    networks:
+#      - syncthing
+#    restart: unless-stopped
+#    ports: #must be forwarded through router to utilize relay
+#      - 22067:22067
+#      - 22070:22070
+#    entrypoint: #overriding default entrypoint to keep relay private
+#      - '/usr/bin/strelaysrv'
+#      - '-pools=""'
+
+networks:
+  syncthing:
+    name: syncthing
+
+volumes:
+  syncthing-config:

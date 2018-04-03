@@ -16,6 +16,8 @@ This repository contains what you need to get started self-hosting various servi
 * [Mastodon](https://mastodon.social/about)
 * [Airsonic]( https://airsonic.github.io/)
 * [ProjectSend](https://www.projectsend.org/)
+* [Syncthing](https://syncthing.net/)
+
 ## Before You Begin
 
 You will need a computer, preferably running Linux, but anything will do.  Download and install Docker and Docker-compose following the instructions for your OS
@@ -27,6 +29,7 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 
 * Register for [DuckDNS](https://www.duckdns.org/) and have your subdomain name and token ready
 * Forwarded ports 80 and 443 through your router to your host machine
+* Read through and get a basic understanding of the configuration options in every .yaml file you intend to use
 * Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
 * Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
 * If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
@@ -58,3 +61,16 @@ This will delete the entire stack, including data stored in Docker volumes, perm
 ## Other Docker-compose Commands
 
 Docker-compose can do more than just bring everything up or bring everything down.  To manage your stack from the command line, pleaes refer to the [Docker-compose CLI reference](https://docs.docker.com//compose/reference/)
+
+## For more about self-hosting your own online services:
+
+* [/r/selfhosted on Reddit]{https://www.reddit.com/r/selfhosted/}
+* [/r/HomeServer on Reddit]{https://www.reddit.com/r/HomeServer/}
+
+## Assorted other links of interest:
+
+* [/r/Rad_Decentralization on Reddit]{https://www.reddit.com/r/Rad_Decentralization/}
+* [/r/Privacy on Reddit]{https://www.reddit.com/r/privacy/}
+* [/r/WebApps on Reddit]{https://www.reddit.com/r/WebApps/}
+* [/r/Docker on Reddit]{https://www.reddit.com/r/docker/}
+* [/r/DevOps on Reddit]{https://www.reddit.com/r/devops/}
