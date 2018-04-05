@@ -1,0 +1,24 @@
+#This compose file adds Draw.io https://draw.io to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - drawio
+  drawio:
+    image: fjudith/draw.io:latest
+    container_name: drawio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.backend=drawio"
+      - "traefik.frontend.rule=Host:drawio.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=drawio"
+      - "traefik.default.protocol=http"
+      - com.centurylinklabs.watchtower.enable="true"
+    networks:
+      - drawio
+    restart: unless-stopped
+
+networks:
+  drawio:
+    name: drawio
