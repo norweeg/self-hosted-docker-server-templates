@@ -39,6 +39,7 @@ services:
     image: mongo:latest
     restart: unless-stopped
     container_name: rocketchat-mongo
+    hostname: rocketchat-mongo #needs to be manually defined so init-replica command can find it
     volumes:
       - rocketchat-db:/data/db
       #- ./data/dump:/dump
@@ -56,7 +57,7 @@ services:
   # it will run the command and remove himself (it will not stay running)
   rocketchat-mongo-init-replica:
     image: mongo:latest
-    command: 'mongo mongo/rocketchat --eval "rs.initiate({ _id: ''rs0'', members: [ { _id: 0, host: ''mongo:27017'' } ]})"'
+    command: 'mongo rocketchat-mongo/rocketchat --eval "rs.initiate({ _id: ''rs0'', members: [ { _id: 0, host: ''rocketchat-mongo:27017'' } ]})"'
     volumes:
       - rocketchat-db:/data/db
       - rocketchat-configdb:/data/configdb

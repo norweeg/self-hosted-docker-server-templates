@@ -87,8 +87,7 @@ services:
     depends_on:
       - dynamic-dns
     networks:
-    #containers will default to the default bridge network if none is specified, but I want this container on both
-      - default
+    #containers will default to the default bridge network if none is specified
       - docker-gui-network
 #Optional: this service will watch specified containers (defaults to all containers) and automatically recreate them
 #with an updated image if it detects that the upstream image has been updated.  Pros: you don't have to do it manually
@@ -124,8 +123,7 @@ services:
       - /watchtower #this by itself is the default entrypoint, we are adding additonal arguments
       - --label-enable #enables monitoring based on label
       - --cleanup #removes old image after update to prevent accumulation of old, orphaned images
-    networks:
-      - default
+    networks_mode: bridge #network aliases are incompatible with default bridge network, this disables them for this service
 
 #If you want email notifications when watchtower does something, uncomment the following section and update with your
 #settings
@@ -181,9 +179,6 @@ services:
 networks:
   docker-gui-network:
     name: docker-gui-network #docker compose will generate a name if not specified
-  default: #what we will call the default network
-    external: #this network already exists and does not need to be created
-      name: "bridge" #the actual name of Docker's default network
 
 #This section is for defining name volumes, which are where a container can store data for persisting
 #between instances/runs of the container

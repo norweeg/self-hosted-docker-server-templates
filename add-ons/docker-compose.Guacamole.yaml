@@ -16,7 +16,7 @@ services:
     environment:
       - MYSQL_DATABASE=guacamole_db
       - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD="aSecureDBPassw0rd"
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
       - GUACD_HOSTNAME=guacd
       - MYSQL_HOSTNAME=guacamole-db
     expose:
