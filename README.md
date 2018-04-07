@@ -17,6 +17,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Airsonic]( https://airsonic.github.io/)
 * [ProjectSend](https://www.projectsend.org/)
 * [Syncthing](https://syncthing.net/)
+* [Draw.io](https://draw.io)
 
 ## Before You Begin
 

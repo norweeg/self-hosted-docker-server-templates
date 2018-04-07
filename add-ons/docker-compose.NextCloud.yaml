@@ -47,7 +47,7 @@ services:
       - nextcloud
   office:
     image: libreoffice/online:master
-    container_name: libreoffice-online
+    container_name: collabora/code:latest
     environment:
       - domain="cloud.yourDynamicDomain.duckdns.org"
     labels:
@@ -61,7 +61,8 @@ services:
     restart: unless-stopped
     networks:
       - nextcloud
-    cap_add: MKNOD
+    cap_add: 
+      - MKNOD
     expose:
       - "9980"
 
