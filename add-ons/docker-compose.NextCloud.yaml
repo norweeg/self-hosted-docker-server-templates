@@ -1,4 +1,14 @@
 #This adds NextCloud https://nextcloud.com to your stack
+#I highly recommend that you substitute bind mounts for volumes for volumes
+#in this service to ensure they are on a device with ample storeage for your
+#NextCloud data.  To utilize Collabora for document editing, after starting,
+#log into NextCloud and:
+#1 Go to the Apps section and choose "Office & text"
+#2 Install the "Collabora Online app"
+#3 Admin -> Collabora Online -> Specify the server you have setup below
+#(e.g. "https://office.yourDynamicDomain.duckdns.org")
+#Your Collabora's admin settings can be accessed at
+#https://office.yourDynamicDomain.duckdns.org/loleaflet/dist/admin/admin.html
 version: '3.5'
 services:
   reverse-proxy:
@@ -29,6 +39,7 @@ services:
     restart: unless-stopped
     depends_on:
       - nextcloud-db
+      - office
   nextcloud-db:
     image: mariadb:latest
     container_name: nextcloud-db
@@ -45,32 +56,55 @@ services:
     restart: unless-stopped
     networks:
       - nextcloud
+
   office:
-    image: libreoffice/online:master
-    container_name: collabora/code:latest
+    image: collabora/code:latest
+    container_name: office
     environment:
-      - domain="cloud.yourDynamicDomain.duckdns.org"
+      - domain=cloud.yourDynamicDomain.duckdns.org #must be the domain of the nextcloud instance
+      - username=adminUsernameForCollabora
+      - password=Pa55wordforCollaboraAdmin
+      - server_name=office.yourDynamicDomain.duckdns.org #must be the domain of the Collabora instance
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    restart: unless-stopped
+    networks:
+      - nextcloud
+    cap_add:
+      - MKNOD #required to function properly
+    expose:
+      - "9980"
+    tty: true
+
+#Either Traefik can't properly add the proper HTTP headers to WebSocket connectons to Collabora or I can't
+#figure out how.  Either way, the traefik reverse proxy (service reverse-proxy) will be configured
+#to forward all requests to this nginx proxy which is configured per Collabora's own documentation
+#to properly add HTTP headers.
+  office-proxy:
+    image: nginx:latest
+    container_name: office-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.port=9980"
-      - "traefik.backend=libreoffice-online"
-      - "traefik.frontend.rule=Host:office.yourDynamicDomain.duckdns.org"
+      #make sure you edit line 3 of configs/collabora-proxy.conf to add this hostname
+      - "traefik.web.frontend.rule=Host:office.yourDynamicDomain.duckdns.org;"
+      - "traefik.port=80"
+      - "traefik.protocol=http"
       - "traefik.docker.network=nextcloud"
+      - "traefik.frontend.passHostHeader=true"
       - "traefik.frontend.headers.STSSeconds=15552000"
       - com.centurylinklabs.watchtower.enable="true"
     restart: unless-stopped
     networks:
       - nextcloud
-    cap_add: 
-      - MKNOD
     expose:
-      - "9980"
-
-
+      - "80"
+    volumes:
+      - ./configs/collabora-proxy.conf:/etc/nginx/conf.d/default.conf:ro
 
 networks:
   nextcloud:
-
+#Don't forget to remove this section if you substitute bind mounts for volumes above!
 volumes:
   nextcloud-html:
   nextcloud-ssl:

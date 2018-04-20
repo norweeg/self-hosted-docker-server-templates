@@ -33,7 +33,9 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 * Read through and get a basic understanding of the configuration options in every .yaml file you intend to use
 * Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
 * Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
+* If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails
 * If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
+* Many if not most of these templates are written assuming you're running from a Linux environment.  Attempts were made to make the templates compatible with windows, but there is no guarantee that they will work and you're probably better off using Linux, or at least a linux environment.  You can emulate this in Windows using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).  To control Docker for Windows from WSL, follow [these instructions](https://blogs.msdn.microsoft.com/commandline/2017/12/08/cross-post-wsl-interoperability-with-docker/).  Provided helper scripts will be written in Bash shell because that is what I know, therefore, they will only run in a Linux environment.  Docker for windows has a Linux container mode, which runs the containers in a Linux virtual machine using Hyper-V, but this requires Hyper-V and Hyper-V requires a Windows 10 professional or enterprise license and is not available in Windows 10 Home.
 
 ## Starting Your Stack
 
@@ -63,12 +65,13 @@ This will delete the entire stack, including data stored in Docker volumes, perm
 
 Docker-compose can do more than just bring everything up or bring everything down.  To manage your stack from the command line, pleaes refer to the [Docker-compose CLI reference](https://docs.docker.com//compose/reference/)
 
-## For more about self-hosting your own online services:
+## For more about self-hosting your own online services
 
 * [/r/HomeServer on Reddit](https://www.reddit.com/r/HomeServer/)
 * [/r/selfhosted on Reddit](https://www.reddit.com/r/selfhosted/)
+* [Awesome Self-hosted](https://github.com/Kickball/awesome-selfhosted)
 
-## Assorted other links of interest:
+## Assorted other links of interest
 
 * [/r/Rad_Decentralization on Reddit](https://www.reddit.com/r/Rad_Decentralization/)
 * [/r/Privacy on Reddit](https://www.reddit.com/r/privacy/)
