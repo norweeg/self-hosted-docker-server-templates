@@ -39,7 +39,6 @@ services:
     restart: unless-stopped
     depends_on:
       - nextcloud-db
-      - office
   nextcloud-db:
     image: mariadb:latest
     container_name: nextcloud-db
@@ -101,6 +100,8 @@ services:
       - "80"
     volumes:
       - ./configs/collabora-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - office
 
 networks:
   nextcloud:
