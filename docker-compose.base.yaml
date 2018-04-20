@@ -169,6 +169,7 @@ services:
     #when it starts
 ###    command: -d /data -H npipe:////./pipe/docker_engine #uncomment this line in windows
 ###    command: -d /data -H tcp://localhost:2375 #alternative to the last line, pick only 1!
+    restart: unless-stopped
 
 #This section allows you to define networks.  We will only be using basic configuration here.  For Advanced
 #Configuration options, refer to the docker-compose file documentation linked in the header.  Networks

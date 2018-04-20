@@ -39,7 +39,7 @@ services:
       - guacamole
     labels:
       - "traefik.enable=false"
-    restart: always
+    restart: unless-stopped
     expose:
       - "4882"
 
