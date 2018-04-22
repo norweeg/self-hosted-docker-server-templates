@@ -4,6 +4,9 @@ services:
   reverse-proxy:
     networks:
       - projectsend
+  mail-relay:
+    networks:
+      - projectsend
   projectsend:
     image: linuxserver/projectsend:latest
     container_name: projectsend

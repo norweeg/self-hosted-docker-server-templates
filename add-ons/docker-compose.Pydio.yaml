@@ -8,6 +8,9 @@ services:
   reverse-proxy:
     networks:
       - pydio
+  mail-relay:
+    networks:
+      - pydio
   pydio:
     image: linuxserver/pydio:latest
     container_name: pydio

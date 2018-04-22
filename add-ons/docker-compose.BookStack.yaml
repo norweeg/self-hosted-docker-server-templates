@@ -4,6 +4,9 @@ services:
   reverse-proxy:
     networks:
       - bookstack
+  mail-relay:
+    networks:
+      - bookstack
   bookstack:
     image: solidnerd/bookstack:latest
     container_name: bookstack
@@ -12,6 +15,8 @@ services:
       - DB_USER=bookstack
       - DB_PASSWORD=YourSecureDBPassw0rd
       - DB_HOST=bookstack-db
+      - MAIL_HOST=mail-relay
+      - MAIL_PORT=25
     volumes:
       - "bookstack-storage:/var/www/bookstack/public/storage"
       - "bookstack-uploads:/var/www/bookstack/public/uploads"

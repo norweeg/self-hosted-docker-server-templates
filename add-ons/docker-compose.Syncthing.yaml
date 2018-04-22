@@ -3,7 +3,7 @@
 version: '3.5'
 services:
   reverse-proxy:
-    networks: 
+    networks:
       - syncthing
   syncthing:
     image: linuxserver/syncthing:latest
@@ -33,7 +33,7 @@ services:
       - "21027:21027/udp"
 #Relay for use when 2 devices cannot communicate directly
 #uncomment the following to create a private relay
-#  syncthing-relay: 
+#  syncthing-relay:
 #    image: kylemanna/syncthing-relay:latest
 #    container_name: syncthing-relay
 #    labels:

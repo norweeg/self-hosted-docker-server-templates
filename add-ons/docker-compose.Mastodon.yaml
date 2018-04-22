@@ -1,17 +1,29 @@
 #This adds Mastodon https://mastodon.social/about to your stack
-#I used volumes, but you might want to use mount binds to a location on a large
-#drive instead.  I think redis and elastic search are RAM and/or storage intensive
-#so uncomment only the services and their volumes and dependency lines if you're 
-#confident your system can handle them.
+#I used volumes here, but you might want to use mount binds to a location on a large
+#drive instead.  In that case, change the value before : in each volumes section to a
+#directory you wish to store the data.  You must run `chown 991 mastodon-assets
+#mastodon-system mastodon-packs` at the command line, replacing the vales of
+#mastodon-assets, mastodon-system, and mastodon-packs to the directories you replaced
+#them with for Mastodon to build its assets correctly, otherwise build will fail and
+#the server will return HTTP error 500 when you connect to it.  Make sure to delete
+#the entire volumes: section at the bottom of this file if you use mount binds,
+#otherwise named volumes will be created but not be used.
 ####################################################################################
 #make sure to edit values in configs/mastodon.env                                  #
 #there are mandatory configuration items in this file.  instructions in comments   #
+#  ****Please note: ElasticSearch is storage and memory intensive.  You also       #
+#      probably don't need it for a home server instance of Mastodon.  Only        #
+#      enable it if you're sure you want it and your system can handle it.         #
 ####################################################################################
 
 version: '3.5'
 services:
   reverse-proxy:
     networks:
+      - mastodon-external
+  mail-relay:
+    networks:
+      - mastodon-internal
       - mastodon-external
   mastodon-db:
     restart: unless-stopped
@@ -24,19 +36,19 @@ services:
     labels:
       - "traefik.enable=false"
       - com.centurylinklabs.watchtower.enable="true"
-#
-#  mastodon-redis:
-#    restart: unless-stopped
-#    container_name: mastodon-redis
-#    image: redis:latest
-#    networks:
-#      - mastodon-internal
-#    labels:
-#      - "traefik.enable=false"
-#      - com.centurylinklabs.watchtower.enable="true"
-#    volumes:
-#      - mastodon-redis:/data
-#
+
+  mastodon-redis:
+    restart: unless-stopped
+    container_name: mastodon-redis
+    image: redis:latest
+    networks:
+      - mastodon-internal
+    labels:
+      - "traefik.enable=false"
+      - com.centurylinklabs.watchtower.enable="true"
+    volumes:
+      - mastodon-redis:/data
+
 #  mastodon-elasticsearch:
 #    restart: unless-stopped
 #    image: elasticsearch:latest
@@ -64,7 +76,7 @@ services:
       - "3000:3000"
     depends_on:
       - mastodon-db
-#      - mastodon-redis
+      - mastodon-redis
 #      - mastodon-elasticsearch
     volumes:
       - mastodon-assets:/mastodon/public/assets
@@ -91,10 +103,14 @@ services:
       - "4000:4000"
     depends_on:
       - mastodon-db
-#      - mastodon-redis
+      - mastodon-redis
     labels:
       - "traefik.enable=false"
       - com.centurylinklabs.watchtower.enable="true"
+    volumes:
+      - mastodon-assets:/mastodon/public/assets
+      - mastodon-packs:/mastodon/public/packs
+      - mastodon-system:/mastodon/public/system
 
   mastodon-sidekiq:
     container_name: mastodon-sidekiq
@@ -104,11 +120,12 @@ services:
     command: bundle exec sidekiq -q default -q mailers -q pull -q push
     depends_on:
       - mastodon-db
-#      - mastodon-redis
+      - mastodon-redis
     networks:
       - mastodon-external
       - mastodon-internal
     volumes:
+      - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     labels:
@@ -128,4 +145,4 @@ volumes:
   mastodon-system:
   mastodon-db:
 #  mastodon-elasticsearch:
-#  mastodon-redis:
+  mastodon-redis:

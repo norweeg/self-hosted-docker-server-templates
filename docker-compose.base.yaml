@@ -171,6 +171,31 @@ services:
 ###    command: -d /data -H tcp://localhost:2375 #alternative to the last line, pick only 1!
     restart: unless-stopped
 
+#this mail relay will work with any smtp server, however, as written, it is ready for use with mailgun
+#you could reconfigure this to work with google smtp per the instructions linked from README.md
+#this mail relay will ALWAYS be available to containers whose network it's on at host mail-relay, port 25
+#(sometimes written as mail-relay:25 when there isn't a separate field for port), no TLS, no STARTTLS, no
+#login credentials of any kind.  This relay only accepts emails from your containers and forwards them to
+#the SMTP server it's configured for.
+  mail-relay:
+    image: b32147/mail-relay:latest
+    container_name: mail-relay
+    restart: unless-stopped
+    environment:
+      - RELAY_HOST_NAME=yourCustomDomainName.com
+      - ACCEPTED_NETWORKS=172.0.0.0/8 #accept emails from ANY docker container
+      - EXT_RELAY_HOST=smtp.mailgun.org
+      - EXT_RELAY_PORT=587
+      - SMTP_LOGIN=postmaster@yourCustomDomainName.com
+      - SMTP_PASSWORD=YourPasswordFromMailgun
+      - USE_TLS=yes
+    expose:
+      - "25"
+    labels:
+      - com.centurylinklabs.watchtower.enable="true"
+      - "traefik.enable=false"
+
+
 #This section allows you to define networks.  We will only be using basic configuration here.  For Advanced
 #Configuration options, refer to the docker-compose file documentation linked in the header.  Networks
 #are just a way to group services that work together so that they can "talk" to each other directly and
@@ -186,4 +211,4 @@ networks:
 volumes:
   portainer-data: #persistent storage for portainer's configuration settings
   traefik-cert: #storage for the acme.json file that will hold your LetsEncrypt certs
-  
+

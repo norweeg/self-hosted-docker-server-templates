@@ -6,6 +6,9 @@ services:
   reverse-proxy:
     networks:
       - rocketchat
+  mail-relay:
+    networks:
+      - rocketchat
   rocketchat:
     image: rocketchat/rocket.chat:latest
     restart: unless-stopped

@@ -13,6 +13,9 @@ services:
   reverse-proxy:
     networks:
       - pihole
+  mail-relay:
+    networks:
+      - pihole
   pihole:
     image: diginc/pi-hole:latest #comment out if on ARM architecture
     #image: diginc/pi-hole-multiarch:latest #uncomment for ARM architecture
