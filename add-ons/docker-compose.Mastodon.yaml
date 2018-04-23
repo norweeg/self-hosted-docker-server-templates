@@ -65,7 +65,7 @@ services:
 
   mastodon-web:
     container_name: mastodon-web
-    image: tootsuite/mastodon:latest
+    image: tootsuite/mastodon:v2.3.3
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
@@ -92,7 +92,7 @@ services:
 
   mastodon-streaming:
     container_name: mastodon-streaming
-    image: tootsuite/mastodon:latest
+    image: tootsuite/mastodon:v2.3.3
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: yarn start
@@ -114,7 +114,7 @@ services:
 
   mastodon-sidekiq:
     container_name: mastodon-sidekiq
-    image: tootsuite/mastodon:latest
+    image: tootsuite/mastodon:v2.3.3
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: bundle exec sidekiq -q default -q mailers -q pull -q push

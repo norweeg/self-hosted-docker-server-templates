@@ -50,6 +50,44 @@ This will download the images for and start the base of your stack with basic se
 
 **Please note:** docker-compose.base.yaml must come first on this list.  All the add-ons build upon this base.  The order of the rest of the files does not matter.
 
+## Some Notes About Mastodon
+
+If you are adding Mastodon to your stack, after you edit add-ons/docker-compose.Mastodon.yaml, updating the version of the mastodon images to one of the tags available on [this page](https://hub.docker.com/r/tootsuite/mastodon/tags/)(e.g. image: tootsuite/mastodon:v2.3.3), you must run the following commands to prepare your Mastodon instance:
+
+```bash
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up mastodon-db mastodon-redis
+docker-compose run --rm mastodon-web rake secret
+#copy the output into configs/mastodon.env for the value of SECRET_KEY_BASE
+docker-compose run --rm mastodon-web rake secret
+#copy the output into configs/mastodon.env for the value of OTP_SECRET
+docker-compose run --rm mastodon-web rake secret
+#copy the output into configs/mastodon.env for the value of PAPERCLIP_SECRET
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:webpush:generate_vapid_key
+#copy the output into configs/mastodon.env for the values of VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake db:migrate
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake assets:precompile
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:add_user
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:confirm_email USER_EMAIL=your@email 
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:make_admin USERNAME=yourname
+###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up -d
+```
+
+To update mastodon, change the version in the image: clause of mastodon-web, mastodon-streaming, and mastodon-sidekiq (e.g. image: tootsuite/mastodon:v2.3.3), then run the following commands:
+
+```bash
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml stop mastodon-web mastodon-streaming mastodon-sidekiq
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake db:migrate
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake assets:precompile
+###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up -d
+```
+
+This updates the database to be compatible with the new version and builds any new assets.
+
+For more rake commands, including other administrative commands, refer to [this guide.](https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/List-of-Rake-tasks.md)
+
 ## Making Changes to Services/Containers in Your Stack
 
 To make a change to any service or container in your stack without bringing down and recreating them all, simply edit the docker-compose .yaml file that defines it, save, and re-run your docker-compose command from above.  Docker-compose is inteligent enough to only recreate containers/services you edited in the file.  You can also make changes using the edit functionality in the Portainer Docker GUI (included in the base .yaml file), however, it will not be able to automatically resolve if any dependant containers also need to be recreated.
