@@ -1,4 +1,4 @@
-# Home Docker Service Templates
+# Self-hosted Docker Server Templates
 
 This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.  The templates will set up the following:
 
