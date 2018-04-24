@@ -178,22 +178,39 @@ services:
 #login credentials of any kind.  This relay only accepts emails from your containers and forwards them to
 #the SMTP server it's configured for.
   mail-relay:
-    image: b32147/mail-relay:latest
+    image: mwader/postfix-relay:latest
     container_name: mail-relay
     restart: unless-stopped
     environment:
-      - RELAY_HOST_NAME=yourCustomDomainName.com
-      - ACCEPTED_NETWORKS=172.0.0.0/8 #accept emails from ANY docker container
-      - EXT_RELAY_HOST=smtp.mailgun.org
-      - EXT_RELAY_PORT=587
-      - SMTP_LOGIN=postmaster@yourCustomDomainName.com
-      - SMTP_PASSWORD=YourPasswordFromMailgun
-      - USE_TLS=yes
+      - POSTFIX_myhostname=yourcustomdomain.com #if you use mailgun, you cannot use your duckdns domain, it will not validate it
+      - "POSTFIX_mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8"
+      - POSTFIX_mydestination=yourcustomdomain.com,localhost
+      - POSTFIX_smtp_tls_security_level=may
+      - POSTFIX_smtpd_tls_security_level=none
+      - POSTFIX_smtp_sasl_auth_enable=yes
+      - "POSTFIX_smtp_sasl_password_maps=hash:/etc/postfix/sasl/sasl_passwd"
+      - POSTFIX_smtp_sasl_security_options=noanonymous
+      - POSTFIX_relayhost=smtp.mailgun.org:587 #the host:port for your smtp server.  You don't have to use mailgun
+      - relayhost_username=postmaster@yourcustomdomain.com
+      - relayhost_passwd=yourSMTPPassword
+      - POSTFIX_smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt #might need to change if not on Debian-based linux, uesd to validate secure connection to SMTP
+      - POSTFIX_smtp_tls_note_starttls_offer=yes
+      - POSTFIX_smtp_use_tls=yes
     expose:
       - "25"
     labels:
       - com.centurylinklabs.watchtower.enable="true"
       - "traefik.enable=false"
+    volumes:
+      - mail-relay-lib-postfix:/var/lib/postfix
+      - mail-relay-mail:/var/mail
+      - mail-relay-spool-postfix:/var/spool/postfix
+      - mail-relay-opendkim-keys:/etc/opendkim/keys
+      - mail-relay-sasl:/etc/postfix/sasl
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro #use host's CAs to validate remote SMTP certs, may need to change if not on debian-based linux
+    #override the default command with one that stores smtp credentials, since the image doesn't do this natively
+    command: '/bin/bash -c "echo $$POSTFIX_relayhost $$relayhost_username:$$relayhost_passwd > /etc/postfix/sasl/sasl_passwd && /usr/sbin/postmap /etc/postfix/sasl/sasl_passwd && /root/run"'
+
 
 
 #This section allows you to define networks.  We will only be using basic configuration here.  For Advanced
@@ -211,4 +228,9 @@ networks:
 volumes:
   portainer-data: #persistent storage for portainer's configuration settings
   traefik-cert: #storage for the acme.json file that will hold your LetsEncrypt certs
+  mail-relay-lib-postfix: #persistant storage for the mail-relay
+  mail-relay-mail:
+  mail-relay-spool-postfix:
+  mail-relay-opendkim-keys:
+  mail-relay-sasl:
 

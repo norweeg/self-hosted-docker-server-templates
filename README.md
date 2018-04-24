@@ -7,7 +7,7 @@ This repository contains what you need to get started self-hosting various servi
   * [Traefik](https://traefik.io)
   * [Portainer](https://portainer.io)
   * [Watchtower](https://hub.docker.com/r/centurylink/watchtower/)
-  * [A Postfix Mail Relay](https://hub.docker.com/r/b32147/mail-relay/)
+  * [A Postfix Mail Relay](https://hub.docker.com/r/mwader/postfix-relay/)
 * [Pydio](https://pydio.com/)
 * [NextCloud](https://nextcloud.com/)
 * [Rocket.Chat](https://rocket.chat)
@@ -19,6 +19,13 @@ This repository contains what you need to get started self-hosting various servi
 * [ProjectSend](https://www.projectsend.org/)
 * [Syncthing](https://syncthing.net/)
 * [Draw.io](https://draw.io)
+
+To-dos
+
+* [ ] [Mailu](https://mailu.io)
+* [ ] [Discourse](https://discourse.org)
+* [ ] [Riot.im](https://riot.im)
+* [ ] [Gitlab](https://about.gitlab.com/)
 
 ## Before You Begin
 
@@ -34,7 +41,7 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 * Read through and get a basic understanding of the configuration options in every .yaml file you intend to use
 * Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
 * Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
-* If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails.  Alternatively, you can also setup and use [Mailu](https://mailu.io/), but be aware spam email filters might think your domain is spammy because they won't recognize it.
+* If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails.  Alternatively, you can also setup and use [Mailu](https://mailu.io/), but be aware spam email filters *might* think your domain is spammy because they won't recognize it.  If you use Mailgun, you will need to upgrade from free to basic (which is still free if you're forwarding 10,000 emails or less per month) in order to be able to deliver to email addresses other than the one you registered with.  You will need to enter a credit card to upgrade.
 * If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
 * Many if not most of these templates are written assuming you're running from a Linux environment.  Attempts were made to make the templates compatible with windows, but there is no guarantee that they will work and you're probably better off using Linux, or at least a linux environment.  You can emulate this in Windows using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).  To control Docker for Windows from WSL, follow [these instructions](https://blogs.msdn.microsoft.com/commandline/2017/12/08/cross-post-wsl-interoperability-with-docker/).  Provided helper scripts will be written in Bash shell because that is what I know, therefore, they will only run in a Linux environment.  Docker for windows has a Linux container mode, which runs the containers in a Linux virtual machine using Hyper-V, but this requires Hyper-V and Hyper-V requires a Windows 10 professional or enterprise license and is not available in Windows 10 Home.
 
