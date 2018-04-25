@@ -40,7 +40,7 @@ services:
       - "traefik.frontend.rule=Host:pi-hole.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=pihole"
       - "traefik.default.protocol=http"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - pihole
     restart: unless-stopped

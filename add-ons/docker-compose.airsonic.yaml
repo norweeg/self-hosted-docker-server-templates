@@ -19,7 +19,7 @@ services:
       - "traefik.frontend.rule=Host:airsonic.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=airsonic"
       - "traefik.default.protocol=http"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - airsonic
     restart: unless-stopped

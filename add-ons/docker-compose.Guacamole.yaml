@@ -27,7 +27,7 @@ services:
       - "traefik.frontend.rule=Host:guac.yourDynamicDomain.duckdns.org; AddPrefix:/guacamole"
       - "traefik.docker.network=guacamole"
       - "traefik.port=8080"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - guacamole-db
       - guacd
@@ -59,7 +59,7 @@ services:
       - guacamole
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - init-db-script
 
@@ -73,7 +73,7 @@ services:
     entrypoint: '/bin/bash -c "/opt/guacamole/bin/initdb.sh --mysql > /mnt/initdb.sql" '
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="false"
+      - "com.centurylinklabs.watchtower.enable=false"
     volumes:
       - "guac-db-init-script:/mnt"
     networks:

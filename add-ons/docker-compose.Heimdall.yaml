@@ -16,7 +16,7 @@ services:
       - "traefik.frontend.rule=Host:welcometo.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=heimdall"
       - "traefik.default.protocol=http"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - heimdall
     restart: unless-stopped

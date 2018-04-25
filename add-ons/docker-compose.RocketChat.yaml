@@ -34,7 +34,7 @@ services:
       - "traefik.frontend.rule=Host: chat.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=rocketchat"
       - "traefik.port=3000"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - rocketchat
 
@@ -50,7 +50,7 @@ services:
     command: mongod --smallfiles --oplogSize 128 --replSet rs0 --bind_ip_all
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     expose:
       - 27017
     networks:
@@ -66,7 +66,7 @@ services:
       - rocketchat-configdb:/data/configdb
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="false"
+      - "com.centurylinklabs.watchtower.enable=false"
     depends_on:
       - rocketchat-mongo
     networks:

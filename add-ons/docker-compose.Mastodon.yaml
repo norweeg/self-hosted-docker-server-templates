@@ -35,7 +35,7 @@ services:
       - mastodon-db:/var/lib/postgresql/data
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
 
   mastodon-redis:
     restart: unless-stopped
@@ -45,7 +45,7 @@ services:
       - mastodon-internal
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - mastodon-redis:/data
 
@@ -61,7 +61,7 @@ services:
 #      - mastodon-elasticsearch:/usr/share/elasticsearch/data
 #    labels:
 #      - "traefik.enable=false"
-#      - com.centurylinklabs.watchtower.enable="true"
+#      - "com.centurylinklabs.watchtower.enable=true"
 
   mastodon-web:
     container_name: mastodon-web
@@ -88,7 +88,7 @@ services:
       - "traefik.backend=mastodon-web"
       - "traefik.frontend.rule=Host:mastodon.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=mastodon-external"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
 
   mastodon-streaming:
     container_name: mastodon-streaming
@@ -106,7 +106,7 @@ services:
       - mastodon-redis
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
@@ -130,7 +130,7 @@ services:
       - mastodon-system:/mastodon/public/system
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   mastodon-external:

@@ -54,7 +54,7 @@ services:
     #proxy about how or if to proxy requests to this service
     labels:
       - "traefik.enable=false" #tells traefik reverse proxy to ignore this container, do not proxy requests to it
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: always #if this container stops for any reason, docker will restart it automatically
     networks:
       - default
@@ -77,7 +77,7 @@ services:
       - 443:443
       - 8080:8080 #admin web UI port
     labels:
-      - com.centurylinklabs.watchtower.enable="true" #enables watchtower for auto updates
+      - "com.centurylinklabs.watchtower.enable=true" #enables watchtower for auto updates
     volumes:
     #allows traefik to monitor for changes and to read labels (Mac/Linux ONLY).
       - /var/run/docker.sock:/var/run/docker.sock  ###Comment this line out in Windows, make sure to update traefik.toml
@@ -102,7 +102,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=false"
-      - com.centurylinklabs.watchtower.enable="true" #Yes, it can watch and update itself
+      - "com.centurylinklabs.watchtower.enable=true" #Yes, it can watch and update itself
     #Docker images are a base file system with deltas (changes) representing the steps to go from a base to the
     #finished product overlayed on top of it.  As such, changes you make to data in an image is really happening
     #in yet another delta layer on top of the rest.  This layer is considered temporary and really only something
@@ -158,7 +158,7 @@ services:
       - "traefik.backend=portainer"
       #the target port of the service that traefik should forward
       - "traefik.port=9000"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - docker-gui-network
     volumes:
@@ -199,7 +199,7 @@ services:
     expose:
       - "25"
     labels:
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=false"
     volumes:
       - mail-relay-lib-postfix:/var/lib/postfix

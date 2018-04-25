@@ -14,7 +14,7 @@ services:
       - "traefik.frontend.rule=Host:drawio.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=drawio"
       - "traefik.default.protocol=http"
-      - com.centurylinklabs.watchtower.enable="true"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - drawio
     restart: unless-stopped
