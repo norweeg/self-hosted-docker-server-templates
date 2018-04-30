@@ -11,6 +11,8 @@ defaultEntryPoints = ["https","http"]
   [entryPoints.https]
   address = ":443"
   [entryPoints.https.tls]
+  [entryPoints.traefik]
+  address = ":8080"
 
 [retry]
 
@@ -64,13 +66,10 @@ defaultEntryPoints = ["https","http"]
 ################################################################
 
 # Enable web configuration backend
-[web]
-
-# Web administration port
-#
-# Required
-#
-address = ":8080"
+# https://docs.traefik.io/configuration/api/
+[api]
+entryPoint = "traefik"
+dashboard = "true"
 
 [docker]
 endpoint = "unix:///var/run/docker.sock" ###comment this line out in windows

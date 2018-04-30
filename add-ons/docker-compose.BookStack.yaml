@@ -17,6 +17,7 @@ services:
       - DB_HOST=bookstack-db
       - MAIL_HOST=mail-relay
       - MAIL_PORT=25
+      - MAIL_FROM=notifications@yourcustomdomain.com
     volumes:
       - "bookstack-storage:/var/www/bookstack/public/storage"
       - "bookstack-uploads:/var/www/bookstack/public/uploads"

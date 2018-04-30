@@ -19,6 +19,7 @@ This repository contains what you need to get started self-hosting various servi
 * [ProjectSend](https://www.projectsend.org/)
 * [Syncthing](https://syncthing.net/)
 * [Draw.io](https://draw.io)
+* [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
 
 To-dos
 
@@ -67,15 +68,13 @@ docker-compose run --rm mastodon-web rake secret
 #copy the output into configs/mastodon.env for the value of SECRET_KEY_BASE
 docker-compose run --rm mastodon-web rake secret
 #copy the output into configs/mastodon.env for the value of OTP_SECRET
-docker-compose run --rm mastodon-web rake secret
-#copy the output into configs/mastodon.env for the value of PAPERCLIP_SECRET
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:webpush:generate_vapid_key
 #copy the output into configs/mastodon.env for the values of VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake db:migrate
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake assets:precompile
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:add_user
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:confirm_email USER_EMAIL=your@email 
+docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:confirm_email USER_EMAIL=your@email
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:make_admin USERNAME=yourname
 ###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
 docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up -d

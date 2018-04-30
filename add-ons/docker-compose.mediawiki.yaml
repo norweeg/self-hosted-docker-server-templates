@@ -1,0 +1,83 @@
+#This adds MediaWiki https://www.mediawiki.org/wiki/MediaWiki to your stack
+#This service has a setup wizard that will produce a file which will be mapped in the volumes
+#section when that you will need to uncomment AFTER you've downloaded the LocalSettings.php
+#file from the setup wizard
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - mediawiki
+  #To use the mail-relay with your mediawiki, you must add the following section to your
+  #LocalSettings.php, removing the #'s of course:
+  #$wgSMTP = array(
+  #'host'     => "mail-relay", // could also be an IP address. Where the SMTP server is located
+  #'IDHost'   => "yourdomain.com",      // Generally this will be the domain name of your website (aka mywiki.org)
+  #'port'     => 25,                 // Port to use when connecting to the SMTP server
+  #'auth'     => false,               // Should we use SMTP authentication (true or false)
+  #'username' => "",     // Username to use for SMTP authentication (if being used)
+  #'password' => ""       // Password to use for SMTP authentication (if being used)
+  #);
+  mail-relay:
+    networks:
+      - mediawiki
+  mediawiki:
+    image: mediawiki:stable
+    container_name: mediawiki
+    environment:
+    #only the DB variables matter.  The rest are either ignored or overwritten in setup anyway
+      - MEDIAWIKI_DB_NAME=mediawiki
+      - MEDIAWIKI_DB_USER=mediawiki
+      - MEDIAWIKI_DB_PASSWORD=AS3curePa55word
+      - MEDIAWIKI_DB_HOST=mediawiki-db #in the setup wizard, enter this as mediawiki-db:3306
+      - MEDIAWIKI_SITE_NAME=My Wiki
+      - MEDIAWIKI_ADMIN_USER=myadminuser
+      - MEDIAWIKI_ADMIN_PASS=MyS3cureAdminPa55word
+      - MEDIAWIKI_DB_TYPE=mysql
+    volumes:
+      - mediawiki-images:/var/www/html/images #location for image uploads
+      #### The following must remain commented out for first run.  The setup wizard will produce
+      #### this file.  Download it and save it in the configs folder, or wherever, as long as you 
+      #### update this line and uncomment it.  All configuration is made in this file.  See
+      #### https://www.mediawiki.org/wiki/Manual:LocalSettings.php for more options.  The container
+      #### likely change the owner of this file to root after you restart with it mapped, so you
+      #### will need to edit it with admin privileges afterwards.
+#      - ./configs/LocalSettings.php:/var/www/html/LocalSettings.php
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=mediawiki"
+      - "traefik.frontend.rule=Host:mywiki.mydynamicdomain.duckdns.org"
+      - "traefik.docker.network=mediawiki"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - mediawiki
+    restart: unless-stopped
+    depends_on:
+      - mediawiki-db
+  mediawiki-db:
+    image: mariadb:latest
+    container_name: mediawiki-db
+    environment:
+    #note these values, you will need them in the setup wizard
+      - MYSQL_DATABASE=mediawiki
+      - MYSQL_USER=mediawiki
+      - MYSQL_PASSWORD=mysecureDBPa55word
+      - MYSQL_ROOT_PASSWORD=myS3cureDBR00tPa55word
+    volumes:
+      - "mediawiki-database:/var/lib/mysql"
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+    networks:
+      - mediawiki
+    expose:
+      - "3306"
+
+networks:
+  mediawiki:
+
+volumes:
+#I suggest you replace these volumes with bind mounts to directories and delete this section
+  mediawiki-database:
+  mediawiki-images:

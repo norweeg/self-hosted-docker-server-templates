@@ -182,8 +182,15 @@ services:
     container_name: mail-relay
     restart: unless-stopped
     environment:
-      - POSTFIX_myhostname=yourcustomdomain.com #if you use mailgun, you cannot use your duckdns domain, it will not validate it
-      - "POSTFIX_mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8"
+      #if you use mailgun, you cannot use your duckdns domain, it will not validate it
+      - POSTFIX_myhostname=yourcustomdomain.com
+      #reluctantly adding 192.168.0.0/16 to allowed networks.  This address range is typically used on routers and, if the mail relay
+      #port were mapped to the host, this would be a HUGE security risk (anyone could send email through the relay, including others
+      #on the same router).  The "expose" section, as I understand it only makes the port available to other docker services
+      #and does not map it to the host, which is the only reason why I think its ok to allow the 192.168.0.0/16 range, otherwise
+      #you can't use the mail relay after you've exhausted the private addresses 172.16.0.0-> 172.31.0.0 with many services on your
+      #stack
+      - "POSTFIX_mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8 192.168.0.0/16"
       - POSTFIX_mydestination=yourcustomdomain.com,localhost
       - POSTFIX_smtp_tls_security_level=may
       - POSTFIX_smtpd_tls_security_level=none
