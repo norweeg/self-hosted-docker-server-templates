@@ -1,0 +1,106 @@
+#This compose file adds Discourse https://www.discourse.org/ to your stack
+#Useful documentation for the bitnami Discourse image:
+# https://docs.bitnami.com/installer/apps/discourse/
+#You can run administrative commands inside the container like this:
+#RAILS_ENV=production bundle exec rake yourcommand
+#run RAILS_ENV=production bundle exec rake -T inside container for available commands
+#useful for forcing administrative actions without email confirmation
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - discourse-external
+
+  mail-relay:
+    networks:
+      - discourse-internal
+
+  discourse:
+    image: bitnami/discourse:latest
+    container_name: discourse
+    env_file: ./configs/discourse.env
+    volumes:
+      - discourse-data:/bitnami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.backend=discourse"
+      - "traefik.frontend.rule=Host:forum.yourdomain.com"
+      - "traefik.docker.network=discourse"
+      - "traefik.default.protocol=http"
+      #FYI this image takes ~5 minutes to check the DB when it is recreated
+      #if that is disruptive, either disable watchtower for this and the sidekiq image
+      #or set watchtower to run only when you can afford momentary downtime
+      #if the upstream image updates
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - discourse-external
+      - discourse-internal
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - discourse-db
+      - discourse-redis
+
+  discourse-db:
+    image: postgres:9.6.8 #Discourse not currently compatible with postgres 10.x
+    container_name: discourse-db
+    restart: unless-stopped
+    networks:
+      - discourse-internal
+    volumes:
+      - discourse-db-data:/var/lib/postgresql/data
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=SecureDBPa55w0rd
+      - POSTGRES_DB=postgres
+    expose:
+      - "5432"
+
+  discourse-redis:
+    restart: unless-stopped
+    container_name: discourse-redis
+    image: redis:latest
+    networks:
+      - discourse-internal
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - /mnt/DockerStorage/Discourse/redis-data:/data
+
+  discourse-sidekiq:
+    container_name: discourse-sidekiq
+    image: bitnami/discourse:latest
+    env_file: ./configs/discourse.env
+    restart: unless-stopped
+    command: nami start --foreground discourse-sidekiq
+    depends_on:
+      - discourse-db
+      - discourse-redis
+      - discourse
+    networks:
+      - discourse-external
+      - discourse-internal
+    volumes:
+      - discourse-data:/bitnami
+    labels:
+      - "traefik.enable=false"
+      #see the above note on discourse service.  the two should be the same image at all times!
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  discourse-internal:
+    name: discourse-internal
+    internal: true
+  discourse-external:
+    name: discourse-external
+
+volumes:
+  discourse-db-data:
+  discourse-redis-data:
+  discourse-data:

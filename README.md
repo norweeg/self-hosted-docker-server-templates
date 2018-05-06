@@ -20,11 +20,11 @@ This repository contains what you need to get started self-hosting various servi
 * [Syncthing](https://syncthing.net/)
 * [Draw.io](https://draw.io)
 * [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
+* [Discourse](https://discourse.org)
 
 To-dos
 
 * [ ] [Mailu](https://mailu.io)
-* [ ] [Discourse](https://discourse.org)
 * [ ] [Riot.im](https://riot.im)
 * [ ] [Gitlab](https://about.gitlab.com/)
 
