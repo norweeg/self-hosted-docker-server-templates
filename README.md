@@ -21,6 +21,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Draw.io](https://draw.io)
 * [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
 * [Discourse](https://discourse.org)
+* [Piwigo](https://piwigo.org/)
 
 To-dos
 

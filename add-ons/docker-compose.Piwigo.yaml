@@ -1,0 +1,59 @@
+#This compose file adds Piwigo, a photo collection app http://piwigo.org to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - piwigo
+  mail-relay:
+    networks:
+      - piwigo
+  piwigo:
+    image: linuxserver/piwigo:latest
+    container_name: piwigo
+    volumes:
+      - piwigo-config:/config
+      - piwigo-pictures:/pictures
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=America/New_York #change this if you need to
+      - PGID=1000
+      - PUID=1000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=piwigo"
+      - "traefik.frontend.rule=Host:photos.yourdynamicdomain.duckdns.org"
+      - "traefik.docker.network=piwigo"
+      - "traefik.default.protocol=http"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - piwigo
+    restart: unless-stopped
+    depends_on:
+      - piwigo-db
+  piwigo-db:
+    image: mariadb:5.5.60 #the community extension requires mariadb 5 for now
+    container_name: piwigo-db
+    hostname: piwigo-db
+    environment:
+      - MYSQL_DATABASE=piwigo
+      - MYSQL_USER=piwigo
+      - MYSQL_PASSWORD=SecureDBPa55w0rd
+      - MYSQL_ROOT_PASSWORD=SecureR00tDBPa55word
+    volumes:
+      - piwigo-database:/var/lib/mysql
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+    networks:
+      - piwigo
+
+networks:
+  piwigo:
+    name: piwigo
+
+volumes:
+  piwigo-config:
+  piwigo-pictures:
+  piwigo-database:
