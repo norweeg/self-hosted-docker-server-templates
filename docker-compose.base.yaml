@@ -117,12 +117,9 @@ services:
 ###    environment: #uncomment this line in windows
 ###      - "DOCKER_HOST=npipe:////./pipe/docker_engine" #uncomment this line in windows
 ###      - "DOCKER_HOST=tcp://localhost:2375" #alternative to the last line.  Pick only 1!
-    #The following section allows us to override the default container entrypoint.  The entrypoint is the default
+    #The following section allows us to add arguments to the container's entrypoint.  The entrypoint is the default
     #command that is run inside the container when it starts
-    entrypoint:
-      - /watchtower #this by itself is the default entrypoint, we are adding additonal arguments
-      - --label-enable #enables monitoring based on label
-      - --cleanup #removes old image after update to prevent accumulation of old, orphaned images
+    command: --schedule "0 0 4 * * *" --label-enable --cleanup
     networks_mode: bridge #network aliases are incompatible with default bridge network, this disables them for this service
 
 #If you want email notifications when watchtower does something, uncomment the following section and update with your

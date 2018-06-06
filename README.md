@@ -22,12 +22,12 @@ This repository contains what you need to get started self-hosting various servi
 * [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
 * [Discourse](https://discourse.org)
 * [Piwigo](https://piwigo.org/)
+* [Gitlab](https://about.gitlab.com/)
 
 To-dos
 
 * [ ] [Mailu](https://mailu.io)
 * [ ] [Riot.im](https://riot.im)
-* [ ] [Gitlab](https://about.gitlab.com/)
 
 ## Before You Begin
 

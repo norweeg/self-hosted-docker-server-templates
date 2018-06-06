@@ -1,0 +1,47 @@
+#This compose file adds adds a gitlab community edition instance (https://gitlab.com) to your stack
+#The majority of the configuration is in .configs/gitlab.rb.  Do your configuration in that file
+#be sure to replace placeholder values.  Enabling currently disabled options e.g. a gitlab docker image
+#registry will need additional settings not currently in this docker-compose file
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - gitlab
+  mail-relay:
+    networks:
+      - gitlab
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    volumes:
+      - gitlab-data:/var/opt/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-config:/var/opt/gitlab
+      - ./configs/gitlab.rb:/etc/gitlab/gitlab.rb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.backend=gitlab"
+      - "traefik.frontend.rule=Host:gitlab.example.com;"
+      - "traefik.docker.network=gitlab"
+      - "traefik.default.protocol=http"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - gitlab
+    restart: unless-stopped
+    expose:
+      - "80"
+      - "443"
+      - "8082"
+    ports:
+      - "2224:22" #traefik not yet able to proxy non-http request, but ssh needed for git to function.  This port will need to be forwarded through your router
+
+volumes:
+  gitlab-data:
+  gitlab-config:
+  gitlab-logs:
+
+networks:
+  gitlab:
+    name: gitlab
