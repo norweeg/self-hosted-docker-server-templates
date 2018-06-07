@@ -18,6 +18,7 @@ services:
       - MAIL_HOST=mail-relay
       - MAIL_PORT=25
       - MAIL_FROM=notifications@yourcustomdomain.com
+      - APP_URL=https://bookstack.yourDynamicDomain.duckdns.org
     volumes:
       - "bookstack-storage:/var/www/bookstack/public/storage"
       - "bookstack-uploads:/var/www/bookstack/public/uploads"
