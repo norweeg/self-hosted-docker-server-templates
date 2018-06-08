@@ -19,6 +19,9 @@ services:
       - MAIL_PORT=25
       - MAIL_FROM=notifications@yourcustomdomain.com
       - APP_URL=https://bookstack.yourDynamicDomain.duckdns.org
+#   optional, alternative to environment section above (comment out environment section if you use this)
+#   this env file contains the BookStack app's full configurable options.  Edit as you see fit
+#    env_file: ./configs/bookstack.env
     volumes:
       - "bookstack-storage:/var/www/bookstack/public/storage"
       - "bookstack-uploads:/var/www/bookstack/public/uploads"
