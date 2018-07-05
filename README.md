@@ -59,36 +59,49 @@ This will download the images for and start the base of your stack with basic se
 
 **Please note:** docker-compose.base.yaml must come first on this list.  All the add-ons build upon this base.  The order of the rest of the files does not matter.
 
+## Updating Containers In Your Stack
+
+The service "auto-updater" is included and can automatically update containers who have the label "com.centurylinklabs.watchtower.enable=true".  If you would prefer to control when and to which version you update your containers to, or if the automatic updates are causing you issues taking services offline when they don't start up correctly (health checks have been included on most services to help mitigate this), you can disable the auto-updater on a per-service basis by setting the label "com.centurylinklabs.watchtower.enable=false" on that service.  You can also update services using a scheduled cron job that runs the following commands:
+
+```bash
+#This will pull the latest image for each service specified in the -f included yaml files
+docker-compose -f docker-compose.base.yaml -f ... pull
+#This will recreate containers for any service whose image was updated in the previous command
+docker-compose -f docker-compose.base.yaml -f ... up -d
+#This will cleanup images which are no longer tagged i.e. a newer version of the image was pulled and the untagged image is not in use by any containers, even if the container itself is not running.  -f here means "force" i.e. do not ask for confirmation before deleting the old image, just do it
+docker image prune -f
+```
+
 ## Some Notes About Mastodon
 
 If you are adding Mastodon to your stack, after you edit add-ons/docker-compose.Mastodon.yaml, updating the version of the mastodon images to one of the tags available on [this page](https://hub.docker.com/r/tootsuite/mastodon/tags/)(e.g. image: tootsuite/mastodon:v2.3.3), you must run the following commands to prepare your Mastodon instance:
 
 ```bash
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up mastodon-db mastodon-redis
-docker-compose run --rm mastodon-web rake secret
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up mastodon-db mastodon-redis
+docker-compose run --rm mastodon-web bundle exec rake secret
 #copy the output into configs/mastodon.env for the value of SECRET_KEY_BASE
-docker-compose run --rm mastodon-web rake secret
+docker-compose run --rm mastodon-web bundle exec rake secret
 #copy the output into configs/mastodon.env for the value of OTP_SECRET
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:webpush:generate_vapid_key
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:webpush:generate_vapid_key
 #copy the output into configs/mastodon.env for the values of VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake db:migrate
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake assets:precompile
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:add_user
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:confirm_email USER_EMAIL=your@email
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake mastodon:make_admin USERNAME=yourname
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:add_user
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:confirm_email USER_EMAIL=your@email
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:make_admin USERNAME=yourname
 ###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up -d
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up -d
 ```
 
 To update mastodon, change the version in the image: clause of mastodon-web, mastodon-streaming, and mastodon-sidekiq (e.g. image: tootsuite/mastodon:v2.3.3), then run the following commands:
 
 ```bash
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml stop mastodon-web mastodon-streaming mastodon-sidekiq
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake db:migrate
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml run --rm mastodon-web rake assets:precompile
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml stop mastodon-web mastodon-streaming mastodon-sidekiq
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
 ###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
-docker-compose -f docker-compose.base.yaml -f addons/docker-compose.Mastodon.yaml up -d
+docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up -d
 ```
 
 This updates the database to be compatible with the new version and builds any new assets.

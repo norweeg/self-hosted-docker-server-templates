@@ -23,6 +23,12 @@ services:
     networks:
       - airsonic
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://airsonic:4040 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
 networks:
   airsonic:

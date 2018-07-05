@@ -38,6 +38,13 @@ services:
     restart: unless-stopped
     depends_on:
       - bookstack-db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://bookstack || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   bookstack-db:
     image: mariadb:latest
     container_name: bookstack-db
@@ -54,6 +61,11 @@ services:
     restart: unless-stopped
     networks:
       - bookstack
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   bookstack:

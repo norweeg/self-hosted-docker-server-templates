@@ -42,6 +42,12 @@ services:
     depends_on:
       - discourse-db
       - discourse-redis
+    healthcheck: 
+      test: ["CMD-SHELL", "curl -f http://discourse:3000 || exit 1"] #checking local connectivity
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s #this container takes a while to migrate its database ever time it starts
 
   discourse-db:
     image: postgres:9.6.8 #Discourse not currently compatible with postgres 10.x
@@ -60,6 +66,11 @@ services:
       - POSTGRES_DB=postgres
     expose:
       - "5432"
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   discourse-redis:
     restart: unless-stopped

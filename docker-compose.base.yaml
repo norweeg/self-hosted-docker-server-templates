@@ -167,6 +167,16 @@ services:
 ###    command: -d /data -H npipe:////./pipe/docker_engine #uncomment this line in windows
 ###    command: -d /data -H tcp://localhost:2375 #alternative to the last line, pick only 1!
     restart: unless-stopped
+    #a healthcheck adds a command that is run inside a container to check that it is working properly, for example, checking
+    #that the server can be reached without errors, as shown below.  Healthchecks also will cause any containers that depend on
+    #this container to wait for indicate that it is in status "healthy" before begining to start themselves, which is useful to
+    #guarantee a database server is up and responding to connections before starting the application server.
+    healthcheck: 
+      test: ["CMD-SHELL", "curl -f http://localhost:9000 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
 
 #this mail relay will work with any smtp server, however, as written, it is ready for use with mailgun
 #you could reconfigure this to work with google smtp per the instructions linked from README.md

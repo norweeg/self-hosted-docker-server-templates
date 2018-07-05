@@ -20,6 +20,12 @@ services:
     networks:
       - heimdall
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://heimdall || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
 
 networks:
   heimdall:

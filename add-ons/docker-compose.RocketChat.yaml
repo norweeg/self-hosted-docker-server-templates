@@ -37,6 +37,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - rocketchat
+    healthcheck: 
+      test: ["CMD-SHELL", "curl -f http://rocketchat:3000 || exit 1"] #checking local connectivity
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   rocketchat-mongo:
     image: mongo:latest
@@ -55,6 +61,12 @@ services:
       - 27017
     networks:
       - rocketchat
+    healthcheck: 
+      test: ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongo rocketchat-mongo:27017/test --quiet"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   # this container's job is just run the command to initialize the replica set.
   # it will run the command and remove himself (it will not stay running)

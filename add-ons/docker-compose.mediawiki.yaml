@@ -54,6 +54,13 @@ services:
     restart: unless-stopped
     depends_on:
       - mediawiki-db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://mediawiki || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   mediawiki-db:
     image: mariadb:latest
     container_name: mediawiki-db
@@ -73,6 +80,12 @@ services:
       - mediawiki
     expose:
       - "3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
 
 networks:
   mediawiki:

@@ -31,6 +31,12 @@ services:
     depends_on:
       - guacamole-db
       - guacd
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://guacamole:8080 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   guacd:
     image: guacamole/guacd:latest
@@ -62,6 +68,11 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - init-db-script
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   init-db-script:
     image: guacamole/guacamole:latest

@@ -36,6 +36,11 @@ services:
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mastodon-redis:
     restart: unless-stopped
@@ -89,6 +94,13 @@ services:
       - "traefik.frontend.rule=Host:mastodon.yourDynamicDomain.duckdns.org"
       - "traefik.docker.network=mastodon-external"
       - "com.centurylinklabs.watchtower.enable=true"
+    #For some reason, the below health check always fails.  Will work on this later
+#    healthcheck: 
+#      test: ["CMD-SHELL", "wget --spider http://mastodon-web:3000 || exit 1"] #checking local connectivity
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 5
+#      start_period: 30s
 
   mastodon-streaming:
     container_name: mastodon-streaming

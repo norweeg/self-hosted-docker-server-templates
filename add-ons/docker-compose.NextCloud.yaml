@@ -43,6 +43,13 @@ services:
     depends_on:
       - nextcloud-db
       - office
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://nextcloud || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
   nextcloud-db:
     image: mariadb:latest
     container_name: nextcloud-db
@@ -59,6 +66,11 @@ services:
     restart: unless-stopped
     networks:
       - nextcloud
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   office:
     image: collabora/code:latest

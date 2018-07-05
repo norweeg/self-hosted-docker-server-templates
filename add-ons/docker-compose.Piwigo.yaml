@@ -31,6 +31,13 @@ services:
     restart: unless-stopped
     depends_on:
       - piwigo-db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://piwigo || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
   piwigo-db:
     image: mariadb:5.5.60 #the community extension requires mariadb 5 for now
     container_name: piwigo-db
@@ -48,6 +55,11 @@ services:
     restart: unless-stopped
     networks:
       - piwigo
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   piwigo:
