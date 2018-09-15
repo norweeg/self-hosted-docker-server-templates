@@ -22,7 +22,7 @@ This repository contains what you need to get started self-hosting various servi
 * [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
 * [Discourse](https://discourse.org)
 * [Piwigo](https://piwigo.org/)
-* [Gitlab](https://about.gitlab.com/)
+* [Gitlab](https://about.gitlab.com/)[&#185;](#Notes)
 
 To-dos
 
@@ -46,7 +46,7 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 * Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
 * If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails.  Alternatively, you can also setup and use [Mailu](https://mailu.io/), but be aware spam email filters *might* think your domain is spammy because they won't recognize it.  If you use Mailgun, you will need to upgrade from free to basic (which is still free if you're forwarding 10,000 emails or less per month) in order to be able to deliver to email addresses other than the one you registered with.  You will need to enter a credit card to upgrade.
 * If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
-* Docker for Windows requires Hyper-V, which is only available on Windows 10 Professional or Enterprise.  Follow these instructions to [enable Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v).  If you use Windows 10 Home, you will need to install and use [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) to run your containers in a VirtualBox Virtual Machine instead.  Both run your containers inside of a Linux Virtual Machine, which is not as lightweight as a container would be on Linux.  
+* Docker for Windows requires Hyper-V, which is only available on Windows 10 Professional or Enterprise.  Follow these instructions to [enable Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v).  If you use Windows 10 Home, you will need to install and use [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) to run your containers in a VirtualBox Virtual Machine instead.  Both run your containers inside of a Linux Virtual Machine, which is not as lightweight as a container would be on Linux.
 * Many if not most of these templates are written assuming you're running from a Linux environment.  Attempts were made to make the templates compatible with windows, but there is no guarantee that they will work and you're probably better off using Linux, or at least a linux environment.  You can emulate this in Windows using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).  To control Docker for Windows from WSL, follow [these instructions](https://blogs.msdn.microsoft.com/commandline/2017/12/08/cross-post-wsl-interoperability-with-docker/).  Provided helper scripts will be written in Bash shell because that is what I know, therefore, they will only run in a Linux environment.  Docker for windows has a Linux container mode, which runs the containers in a Linux virtual machine using Hyper-V, but this requires Hyper-V and Hyper-V requires a Windows 10 professional or enterprise license and is not available in Windows 10 Home.
 
 ## Starting Your Stack
@@ -141,3 +141,7 @@ Docker-compose can do more than just bring everything up or bring everything dow
 * [/r/DevOps on Reddit](https://www.reddit.com/r/devops/)
 
 Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container.
+
+###### Notes
+
+&#185; Gitlab is *extremely* resource intensive and tends to leak memory over time.  It probably won't run well on a Raspberry Pi and even on a traditional PC, I have had to schedule cron jobs that periodically restart it due to the memory leaks.  Unsure if this is the result of misconfiguration on my part, or just how the software is.  [↩](#Self-hosted\ Docker\ Server\ Templates)
