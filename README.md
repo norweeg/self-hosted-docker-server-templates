@@ -22,7 +22,7 @@ This repository contains what you need to get started self-hosting various servi
 * [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki)
 * [Discourse](https://discourse.org)
 * [Piwigo](https://piwigo.org/)
-* [Gitlab](https://about.gitlab.com/)[&#185;](#Notes)
+* [Gitlab](https://about.gitlab.com/)[&#185;](#notes)
 
 To-dos
 
@@ -144,4 +144,4 @@ Finally, please contact me if you find something wrong with any of these configs
 
 ###### Notes
 
-&#185; Gitlab is *extremely* resource intensive and tends to leak memory over time.  It probably won't run well on a Raspberry Pi and even on a traditional PC, I have had to schedule cron jobs that periodically restart it due to the memory leaks.  Unsure if this is the result of misconfiguration on my part, or just how the software is.  [↩](#Self-hosted-Docker-Server-Templates)
+&#185; Gitlab is *extremely* resource intensive and tends to leak memory over time.  It probably won't run well on a Raspberry Pi and even on a traditional PC, I have had to schedule cron jobs that periodically restart it due to the memory leaks.  Unsure if this is the result of misconfiguration on my part, or just how the software is.  [↩](#self-hosted-docker-server-templates)
