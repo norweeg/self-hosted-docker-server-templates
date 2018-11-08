@@ -26,9 +26,46 @@ This repository contains what you need to get started self-hosting various servi
 
 To-dos
 
+In no particular order, things I hope to add templates for.  Also taking requests. 
 * [ ] [Mailu](https://mailu.io)
 * [ ] [Riot.im](https://riot.im)
 * [ ] [OpenVPN](https://openvpn.net/)
+* [ ] [Pinry](http://getpinry.com/)
+* [ ] [ymarks](https://bitbucket.org/ymarks/ymarks-server)
+* [ ] [Mozilla Firefox Sync](https://docs.services.mozilla.com/howtos/run-sync-1.5.html)
+* [ ] [Lobsters (link aggregation)](https://lobste.rs/)
+* [ ] [Wordpress](https://wordpress.org/)
+* [ ] [docker-mailserver](https://github.com/tomav/docker-mailserver)
+* [ ] [RSS Monster](https://github.com/pietheinstrengholt/rssmonster)
+* [ ] [Nunux Reader](https://reader.nunux.org/welcome)
+* [ ] [Nunux Keeper](https://keeper.nunux.org/)
+* [ ] [Apache OpenMeetings](https://openmeetings.apache.org/index.html)
+* [ ] [Cozy Cloud](https://github.com/cozy/cozy-stack)
+* [ ] [edX Platform](https://open.edx.org/)
+* [ ] [Moodle](https://moodle.org/)
+* [ ] [Sakai](https://www.sakaiproject.org/)
+* [ ] [Mahara](https://mahara.org/)
+* [ ] [OpenStreetMap](http://www.openstreetmap.org/)
+* [ ] [HomeHost](https://github.com/ridhwaans/homehost)
+* [ ] [Friends Radio](https://github.com/xouabita/friends-radio)
+* [ ] [Volumio](https://volumio.org/)
+* [ ] [PeerTube](https://joinpeertube.org/en/)
+* [ ] [Pushjet](https://pushjet.io/)
+* [ ] [YouTransfer](http://www.youtransfer.io/)
+* [ ] [Onion Share](https://github.com/micahflee/onionshare)
+* [ ] [Tag Spaces](https://www.tagspaces.org/)
+* [ ] [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
+* [ ] [Flox](https://github.com/devfake/flox)
+* [ ] [Lychee](https://lychee.electerious.com/)
+* [ ] [Media Goblin](https://mediagoblin.org/)
+* [ ] [Wallabag](https://www.wallabag.org/)
+* [ ] [Open Project](https://www.openproject.org/)
+* [ ] [Read the Docs](https://docs.readthedocs.org/en/latest/install.html)
+* [ ] [Freedom Box](https://wiki.debian.org/FreedomBox/Features)
+* [ ] [FreeNAS](https://www.freenas.org/)
+* [ ] [OpenMediaVault](http://www.openmediavault.org/)
+* [ ] [WikiSuite](http://wikisuite.org/Chat-and-Video-Conference)
+* [ ] A GUI to start and manage a stack created from these templates
 
 ## Before You Begin
 
