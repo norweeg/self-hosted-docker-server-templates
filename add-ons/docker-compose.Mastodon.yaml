@@ -35,7 +35,7 @@ services:
       - mastodon-db:/var/lib/postgresql/data
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false" #postgres needs a manual database migration on major version updates
     healthcheck: 
       test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
       interval: 10s

@@ -4,11 +4,25 @@ services:
   reverse-proxy:
     networks: 
       - heimdall
+  mail-relay:
+    networks:
+      - heimdall
   heimdall:
     image: linuxserver/heimdall:latest
     container_name: heimdall
     volumes:
       - heimdall-config:/config
+    environment:
+      APP_NAME: "My Apps"
+      APP_URL: "https://welcometo.yourDynamicDomain.duckdns.org"
+      FORCE_HTTPS: "true"
+      MAIL_HOST: "mail-relay"
+      MAIL_PORT: "25"
+      #not used with mail-relay, but can be used
+      MAIL_USERNAME: "null"
+      MAIL_PASSWORD: "null"
+      MAIL_ENCRYPTION: "null"
+      TZ: "America/New_York"
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
