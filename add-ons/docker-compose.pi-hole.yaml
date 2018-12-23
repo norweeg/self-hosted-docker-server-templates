@@ -17,8 +17,7 @@ services:
     networks:
       - pihole
   pihole:
-    image: diginc/pi-hole:latest #comment out if on ARM architecture
-    #image: diginc/pi-hole-multiarch:latest #uncomment for ARM architecture
+    image:  pihole/pihole:latest
     container_name: pihole
     environment:
       - "TZ=America/New_York" #default is UTC
@@ -27,7 +26,8 @@ services:
       - "WEBPASSWORD=yourAdminConsolePa55w0rd"
       - "ServerIP=192.168.xxx.yyy" ###change this to your host's static ip address.  REQUIRED!!!!
       - "IPv6=False" #Default is True
-      - "ServerIPv6=fd5b:1fc7:11c5:71b1:xxxx:xxxx:xxxx:xxxx" #your IPv6 address, if IPv6=True
+      #- "ServerIPv6=fd5b:1fc7:11c5:71b1:xxxx:xxxx:xxxx:xxxx" #your IPv6 address, if IPv6=True
+      - "VIRTUAL_HOST=pi-hole.yourDynamicDomain.duckdns.org"
     cap_add:
       - NET_ADMIN #optional, neededed only if running pi hole for DHCP
     volumes:
