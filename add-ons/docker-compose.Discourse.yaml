@@ -59,7 +59,8 @@ services:
       - discourse-db-data:/var/lib/postgresql/data
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      #only ok because postgres version is fixed, otherwise should be false or manual migrations need to be done on major updates
+      - "com.centurylinklabs.watchtower.enable=true" 
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=SecureDBPa55w0rd
