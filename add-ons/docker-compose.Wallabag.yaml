@@ -1,0 +1,67 @@
+#This file adds Wallabag (https://www.wallabag.org/en) to your stack
+services:
+  reverse-proxy:
+    networks:
+      - wallabag
+  wallabag:
+    image: wallabag/wallabag:latest
+    container_name: wallabag
+    networks:
+      - wallabag
+    restart: unless-stopped
+    environment:
+      - "MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd"
+      - "SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql"
+      - "SYMFONY__ENV__DATABASE_HOST=wallabag-db"
+      - "SYMFONY__ENV__DATABASE_PORT=3306"
+      - "SYMFONY__ENV__DATABASE_NAME=wallabag"
+      - "SYMFONY__ENV__DATABASE_USER=wallabag"
+      - "SYMFONY__ENV__DATABASE_PASSWORD=aSecureDBPassw0rd"
+      - "SYMFONY__ENV__DATABASE_CHARSET=utf8mb4"
+    expose:
+      - "80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=wallabag"
+      - "traefik.frontend.rule=Host:wallabag.yourDynamicDomain.duckdns.org"
+      - "traefik.docker.network=wallabag"
+      - "traefik.port=80"
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - wallabag-db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://wallabag:80 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  wallabag-db:
+    image: mariadb:latest
+    container_name: wallabag-db
+    environment:
+      - MYSQL_DATABASE=wallabag
+      - MYSQL_USER=wallabag
+      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
+    volumes:
+      - "wallabag-db:/var/lib/mysql"
+      - "guac-db-init-script:/docker-entrypoint-initdb.d"
+    restart: unless-stopped
+    networks:
+      - wallabag
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+networks:
+  wallabag:
+
+volumes:
+  wallabag-db:
+

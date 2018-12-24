@@ -23,6 +23,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Discourse](https://discourse.org)
 * [Piwigo](https://piwigo.org/)
 * [Gitlab](https://about.gitlab.com/)[&#185;](#notes)
+* [Wallabag](https://www.wallabag.org/)
 
 To-dos
 
@@ -58,7 +59,6 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Flox](https://github.com/devfake/flox)
 * [ ] [Lychee](https://lychee.electerious.com/)
 * [ ] [Media Goblin](https://mediagoblin.org/)
-* [ ] [Wallabag](https://www.wallabag.org/)
 * [ ] [Open Project](https://www.openproject.org/)
 * [ ] [Read the Docs](https://docs.readthedocs.org/en/latest/install.html)
 * [ ] [Freedom Box](https://wiki.debian.org/FreedomBox/Features)
