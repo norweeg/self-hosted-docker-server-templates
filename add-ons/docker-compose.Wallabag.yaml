@@ -46,7 +46,6 @@ services:
       - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
     volumes:
       - "wallabag-db:/var/lib/mysql"
-      - "guac-db-init-script:/docker-entrypoint-initdb.d"
     restart: unless-stopped
     networks:
       - wallabag
