@@ -19,6 +19,9 @@ services:
   pihole:
     image:  pihole/pihole:latest
     container_name: pihole
+    dns:
+      - 127.0.0.1 
+      - 1.1.1.1
     environment:
       - "TZ=America/New_York" #default is UTC
       - "DNS1=1.1.1.1" #8.8.8.8 is the default value
