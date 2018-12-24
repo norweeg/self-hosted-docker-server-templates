@@ -28,6 +28,8 @@ services:
       - "IPv6=False" #Default is True
       #- "ServerIPv6=fd5b:1fc7:11c5:71b1:xxxx:xxxx:xxxx:xxxx" #your IPv6 address, if IPv6=True
       - "VIRTUAL_HOST=pi-hole.yourDynamicDomain.duckdns.org"
+      - "VIRTUAL_PORT=443"
+      - "PROXY_LOCATION=pihole"
     cap_add:
       - NET_ADMIN #optional, neededed only if running pi hole for DHCP
     volumes:
