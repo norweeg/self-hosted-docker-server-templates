@@ -27,7 +27,7 @@ This repository contains what you need to get started self-hosting various servi
 
 To-dos
 
-In no particular order, things I hope to add templates for.  Also taking requests. 
+In no particular order, things I hope to add templates for.  Also taking requests.
 * [ ] [Mailu](https://mailu.io)
 * [ ] [Riot.im](https://riot.im)
 * [ ] [OpenVPN](https://openvpn.net/)
@@ -79,7 +79,8 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 * Register for [DuckDNS](https://www.duckdns.org/) and have your subdomain name and token ready
 * Forwarded ports 80 and 443 through your router to your host machine
 * Read through and get a basic understanding of the configuration options in every .yaml file you intend to use
-* Replaced **ALL** placeholder values with your desired configuration following the model of the placeholder in all docker-compose .yaml files you intend to use and in ./configs/traefik.toml
+* Copy template.env to .env with `cp template.env .env` and edit .env to contain your configuration **WARNING: Never commit and push your changes to .env to a public git repository unless you want to get hacked!! You would basically be telling everyone where to find you and telling them your adminstrative passwords if you do!**
+* Replace **ALL** placeholder values with your desired configuration following the model of the placeholder in ./configs/traefik.toml and any files in ./configs that are referenced in the docker-compose YAML files you intend to use.  **WARNING: Don't commit and push the changes you make to these files to a public git repository!  See above!**
 * Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
 * If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails.  Alternatively, you can also setup and use [Mailu](https://mailu.io/), but be aware spam email filters *might* think your domain is spammy because they won't recognize it.  If you use Mailgun, you will need to upgrade from free to basic (which is still free if you're forwarding 10,000 emails or less per month) in order to be able to deliver to email addresses other than the one you registered with.  You will need to enter a credit card to upgrade.
 * If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
@@ -89,6 +90,10 @@ Please also, in a developer's text editor e.g. NotePad++, read through docker-co
 ## Starting Your Stack
 
 At your system's command prompt, change directory to the base directory your local copy of this repository and run the following command:
+
+`docker-compose -f docker-compose.base.yaml config`
+
+This will check to make sure that the edits you made to any relevant .env files are valid.  You can also do this later as you add more files to your stack with the -f option. (see below)
 
 `docker-compose -f docker-compose.base.yaml up -d`
 

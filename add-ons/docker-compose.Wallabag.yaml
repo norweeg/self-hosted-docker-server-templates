@@ -1,6 +1,15 @@
 #This file adds Wallabag (https://www.wallabag.org/en) to your stack
+
+#The administrative user will be wallabag, password is wallabag.  Unfortunately the image author set this statically
+#log in after brining this online and change the name and password to your own to make yourself the administrator
+#also, as the administrator go to internal settings->import and enable redis to allow the asynchronous import workers to function.
+
+version: '3.5'
 services:
   reverse-proxy:
+    networks:
+      - wallabag
+  mail-relay:
     networks:
       - wallabag
   wallabag:
@@ -9,58 +18,184 @@ services:
     networks:
       - wallabag
     restart: unless-stopped
-    environment:
-      - "MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd"
-      - "SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql"
-      - "SYMFONY__ENV__DATABASE_HOST=wallabag-db"
-      - "SYMFONY__ENV__DATABASE_PORT=3306"
-      - "SYMFONY__ENV__DATABASE_NAME=wallabag"
-      - "SYMFONY__ENV__DATABASE_USER=wallabag"
-      - "SYMFONY__ENV__DATABASE_PASSWORD=aSecureDBPassw0rd"
-      - "SYMFONY__ENV__DATABASE_CHARSET=utf8mb4"
+    env_file:
+      - ../configs/wallabag.env
     expose:
       - "80"
     labels:
-      - "traefik.enable=true"
-      - "traefik.backend=wallabag"
-      - "traefik.frontend.rule=Host:wallabag.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=wallabag"
-      - "traefik.port=80"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.backend=wallabag
+      - traefik.frontend.rule=Host:${WALLABAG_DOMAIN:?Please copy template.env to .env and provide provide a value for WALLABAG_DOMAIN}
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.docker.network=wallabag
+      - traefik.port=80
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
       - wallabag-db
+      - wallabag-redis
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://wallabag:80 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://wallabag:80/login > /dev/null || exit 1"]
       interval: 15s
       timeout: 10s
       retries: 5
       start_period: 15s
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
 
   wallabag-db:
     image: mariadb:latest
     container_name: wallabag-db
-    environment:
-      - MYSQL_DATABASE=wallabag
-      - MYSQL_USER=wallabag
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
+    env_file:
+      - ../configs/wallabag.env
     volumes:
       - "wallabag-db:/var/lib/mysql"
     restart: unless-stopped
     networks:
       - wallabag
+    expose:
+      - "3306"
     labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
       interval: 15s
       timeout: 10s
       retries: 5
 
+  wallabag-redis:
+    restart: unless-stopped
+    container_name: wallabag-redis
+    image: redis:latest
+    networks:
+      - wallabag
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    volumes:
+      - wallabag-redis:/data
+    expose:
+      - "6379"
+
+##Async Import Workers (for importing large amounts of data)
+##Comment them out to disable them (after stopping and removing the containers, if already started)
+##Redis must be enabled in internal settings-> import by the administrator for these to work.
+  wallabag-importworker-pocket:
+    image: wallabag/wallabag:latest
+    command: import pocket
+    container_name: wallabag-importworker-pocket
+    networks:
+      - wallabag
+    restart: unless-stopped
+    env_file:
+      - ../configs/wallabag.env
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    depends_on:
+      - wallabag-db
+      - wallabag-redis
+      - wallabag
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
+
+  wallabag-importworker-readability:
+    image: wallabag/wallabag:latest
+    command: import readability
+    container_name: wallabag-importworker-readability
+    networks:
+      - wallabag
+    restart: unless-stopped
+    env_file:
+      - ../configs/wallabag.env
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    depends_on:
+      - wallabag-db
+      - wallabag-redis
+      - wallabag
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
+
+  wallabag-importworker-instapaper:
+    image: wallabag/wallabag:latest
+    command: import instapaper
+    container_name: wallabag-importworker-instapaper
+    networks:
+      - wallabag
+    restart: unless-stopped
+    env_file:
+      - ../configs/wallabag.env
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    depends_on:
+      - wallabag-db
+      - wallabag-redis
+      - wallabag
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
+
+  wallabag-importworker-firefox:
+    image: wallabag/wallabag:latest
+    command: import firefox
+    container_name: wallabag-importworker-firefox
+    networks:
+      - wallabag
+    restart: unless-stopped
+    env_file:
+      - ../configs/wallabag.env
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    depends_on:
+      - wallabag-db
+      - wallabag-redis
+      - wallabag
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
+
+  wallabag-importworker-chrome:
+    image: wallabag/wallabag:latest
+    command: import chrome
+    container_name: wallabag-importworker-chrome
+    networks:
+      - wallabag
+    restart: unless-stopped
+    env_file:
+      - ../configs/wallabag.env
+    labels:
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
+    depends_on:
+      - wallabag-db
+      - wallabag-redis
+      - wallabag
+    volumes:
+      - wallabag-images:/var/www/wallabag/web/assets/images
+      - wallabag-data:/var/www/wallabag/data
+      - wallabag-logs:/var/www/wallabag/var/logs
+
+
 networks:
   wallabag:
 
 volumes:
+  wallabag-images:
+  wallabag-data:
+  wallabag-logs:
   wallabag-db:
-
+  wallabag-redis:
