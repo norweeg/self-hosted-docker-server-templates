@@ -28,6 +28,7 @@ This repository contains what you need to get started self-hosting various servi
 To-dos
 
 In no particular order, things I hope to add templates for.  Also taking requests.
+
 * [ ] [Mailu](https://mailu.io)
 * [ ] [Riot.im](https://riot.im)
 * [ ] [OpenVPN](https://openvpn.net/)
@@ -184,6 +185,6 @@ Docker-compose can do more than just bring everything up or bring everything dow
 
 Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container.
 
-###### Notes
+### Notes
 
 &#185; Gitlab is *extremely* resource intensive and tends to leak memory over time.  It probably won't run well on a Raspberry Pi and even on a traditional PC, I have had to schedule cron jobs that periodically restart it due to the memory leaks.  Unsure if this is the result of misconfiguration on my part, or just how the software is.  [↩](#self-hosted-docker-server-templates)
