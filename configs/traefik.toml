@@ -80,9 +80,9 @@ watch = true
 exposedbydefault = false
 
 [acme]
-email = "jdoe@email.com"
+email = "you@youremail.com"
 storage = "/etc/traefik/acme/acme.json"
 entryPoint = "https"
 OnHostRule = true
-[acme.httpChallenge]
-entryPoint = "http"
+[acme.dnsChallenge]
+provider = "duckdns"
