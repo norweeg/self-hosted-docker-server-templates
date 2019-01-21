@@ -16,13 +16,13 @@ services:
       - syncthing-config:/config #default sync directory lives here, you'll probably want to change that
       - /mnt/any/dir/you/want:/sync/dir/you/want #you can put any dirs you want in /sync/ and add them in the web GUI
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8384"
-      - "traefik.backend=syncthing"
-      - "traefik.frontend.rule=Host:syncthing.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=syncthing"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=8384
+      - traefik.backend=syncthing
+      - traefik.frontend.rule=Host:${SYNCTHING_DOMAIN:?Please copy template.env to .env and provide provide a value for SYNCTHING_DOMAIN}
+      - traefik.docker.network=syncthing
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - syncthing
     restart: unless-stopped

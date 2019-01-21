@@ -20,7 +20,7 @@ services:
     image:  pihole/pihole:latest
     container_name: pihole
     dns:
-      - 127.0.0.1 
+      - 127.0.0.1
       - 1.1.1.1
     environment:
       - "TZ=America/New_York" #default is UTC
@@ -42,7 +42,7 @@ services:
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.backend=pihole"
-      - "traefik.frontend.rule=Host:pi-hole.yourDynamicDomain.duckdns.org"
+      - "traefik.frontend.rule=Host:${PI_HOLE_DOMAIN:?Please copy template.env to .env and provide provide a value for PI_HOLE_DOMAIN}"
       - "traefik.docker.network=pihole"
       - "traefik.default.protocol=http"
       - "com.centurylinklabs.watchtower.enable=true"

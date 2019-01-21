@@ -8,13 +8,13 @@ services:
     image: fjudith/draw.io:latest
     container_name: drawio
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=8080"
-      - "traefik.backend=drawio"
-      - "traefik.frontend.rule=Host:drawio.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=drawio"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=8080
+      - traefik.backend=drawio
+      - traefik.frontend.rule=Host:${DRAWIO_DOMAIN:?Please copy template.env to .env and provide provide a value for DRAWIO_DOMAIN}
+      - traefik.docker.network=drawio
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - drawio
     restart: unless-stopped

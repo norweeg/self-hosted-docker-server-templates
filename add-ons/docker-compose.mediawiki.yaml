@@ -36,19 +36,19 @@ services:
     volumes:
       - mediawiki-images:/var/www/html/images #location for image uploads
       #### The following must remain commented out for first run.  The setup wizard will produce
-      #### this file.  Download it and save it in the configs folder, or wherever, as long as you 
+      #### this file.  Download it and save it in the configs folder, or wherever, as long as you
       #### update this line and uncomment it.  All configuration is made in this file.  See
       #### https://www.mediawiki.org/wiki/Manual:LocalSettings.php for more options.  The container
       #### likely change the owner of this file to root after you restart with it mapped, so you
       #### will need to edit it with admin privileges afterwards.
 #      - ./configs/LocalSettings.php:/var/www/html/LocalSettings.php
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=mediawiki"
-      - "traefik.frontend.rule=Host:mywiki.mydynamicdomain.duckdns.org"
-      - "traefik.docker.network=mediawiki"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=mediawiki
+      - traefik.frontend.rule=Host:${MEDIAWIKI_DOMAIN:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_DOMAIN}
+      - traefik.docker.network=mediawiki
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - mediawiki
     restart: unless-stopped

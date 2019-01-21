@@ -20,13 +20,13 @@ services:
       - gitlab-config:/var/opt/gitlab
       - ./configs/gitlab.rb:/etc/gitlab/gitlab.rb
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=gitlab"
-      - "traefik.frontend.rule=Host:gitlab.example.com;"
-      - "traefik.docker.network=gitlab"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=gitlab
+      - traefik.frontend.rule=Host:${GITLAB_DOMAIN:?Please copy template.env to .env and provide provide a value for GITLAB_DOMAIN}
+      - traefik.docker.network=gitlab
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - gitlab
     restart: unless-stopped

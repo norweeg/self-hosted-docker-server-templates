@@ -15,15 +15,15 @@ services:
       - projectsend-data:/data
     environment:
       - MAX_UPLOAD=8000 #MB default: 5000
-      - TZ=America/New_York #change this if you need to
+      - TZ=${TZ}
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=projectsend"
-      - "traefik.frontend.rule=Host:send.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=projectsend"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=projectsend
+      - traefik.frontend.rule=Host:${PROJECTSEND_DOMAIN:?Please copy template.env to .env and provide provide a value for PROJECTSEND_DOMAIN}
+      - traefik.docker.network=projectsend
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - projectsend
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
     container_name: projectsend-db
     #after starting project send, go to send.yourDynamicDomain.duckdns.org/install/make-config.php
     #to configure projectsend with the database info you provide here. The database host will be
-    #"projectsend-db", type will be mySQL, make sure to change the System URI (second page) to start 
+    #"projectsend-db", type will be mySQL, make sure to change the System URI (second page) to start
     #with https:// or else the page will be bare and the site will not work
     environment:
       - MYSQL_DATABASE=projectsend

@@ -34,9 +34,9 @@ services:
     volumes:
       - mastodon-db:/var/lib/postgresql/data
     labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=false" #postgres needs a manual database migration on major version updates
-    healthcheck: 
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=false #postgres needs a manual database migration on major version updates
+    healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
       interval: 10s
       timeout: 5s
@@ -88,14 +88,14 @@ services:
       - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=mastodon-web"
-      - "traefik.frontend.rule=Host:mastodon.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=mastodon-external"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=mastodon-web
+      - traefik.frontend.rule=Host:${MASTODON_DOMAIN:?Please copy template.env to .env and provide provide a value for MASTODON_DOMAIN}
+      - traefik.docker.network=mastodon-external
+      - com.centurylinklabs.watchtower.enable=true
     #For some reason, the below health check always fails.  Will work on this later
-#    healthcheck: 
+#    healthcheck:
 #      test: ["CMD-SHELL", "wget --spider http://mastodon-web:3000 || exit 1"] #checking local connectivity
 #      interval: 1m30s
 #      timeout: 10s
@@ -117,8 +117,8 @@ services:
       - mastodon-db
       - mastodon-redis
     labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
     volumes:
       - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
@@ -141,8 +141,8 @@ services:
       - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
 
 networks:
   mastodon-external:

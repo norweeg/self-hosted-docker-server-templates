@@ -15,14 +15,14 @@ services:
       - piwigo-pictures:/pictures
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - TZ=America/New_York #change this if you need to
-      - PGID=1000
-      - PUID=1000
+      - TZ=${TZ}
+      - PGID=${UID}
+      - PUID=${UID}
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.backend=piwigo"
-      - "traefik.frontend.rule=Host:photos.yourdynamicdomain.duckdns.org"
+      - "traefik.frontend.rule=Host:${PIWIGO_DOMAIN:?Please copy template.env to .env and provide provide a value for PIWIGO_DOMAIN}"
       - "traefik.docker.network=piwigo"
       - "traefik.default.protocol=http"
       - "com.centurylinklabs.watchtower.enable=true"

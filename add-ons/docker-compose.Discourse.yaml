@@ -22,12 +22,12 @@ services:
     volumes:
       - discourse-data:/bitnami
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=3000"
-      - "traefik.backend=discourse"
-      - "traefik.frontend.rule=Host:forum.yourdomain.com"
-      - "traefik.docker.network=discourse"
-      - "traefik.default.protocol=http"
+      - traefik.enable=true
+      - traefik.port=3000
+      - traefik.backend=discourse
+      - traefik.frontend.rule=Host:${DISCOURSE_DOMAIN:?Please copy template.env to .env and provide provide a value for DISCOURSE_DOMAIN}
+      - traefik.docker.network=discourse
+      - traefik.default.protocol=http
       #FYI this image takes ~5 minutes to check the DB when it is recreated
       #if that is disruptive, either disable watchtower for this and the sidekiq image
       #or set watchtower to run only when you can afford momentary downtime
@@ -42,7 +42,7 @@ services:
     depends_on:
       - discourse-db
       - discourse-redis
-    healthcheck: 
+    healthcheck:
       test: ["CMD-SHELL", "curl -f http://discourse:3000 || exit 1"] #checking local connectivity
       interval: 1m30s
       timeout: 10s
@@ -60,14 +60,14 @@ services:
     labels:
       - "traefik.enable=false"
       #only ok because postgres version is fixed, otherwise should be false or manual migrations need to be done on major updates
-      - "com.centurylinklabs.watchtower.enable=true" 
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=SecureDBPa55w0rd
       - POSTGRES_DB=postgres
     expose:
       - "5432"
-    healthcheck: 
+    healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
       interval: 10s
       timeout: 5s
@@ -80,10 +80,10 @@ services:
     networks:
       - discourse-internal
     labels:
-      - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=false
+      - com.centurylinklabs.watchtower.enable=true
     volumes:
-      - /mnt/DockerStorage/Discourse/redis-data:/data
+      - discourse-redis-data:/data
 
   discourse-sidekiq:
     container_name: discourse-sidekiq
@@ -101,9 +101,9 @@ services:
     volumes:
       - discourse-data:/bitnami
     labels:
-      - "traefik.enable=false"
+      - traefik.enable=false
       #see the above note on discourse service.  the two should be the same image at all times!
-      - "com.centurylinklabs.watchtower.enable=true"
+      - com.centurylinklabs.watchtower.enable=true
 
 networks:
   discourse-internal:

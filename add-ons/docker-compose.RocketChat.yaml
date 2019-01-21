@@ -18,26 +18,23 @@ services:
       - rocketchat-hubot-scripts:/home/hubot/scripts
     environment:
       - PORT=3000
-      - ROOT_URL=https://chat.yourDynamicDomain.duckdns.org
+      - ROOT_URL=https://${ROCKETCHAT_DOMAIN:?Please copy template.env to .env and provide provide a value for ROCKETCHAT_DOMAIN}
       - MONGO_URL=mongodb://rocketchat-mongo:27017/rocketchat
       - MONGO_OPLOG_URL=mongodb://rocketchat-mongo:27017/local
-#      - MAIL_URL=smtp://smtp.email
-#      - HTTP_PROXY=http://proxy.domain.com
-#      - HTTPS_PROXY=http://proxy.domain.com
     depends_on:
       - rocketchat-mongo-init-replica
     expose:
       - "3000"
     labels:
-      - "traefik.enable=true"
-      - "traefik.backend=rocketchat"
-      - "traefik.frontend.rule=Host: chat.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=rocketchat"
-      - "traefik.port=3000"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.backend=rocketchat
+      - traefik.frontend.rule=Host:${ROCKETCHAT_DOMAIN:?Please copy template.env to .env and provide provide a value for ROCKETCHAT_DOMAIN}
+      - traefik.docker.network=rocketchat
+      - traefik.port=3000
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - rocketchat
-    healthcheck: 
+    healthcheck:
       test: ["CMD-SHELL", "curl -f http://rocketchat:3000 || exit 1"] #checking local connectivity
       interval: 1m30s
       timeout: 10s
@@ -61,7 +58,7 @@ services:
       - 27017
     networks:
       - rocketchat
-    healthcheck: 
+    healthcheck:
       test: ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongo rocketchat-mongo:27017/test --quiet"]
       interval: 1m30s
       timeout: 10s

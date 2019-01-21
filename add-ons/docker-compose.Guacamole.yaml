@@ -22,12 +22,12 @@ services:
     expose:
       - "8080"
     labels:
-      - "traefik.enable=true"
-      - "traefik.backend=guacamole"
-      - "traefik.frontend.rule=Host:guac.yourDynamicDomain.duckdns.org; AddPrefix:/guacamole"
-      - "traefik.docker.network=guacamole"
-      - "traefik.port=8080"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.backend=guacamole
+      - "traefik.frontend.rule=Host:${GUACAMOLE_DOMAIN:?Please copy template.env to .env and provide provide a value for GUACAMOLE_DOMAIN}; AddPrefix:/guacamole"
+      - traefik.docker.network=guacamole
+      - traefik.port=8080
+      - com.centurylinklabs.watchtower.enable=true
     depends_on:
       - guacamole-db
       - guacd

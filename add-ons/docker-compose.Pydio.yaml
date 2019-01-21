@@ -15,18 +15,18 @@ services:
     image: linuxserver/pydio:latest
     container_name: pydio
     environment:
-      - TZ=America/New_York #change this if you need to
+      - TZ=${TZ}
     volumes:
       - "pydio-config:/config"
       - "pydio-data:/data"
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=pydio"
-      - "traefik.frontend.rule=Host:pydio.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=pydio"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=pydio
+      - traefik.frontend.rule=Host:${PYDIO_DOMAIN:?Please copy template.env to .env and provide provide a value for PYDIO_DOMAIN}
+      - traefik.docker.network=pydio
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     expose:
       - "80"
     networks:

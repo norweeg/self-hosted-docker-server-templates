@@ -13,13 +13,13 @@ services:
       - "~/.Playlists:/airsonic/playlists:z"
       - "airsonic-data:/airsonic/data"
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=4040"
-      - "traefik.backend=airsonic"
-      - "traefik.frontend.rule=Host:airsonic.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=airsonic"
-      - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=4040
+      - traefik.backend=airsonic
+      - traefik.frontend.rule=Host:${AIRSONIC_DOMAIN:?Please copy template.env to .env and provide provide a value for AIRSONIC_DOMAIN}
+      - traefik.docker.network=airsonic
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - airsonic
     restart: unless-stopped

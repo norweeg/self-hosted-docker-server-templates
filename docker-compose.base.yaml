@@ -47,8 +47,8 @@ services:
     image: linuxserver/duckdns:latest #which container from the docker store to use
     container_name: duckdns #optional, but recommended, otherwise defaults to a generated name
     environment: #configuration options defined by environment variables go here
-      - SUBDOMAINS=yourDynamicDomainName #replace with the domain you registered.
-      - TOKEN=yourDuckDNStoken #the token duckDNS provides you for domain updates
+      - SUBDOMAINS=${DUCKNS_SUBDOMAIN:?Please copy template.env to .env and provide provide a value for DUCKDNS_SUBDOMAIN}
+      - TOKEN=${DUCKDNS_TOKEN:?Please copy template.env to .env and provide provide a value for DUCKDNS_TOKEN}
     #Container metadata can be put in labels.  This is sometimes used to communicate information to other containers
     #or services e.g. to docker compose about what other services depend on this service, or to traefik reverse
     #proxy about how or if to proxy requests to this service
@@ -145,17 +145,17 @@ services:
     container_name: portainer
     labels:
       #tells Traefik to proxy requests to this container
-      - "traefik.enable=true"
+      - traefik.enable=true
       #the rule traefik will use to match a request to this service
       #in this case, the hostname of the requested source matches what you put here
-      - "traefik.frontend.rule=Host:portainer.yourDynamicDomain.duckdns.org"
+      - traefik.frontend.rule=Host:${PORTAINER_DOMAIN:?Please copy template.env to .env and provide provide a value for PORTAINER_DOMAIN}
       #tells traefik the name of the container it will send requests to when it finds
       #the traefik must be on the on the same network (see below) to be able to route requests
       #to it by hostname
-      - "traefik.backend=portainer"
+      - traefik.backend=portainer
       #the target port of the service that traefik should forward
-      - "traefik.port=9000"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.port=9000
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - docker-gui-network
     volumes:
@@ -171,7 +171,7 @@ services:
     #that the server can be reached without errors, as shown below.  Healthchecks also will cause any containers that depend on
     #this container to wait for indicate that it is in status "healthy" before begining to start themselves, which is useful to
     #guarantee a database server is up and responding to connections before starting the application server.
-    healthcheck: 
+    healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9000 || exit 1"]
       interval: 1m30s
       timeout: 10s
@@ -190,7 +190,7 @@ services:
     restart: unless-stopped
     environment:
       #if you use mailgun, you cannot use your duckdns domain, it will not validate it
-      - POSTFIX_myhostname=yourcustomdomain.com
+      - POSTFIX_myhostname=${REGISTERED_DOMAIN:?Please copy template.env to .env and provide provide a value for REGISTERED_DOMAIN}
       #reluctantly adding 192.168.0.0/16 to allowed networks.  This address range is typically used on routers and, if the mail relay
       #port were mapped to the host, this would be a HUGE security risk (anyone could send email through the relay, including others
       #on the same router).  The "expose" section, as I understand it only makes the port available to other docker services
@@ -198,15 +198,15 @@ services:
       #you can't use the mail relay after you've exhausted the private addresses 172.16.0.0-> 172.31.0.0 with many services on your
       #stack
       - "POSTFIX_mynetworks=127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.0.0.0/8 192.168.0.0/16"
-      - POSTFIX_mydestination=yourcustomdomain.com,localhost
+      - POSTFIX_mydestination=${REGISTERED_DOMAIN:?Please copy template.env to .env and provide provide a value for REGISTERED_DOMAIN},localhost
       - POSTFIX_smtp_tls_security_level=may
       - POSTFIX_smtpd_tls_security_level=none
       - POSTFIX_smtp_sasl_auth_enable=yes
       - "POSTFIX_smtp_sasl_password_maps=hash:/etc/postfix/sasl/sasl_passwd"
       - POSTFIX_smtp_sasl_security_options=noanonymous
-      - POSTFIX_relayhost=smtp.mailgun.org:587 #the host:port for your smtp server.  You don't have to use mailgun
-      - relayhost_username=postmaster@yourcustomdomain.com
-      - relayhost_passwd=yourSMTPPassword
+      - POSTFIX_relayhost=${UPSTREAM_SMTP_HOST:?Please copy template.env to .env and provide provide a value for UPSTREAM_SMTP_HOST}
+      - relayhost_username=${UPSTREAM_SMTP_USERNAME:?Please copy template.env to .env and provide provide a value for UPSTREAM_SMTP_USERNAME}
+      - relayhost_passwd=${UPSTREAM_SMTP_PASSWORD:?Please copy template.env to .env and provide provide a value for UPSTREAM_SMTP_PASSWORD}
       - POSTFIX_smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt #might need to change if not on Debian-based linux, uesd to validate secure connection to SMTP
       - POSTFIX_smtp_tls_note_starttls_offer=yes
       - POSTFIX_smtp_use_tls=yes

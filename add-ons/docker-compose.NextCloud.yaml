@@ -30,13 +30,13 @@ services:
       - nextcloud-html:/var/www/html
       - nextcloud-ssl:/etc/ssl
     labels:
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.backend=nextcloud"
-      - "traefik.frontend.rule=Host:cloud.yourDynamicDomain.duckdns.org"
-      - "traefik.docker.network=nextcloud"
-      - "traefik.frontend.headers.STSSeconds=15552000"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=nextcloud
+      - traefik.frontend.rule=Host:${NEXTCLOUD_DOMAIN:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DOMAIN}
+      - traefik.docker.network=nextcloud
+      - traefik.frontend.headers.STSSeconds=15552000
+      - com.centurylinklabs.watchtower.enable=true
     networks:
       - nextcloud
     restart: unless-stopped
@@ -76,10 +76,10 @@ services:
     image: collabora/code:latest
     container_name: office
     environment:
-      - domain=cloud.yourDynamicDomain.duckdns.org #must be the domain of the nextcloud instance
+      - domain=${NEXTCLOUD_DOMAIN:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DOMAIN}
       - username=adminUsernameForCollabora
       - password=Pa55wordforCollaboraAdmin
-      - server_name=office.yourDynamicDomain.duckdns.org #must be the domain of the Collabora instance
+      - server_name=${COLLABORA_OFFICE_DOMAIN:?Please copy template.env to .env and provide provide a value for COLLABORA_OFFICE_DOMAIN}
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
@@ -100,15 +100,15 @@ services:
     image: nginx:latest
     container_name: office-proxy
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
       #make sure you edit line 3 of configs/collabora-proxy.conf to add this hostname
-      - "traefik.web.frontend.rule=Host:office.yourDynamicDomain.duckdns.org;"
-      - "traefik.port=80"
-      - "traefik.protocol=http"
-      - "traefik.docker.network=nextcloud"
-      - "traefik.frontend.passHostHeader=true"
-      - "traefik.frontend.headers.STSSeconds=15552000"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - traefik.web.frontend.rule=Host:${COLLABORA_OFFICE_DOMAIN:?Please copy template.env to .env and provide provide a value for COLLABORA_OFFICE_DOMAIN}
+      - traefik.port=80
+      - traefik.protocol=http
+      - traefik.docker.network=nextcloud
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.STSSeconds=15552000
+      - com.centurylinklabs.watchtower.enable=true
     restart: unless-stopped
     networks:
       - nextcloud
