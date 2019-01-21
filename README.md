@@ -66,6 +66,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [FreeNAS](https://www.freenas.org/)
 * [ ] [OpenMediaVault](http://www.openmediavault.org/)
 * [ ] [WikiSuite](http://wikisuite.org/Chat-and-Video-Conference)
+* [ ] [Ghost](https://ghost.org/)
 * [ ] A GUI to start and manage a stack created from these templates
 
 ## Before You Begin
