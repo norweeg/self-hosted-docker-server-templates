@@ -69,7 +69,7 @@ defaultEntryPoints = ["https","http"]
 # https://docs.traefik.io/configuration/api/
 [api]
 entryPoint = "traefik"
-dashboard = "true"
+dashboard = true
 
 [docker]
 endpoint = "unix:///var/run/docker.sock" ###comment this line out in windows
