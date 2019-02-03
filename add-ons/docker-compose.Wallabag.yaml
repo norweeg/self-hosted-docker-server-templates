@@ -26,6 +26,9 @@ services:
       - traefik.enable=true
       - traefik.backend=wallabag
       - traefik.frontend.rule=Host:${WALLABAG_DOMAIN:?Please copy template.env to .env and provide provide a value for WALLABAG_DOMAIN}
+      - "traefik.frontend.redirect.regex=^http://${WALLABAG_DOMAIN}/(.*)"
+      - "traefik.frontend.redirect.replacement=https://${WALLABAG_DOMAIN}/$$1"
+      - traefik.frontend.redirect.permanent=true
       - traefik.frontend.passHostHeader=true
       - traefik.frontend.whiteList.useXForwardedFor=true
       - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
