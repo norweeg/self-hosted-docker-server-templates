@@ -24,6 +24,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Piwigo](https://piwigo.org/)
 * [Gitlab](https://about.gitlab.com/)[&#185;](#notes)
 * [Wallabag](https://www.wallabag.org/)
+* [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
 
 To-dos
 
@@ -56,7 +57,6 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [YouTransfer](http://www.youtransfer.io/)
 * [ ] [Onion Share](https://github.com/micahflee/onionshare)
 * [ ] [Tag Spaces](https://www.tagspaces.org/)
-* [ ] [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
 * [ ] [Flox](https://github.com/devfake/flox)
 * [ ] [Lychee](https://lychee.electerious.com/)
 * [ ] [Media Goblin](https://mediagoblin.org/)

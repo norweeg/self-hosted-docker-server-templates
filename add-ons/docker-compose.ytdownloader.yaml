@@ -1,0 +1,45 @@
+#This file adds a downloader for youtube to your stack.  Service ytdownloader is a no-frills basic downloader which allows you to download
+#a video from youtube using a browser.  Service ytdownloader-alternate is more polished, but can only download videos as mp3s and only to 
+#a directory on the machine hosting it.  Both use environment variable  YTDOWNLOADER_DOMAIN, so only have one service active at any time.
+
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - ytdownloader
+  ytdownloader:
+    #website: https://github.com/RONTheCookie/ytdl
+    image: ronthecookie/ytdl
+    container_name: ytdownloader
+    networks:
+      - ytdownloader
+    expose:
+      - "3000"
+    labels:
+      - traefik.enable=true
+      - traefik.backend=ytdownloader
+      - traefik.frontend.rule=Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
+      - traefik.docker.network=ytdownloader
+      - traefik.port=3000
+      - com.centurylinklabs.watchtower.enable=true
+
+#  ytdownloader-alternate:
+#    #website: https://github.com/Algram/ytdl-webserver
+#    image: algram/ytdl-webserver
+#    container_name: ytdownloader
+#    networks:
+#      - ytdownloader
+#    expose:
+#      - "3000"
+#    volumes:
+#      - ${HOME}/Videos/youtube:/home/app/public/temp
+#    labels:
+#      - traefik.enable=true
+#      - traefik.backend=ytdownloader
+#      - traefik.frontend.rule=Host:Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
+#      - traefik.docker.network=ytdownloader
+#      - traefik.port=3000
+#      - com.centurylinklabs.watchtower.enable=true
+
+networks:
+  ytdownloader:
