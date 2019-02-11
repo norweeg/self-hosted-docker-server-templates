@@ -21,7 +21,7 @@ defaultEntryPoints = ["https","http"]
 #
 # Optional
 #
-# [traefikLog]
+[traefikLog]
 
 # Sets the filepath for the traefik log. If not specified, stdout will be used.
 # Intermediate directories are created if necessary.
@@ -36,7 +36,7 @@ defaultEntryPoints = ["https","http"]
 # Optional
 # Default: "common"
 #
-# format = "common"
+format = "common"
 
 # Enable access logs
 # By default it will write to stdout and produce logs in the textual
@@ -44,7 +44,7 @@ defaultEntryPoints = ["https","http"]
 #
 # Optional
 #
-# [accessLog]
+[accessLog]
 
 # Sets the file path for the access log. If not specified, stdout will be used.
 # Intermediate directories are created if necessary.
@@ -59,7 +59,7 @@ defaultEntryPoints = ["https","http"]
 # Optional
 # Default: "common"
 #
-# format = "common"
+format = "common"
 
 ################################################################
 # Web configuration backend

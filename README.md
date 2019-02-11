@@ -24,6 +24,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Piwigo](https://piwigo.org/)
 * [Gitlab](https://about.gitlab.com/)[&#185;](#notes)
 * [Wallabag](https://www.wallabag.org/)
+* [Transmission Bittorrent Client Webserver](https://transmissionbt.com/)
 * [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
 
 To-dos

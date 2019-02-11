@@ -1,0 +1,39 @@
+#This compose file adds a transmission bittorrent client webserver https://transmissionbt.com/ to your stack
+#make sure you set a password by changing everything in quotation marks for rpc-password in .config/transmissionbt-settings.json to your desired password
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - transmission
+  transmission:
+    image: linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=${UID} #your UID
+      - PGID=${UID} #your primary GID which should equal your UID
+      - TZ=${TZ}
+    volumes:
+      - transmission-config:/config
+      - ${PWD}/configs/transmissionbt-settings.json:/config/settings.json #server settings can be changed in this file.
+      - ${HOME}/Downloads:/downloads
+      - ${HOME}/Downloads:/watch
+    labels:
+      - traefik.enable=true
+      - traefik.port=9091
+      - traefik.backend=transmission
+      - traefik.frontend.rule=Host:${TRANSMISSIONBT_DOMAIN}
+      - traefik.docker.network=transmission
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - transmission
+    restart: unless-stopped
+    expose: #exposed only within network, reverse-proxy will proxy http requests to it
+      - "9091"
+
+networks:
+  transmission:
+    name: transmission
+
+volumes:
+  transmission-config:

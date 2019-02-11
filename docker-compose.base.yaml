@@ -47,6 +47,7 @@ services:
     image: linuxserver/duckdns:latest #which container from the docker store to use
     container_name: duckdns #optional, but recommended, otherwise defaults to a generated name
     environment: #configuration options defined by environment variables go here
+      - TZ=${TZ}
       - SUBDOMAINS=${DUCKNS_SUBDOMAIN:?Please copy template.env to .env and provide provide a value for DUCKDNS_SUBDOMAIN}
       - TOKEN=${DUCKDNS_TOKEN:?Please copy template.env to .env and provide provide a value for DUCKDNS_TOKEN}
     #Container metadata can be put in labels.  This is sometimes used to communicate information to other containers
@@ -75,14 +76,21 @@ services:
     #container (right)
       - 80:80
       - 443:443
-      - 8080:8080 #admin web UI port
+    expose:
+      - "8080" #admin web UI port
     labels:
       - "com.centurylinklabs.watchtower.enable=true" #enables watchtower for auto updates
+      - "traefik.enable=true" #set to false to disable admin dashboard
+      - "traefik.frontend.rule=Host:${TRAEFIK_DASHBOARD_URL:?Please set the value of TRAEFIK_DASHBOARD_URL in .env or comment this line out}"
+      - "traefik.port=8080"
+      - "traefik.frontend.auth.digest.usersFile=/etc/traefik/dashboard-users-passwd"
     volumes:
     #allows traefik to monitor for changes and to read labels (Mac/Linux ONLY).
       - /var/run/docker.sock:/var/run/docker.sock  ###Comment this line out in Windows, make sure to update traefik.toml
       - ./configs/traefik.toml:/etc/traefik/traefik.toml #traefik config file
       - traefik-cert:/etc/traefik/acme/ #volume for storing LetsEncrypt cets
+      #comment out the next line if you disable the dashboard
+      - ${TRAEFIK_DASHBOARD_USERS_PASSWORD_FILE:?Run htdigest -c /path/to/new/password/file traefik yourusername to create a username/password for the traefik dashboard and set TRAEFIK_USERS_PASSWORD_FILE in .env to the path of the file}:/etc/traefik/dashboard-users-passwd
     #The following section allows you to deifne services which must be started before this service can start
     depends_on:
       - dynamic-dns
