@@ -7,6 +7,8 @@ services:
   airsonic:
     image: airsonic/airsonic
     container_name: airsonic
+    environment:
+      - "JAVA_OPTS=-Dserver.use-forward-headers=true -Dserver.tomcat.protocol-header=X-Forwarded-Proto"
     volumes:
       - "~/Music:/airsonic/music:z"
       - "~/Podcasts:/airsonic/podcasts:z"
@@ -17,6 +19,12 @@ services:
       - traefik.port=4040
       - traefik.backend=airsonic
       - traefik.frontend.rule=Host:${AIRSONIC_DOMAIN:?Please copy template.env to .env and provide provide a value for AIRSONIC_DOMAIN}
+      - traefik.frontend.redirect.regex=^http://${AIRSONIC_DOMAIN}/(.*)"
+      - traefik.frontend.redirect.replacement=https://${AIRSONIC_DOMAIN}/$$1"
+      - traefik.frontend.redirect.permanent=true
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
       - traefik.docker.network=airsonic
       - traefik.default.protocol=http
       - com.centurylinklabs.watchtower.enable=true
