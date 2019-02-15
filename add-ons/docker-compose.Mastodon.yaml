@@ -14,6 +14,12 @@
 #  ****Please note: ElasticSearch is storage and memory intensive.  You also       #
 #      probably don't need it for a home server instance of Mastodon.  Only        #
 #      enable it if you're sure you want it and your system can handle it.         #
+#      You must run the following command before starting mastodon-elasticsearch   #
+#      sudo sysctl -w vm.max_mapp_count=262144                                     #
+#      You will need to edit /etc/sysctl.conf on your host and add the following:  #
+#      vm.max_map_count=262144                                                     #
+#      to make this change permanent.  Elasticsearch's data directory must         #
+#      also be writable by the user who launches the container for some reason     #
 ####################################################################################
 
 version: '3.5'
@@ -53,36 +59,42 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - mastodon-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
 
 #  mastodon-elasticsearch:
 #    restart: unless-stopped
-#    image: elasticsearch:latest
+#    image: elasticsearch:6.6.0
 #    container_name: mastodon-elasticsearch
 #    environment:
 #      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 #    networks:
 #      - mastodon-internal
+#    expose:
+#      - "9200"
 #    volumes:
 #      - mastodon-elasticsearch:/usr/share/elasticsearch/data
 #    labels:
 #      - "traefik.enable=false"
 #      - "com.centurylinklabs.watchtower.enable=true"
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl --silent --fail mastodon-elasticsearch:9200/_cluster/health || exit 1"]
 
   mastodon-web:
     container_name: mastodon-web
-    image: tootsuite/mastodon:v2.3.3
+    image: tootsuite/mastodon:v2.7.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
     networks:
       - mastodon-external
       - mastodon-internal
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     depends_on:
       - mastodon-db
       - mastodon-redis
-#      - mastodon-elasticsearch
+ #     - mastodon-elasticsearch
     volumes:
       - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
@@ -94,42 +106,51 @@ services:
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN:?Please copy template.env to .env and provide provide a value for MASTODON_DOMAIN}
       - traefik.docker.network=mastodon-external
       - com.centurylinklabs.watchtower.enable=true
-    #For some reason, the below health check always fails.  Will work on this later
-#    healthcheck:
-#      test: ["CMD-SHELL", "wget --spider http://mastodon-web:3000 || exit 1"] #checking local connectivity
-#      interval: 1m30s
-#      timeout: 10s
-#      retries: 5
-#      start_period: 30s
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off mastodon-web:3000/api/v1/instance || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   mastodon-streaming:
     container_name: mastodon-streaming
-    image: tootsuite/mastodon:v2.3.3
+    image: tootsuite/mastodon:v2.7.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: yarn start
     networks:
       - mastodon-external
       - mastodon-internal
-    ports:
-      - "4000:4000"
+    expose:
+      - "4000"
     depends_on:
       - mastodon-db
       - mastodon-redis
     labels:
-      - traefik.enable=false
+      - traefik.enable=true
+      - traefik.port=4000
+      - traefik.backend=mastodon-streaming
+      - traefik.docker.network=mastodon-external
+      - traefik.frontend.rule=Host:${MASTODON_DOMAIN};PathPrefixStrip:/api/v1/streaming
       - com.centurylinklabs.watchtower.enable=true
     volumes:
       - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off mastodon-streaming:4000/api/v1/streaming/health || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   mastodon-sidekiq:
     container_name: mastodon-sidekiq
-    image: tootsuite/mastodon:v2.3.3
+    image: tootsuite/mastodon:v2.7.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
-    command: bundle exec sidekiq -q default -q mailers -q pull -q push
+    command: bundle exec sidekiq 
     depends_on:
       - mastodon-db
       - mastodon-redis
@@ -156,5 +177,5 @@ volumes:
   mastodon-packs:
   mastodon-system:
   mastodon-db:
-#  mastodon-elasticsearch:
+  #mastodon-elasticsearch:
   mastodon-redis:
