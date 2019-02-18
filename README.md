@@ -15,7 +15,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Bookstack](https://www.bookstackapp.com/)
 * [Heimdall](https://heimdall.site/)
 * [Mastodon](https://mastodon.social/about)
-* [Airsonic]( https://airsonic.github.io/)
+* [Airsonic](https://airsonic.github.io/)
 * [ProjectSend](https://www.projectsend.org/)
 * [Syncthing](https://syncthing.net/)
 * [Draw.io](https://draw.io)
@@ -54,7 +54,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Friends Radio](https://github.com/xouabita/friends-radio)
 * [ ] [Volumio](https://volumio.org/)
 * [ ] [PeerTube](https://joinpeertube.org/en/)
-* [ ] [Pushjet](https://pushjet.io/)
+* [x] ~~[Pushjet](https://pushjet.io/)~~ (project seems to be inactive, homepage is unresponsive)
 * [ ] [YouTransfer](http://www.youtransfer.io/)
 * [ ] [Onion Share](https://github.com/micahflee/onionshare)
 * [ ] [Tag Spaces](https://www.tagspaces.org/)
@@ -68,6 +68,18 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [OpenMediaVault](http://www.openmediavault.org/)
 * [ ] [WikiSuite](http://wikisuite.org/Chat-and-Video-Conference)
 * [ ] [Ghost](https://ghost.org/)
+* [ ] [Wekan](https://wekan.github.io/)
+* [ ] [Kanboard](https://kanboard.org/)
+* [ ] [Tiny tiny RSS](https://tt-rss.org/)
+* [ ] [LibrePlan](http://www.libreplan.org/)
+* [ ] [Hexo](https://hexo.io/)
+* [ ] [Searx](https://asciimoo.github.io/searx/)
+* [ ] [Rainloop](https://www.rainloop.net/)
+* [ ] [Known](https://withknown.com/)
+* [ ] [SoGo](https://sogo.nu/)
+* [ ] [Taiga.io](https://taiga.io/)
+* [ ] [Logitech Media Server](http://www.mysqueezebox.com/download/)
+* [ ] [Moode](http://moodeaudio.org/)
 * [ ] A GUI to start and manage a stack created from these templates
 
 ## Before You Begin
@@ -176,6 +188,8 @@ Docker-compose can do more than just bring everything up or bring everything dow
 * [/r/HomeServer on Reddit](https://www.reddit.com/r/HomeServer/)
 * [/r/selfhosted on Reddit](https://www.reddit.com/r/selfhosted/)
 * [Awesome Self-hosted](https://github.com/Kickball/awesome-selfhosted)
+* [Awesome Sysadmin](https://github.com/n1trux/awesome-sysadmin)
+* [gLibre Services](https://alternativeto.net//list/7451/glibre-services)
 
 ## Assorted other links of interest
 
