@@ -14,7 +14,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Gucamole](https://guacamole.apache.org/)
 * [Bookstack](https://www.bookstackapp.com/)
 * [Heimdall](https://heimdall.site/)
-* [Mastodon](https://mastodon.social/about)
+* [Mastodon](https://mastodon.social/about) (see also: [Upgrading Mastodon](docs/mastodon.md))
 * [Airsonic](https://airsonic.github.io/)
 * [ProjectSend](https://www.projectsend.org/)
 * [Syncthing](https://syncthing.net/)
@@ -26,13 +26,13 @@ This repository contains what you need to get started self-hosting various servi
 * [Wallabag](https://www.wallabag.org/)
 * [Transmission Bittorrent Client Webserver](https://transmissionbt.com/)
 * [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
+* [Riot.im](https://riot.im) (see also: [Riot.im Setup](docs/riot.md))
 
 To-dos
 
 In no particular order, things I hope to add templates for.  Also taking requests.
 
 * [ ] [Mailu](https://mailu.io)
-* [ ] [Riot.im](https://riot.im)
 * [ ] [OpenVPN](https://openvpn.net/)
 * [ ] [Pinry](http://getpinry.com/)
 * [ ] [ymarks](https://bitbucket.org/ymarks/ymarks-server)
@@ -84,7 +84,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 
 ## Before You Begin
 
-You will need a computer, preferably running Linux, but anything will do.  Download and install Docker and Docker-compose following the instructions for your OS
+You will need a computer, preferably running Linux, but anything will do [&#178;](#notes).  Download and install Docker and Docker-compose following the instructions for your OS
 
 * [Docker](https://www.docker.com/community-edition) (or [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) if you do not have Windows 10 Professional or Enterprise.  See description below.)
 * [Docker-Compose](https://docs.docker.com/compose/install/)
@@ -131,42 +131,6 @@ docker-compose -f docker-compose.base.yaml -f ... up -d
 docker image prune -f
 ```
 
-## Some Notes About Mastodon
-
-If you are adding Mastodon to your stack, after you edit add-ons/docker-compose.Mastodon.yaml, updating the version of the mastodon images to one of the tags available on [this page](https://hub.docker.com/r/tootsuite/mastodon/tags/)(e.g. image: tootsuite/mastodon:v2.3.3), you must run the following commands to prepare your Mastodon instance:
-
-```bash
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up mastodon-db mastodon-redis
-docker-compose run --rm mastodon-web bundle exec rake secret
-#copy the output into configs/mastodon.env for the value of SECRET_KEY_BASE
-docker-compose run --rm mastodon-web bundle exec rake secret
-#copy the output into configs/mastodon.env for the value of OTP_SECRET
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:webpush:generate_vapid_key
-#copy the output into configs/mastodon.env for the values of VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:add_user
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:confirm_email USER_EMAIL=your@email
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:make_admin USERNAME=yourname
-###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up -d
-```
-
-To update mastodon, change the version in the image: clause of mastodon-web, mastodon-streaming, and mastodon-sidekiq (e.g. image: tootsuite/mastodon:v2.3.3), then run the following commands:
-
-```bash
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml stop mastodon-web mastodon-streaming mastodon-sidekiq
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
-###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up -d
-```
-
-This updates the database to be compatible with the new version and builds any new assets.
-
-For more rake commands, including other administrative commands, refer to [this guide.](https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/List-of-Rake-tasks.md)
-
 ## Making Changes to Services/Containers in Your Stack
 
 To make a change to any service or container in your stack without bringing down and recreating them all, simply edit the docker-compose .yaml file that defines it, save, and re-run your docker-compose command from above.  Docker-compose is inteligent enough to only recreate containers/services you edited in the file.  You can also make changes using the edit functionality in the Portainer Docker GUI (included in the base .yaml file), however, it will not be able to automatically resolve if any dependant containers also need to be recreated.
@@ -204,3 +168,5 @@ Finally, please contact me if you find something wrong with any of these configs
 ### Notes
 
 &#185; Gitlab is *extremely* resource intensive and tends to leak memory over time.  It probably won't run well on a Raspberry Pi and even on a traditional PC, I have had to schedule cron jobs that periodically restart it due to the memory leaks.  Unsure if this is the result of misconfiguration on my part, or just how the software is.  [↩](#self-hosted-docker-server-templates)
+
+&#178; The images used in these templates are mostly only built by their creators to run on x86_64 (Intel/AMD) processors.  If you are a hoping to host one or more of these services on a Raspberry Pi or similar device and it doesn't run with the template as-written, open an issue to have the file or service adapted for use on ARM processors.  [↩](#self-hosted-docker-server-templates)

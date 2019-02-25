@@ -1,0 +1,90 @@
+#This compose file adds Riot.im (https://about.riot.im/) and a Matrix messenger server (https://matrix.org/blog/home/) to your stack
+version: '3.5'
+services:
+
+  reverse-proxy:
+    networks:
+      - riot
+
+  mail-relay:
+    networks:
+      - riot
+
+  riot-matrix-db:
+    restart: unless-stopped
+    container_name: riot-matrix-db
+    image: postgres:11
+    networks:
+      - riot
+    volumes:
+      - riot-matrix-db:/var/lib/postgresql/data
+    labels:
+      - "traefik.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - POSTGRES_USER=${RIOT_MATRIX_DB_USER:?Please copy template.env to .env and provide provide a value for RIOT_MATRIX_DB_USER}
+      - POSTGRES_PASSWORD=${RIOT_MATRIX_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for RIOT_MATRIX_DB_PASSWORD}
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${RIOT_MATRIX_DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  riot-matrix-server:
+    image: avhost/docker-matrix:v0.99.1.1
+    container_name: riot-matrix-server
+    volumes:
+      - riot-matrix-server-data:/data
+      - riot-matrix-server-uploads:/uploads
+    labels:
+      - traefik.enable=true
+      - traefik.backend=riot-matrix-server
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.rule=Host:${RIOT_DOMAIN};PathPrefix:/_matrix/
+      - traefik.docker.network=riot
+      - traefik.port=8008
+    environment:
+      SERVER_NAME: ${RIOT_DOMAIN:?Please copy template.env to .env and provide provide a value for RIOT_DOMAIN}
+      REPORT_STATS: "yes"
+    networks:
+      - riot
+    restart: unless-stopped
+    expose:
+      - "8008"
+    ports:
+      #these will need to be forwarded through your router.  They are for protocols Traefik cannot proxy
+      - 3478:3478
+      - 5349:5349
+    depends_on:
+      - riot-matrix-db
+
+  riot:
+    image: avhost/docker-matrix-riot:v1.0.0
+    container_name: riot
+    volumes:
+      - riot-data:/data
+    labels:
+        - traefik.enable=true
+        - traefik.backend=riot
+        - traefik.frontend.rule=Host:${RIOT_DOMAIN}
+        - traefik.docker.network=riot
+        - traefik.port=8080
+        - com.centurylinklabs.watchtower.enable=true
+    networks:
+      - riot
+    depends_on:
+      - riot-matrix-server
+    restart: unless-stopped
+
+networks:
+  riot:
+    name: riot
+
+volumes:
+  riot-matrix-db:
+  riot-matrix-server-data:
+  riot-matrix-server-uploads:
+  riot-data:
+
