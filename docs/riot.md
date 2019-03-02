@@ -20,19 +20,19 @@ docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml r
 
 At the very minimum, you must change some options to match your config in your [.env](../template.env) file.
 
-```yaml 
+```yaml
 #homeserver.yaml.  This is not the complete file, just the minimum edits you will need to make
 server_name: "riotdomain.example.com" #change to match RIOT_DOMAIN
 listeners:
   - port: 8008
     tls: false
     bind_addresses: ['0.0.0.0'] #changed from default
-    type: http 
+    type: http
     x_forwarded: true
 
-    resources: 
+    resources:
       - names: [client, federation]
-        compress: false 
+        compress: false
 # Database configuration
 database:
   name: "psycopg2" #change from default
@@ -49,8 +49,8 @@ email: #this section is optional, you can leave it commented out in the generate
    smtp_user: ""
    smtp_pass: ""
    require_transport_security: True
-   notif_from: "Your Friendly %(app)s Home Server <noreply@example.com>" #change to match 
-   app_name: Riot #changed to whatever your want 
+   notif_from: "Your Friendly %(app)s Home Server <noreply@example.com>" #change to match
+   app_name: Riot #changed to whatever your want
    # if template_dir is unset, uses the example templates that are part of
    # the Synapse distribution.
    #template_dir: res/templates
@@ -64,7 +64,7 @@ Similarly, you must make edits in the config.json file.  Below are the minimum s
 
 ```json
 {
-    "default_hs_url": "https://matrix.example.com", 
+    "default_hs_url": "https://matrix.example.com",
     "brand": "Custom Brand",
     "roomDirectory": {
         "servers": [

@@ -84,7 +84,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 
 ## Before You Begin
 
-You will need a computer, preferably running Linux, but anything will do [&#178;](#notes).  Download and install Docker and Docker-compose following the instructions for your OS
+You will need a computer, preferably running Linux, but anything will do. [&#178;](#notes)  Download and install Docker and Docker-compose following the instructions for your OS
 
 * [Docker](https://www.docker.com/community-edition) (or [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) if you do not have Windows 10 Professional or Enterprise.  See description below.)
 * [Docker-Compose](https://docs.docker.com/compose/install/)

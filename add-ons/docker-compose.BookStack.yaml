@@ -12,23 +12,19 @@ services:
     container_name: bookstack
     environment:
       - DB_DATABASE=bookstack
-      - DB_USER=bookstack
-      - DB_PASSWORD=YourSecureDBPassw0rd
+      - DB_USERNAME=${BOOKSTACK_DB_USERNAME:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DB_USERNAME}
+      - DB_PASSWORD=${BOOKSTACK_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DB_PASSWORD}
       - DB_HOST=bookstack-db
       - MAIL_HOST=mail-relay
       - MAIL_PORT=25
       - MAIL_FROM=${FROM_ADDRESS:?Please copy template.env to .env and provide provide a value for FROM_ADDRESS}
       - APP_URL=https://${BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
-#   optional, alternative to environment section above (comment out environment section if you use this)
-#   this env file contains the BookStack app's full configurable options.  Edit as you see fit
-#    env_file: ./configs/bookstack.env
     volumes:
       - bookstack-storage:/var/www/bookstack/public/storage
       - bookstack-uploads:/var/www/bookstack/public/uploads
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=bookstack
       - traefik.frontend.rule=Host:{BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
       - traefik.docker.network=bookstack
       - traefik.default.protocol=http
@@ -50,9 +46,9 @@ services:
     container_name: bookstack-db
     environment:
       - MYSQL_DATABASE=bookstack
-      - MYSQL_USER=bookstack
-      - MYSQL_PASSWORD=yourSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=yourSecureDBR00tPass
+      - MYSQL_USER=${BOOKSTACK_DB_USERNAME}
+      - MYSQL_PASSWORD=${BOOKSTACK_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${BOOKSTACK_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DB_ROOT_PASSWORD}
     volumes:
       - "bookstack-database-data:/var/lib/mysql"
     labels:
