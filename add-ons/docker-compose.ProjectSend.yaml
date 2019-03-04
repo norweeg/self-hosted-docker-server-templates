@@ -19,7 +19,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=projectsend
       - traefik.frontend.rule=Host:${PROJECTSEND_DOMAIN:?Please copy template.env to .env and provide provide a value for PROJECTSEND_DOMAIN}
       - traefik.docker.network=projectsend
       - traefik.default.protocol=http
@@ -38,9 +37,9 @@ services:
     #with https:// or else the page will be bare and the site will not work
     environment:
       - MYSQL_DATABASE=projectsend
-      - MYSQL_USER=projectsend
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
+      - MYSQL_USER=${PROJECT_SEND_DB_USERNAME:-projectsend}
+      - MYSQL_PASSWORD=${PROJECT_SEND_DB_PASSWORD:??Please copy template.env to .env and provide provide a value for PROJECT_SEND_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${PROJECT_SEND_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for PROJECT_SEND_DB_ROOT_PASSWORD}
     volumes:
       - projectsend-database:/var/lib/mysql
     labels:
@@ -52,7 +51,6 @@ services:
 
 networks:
   projectsend:
-    name: projectsend
 
 volumes:
   projectsend-config:

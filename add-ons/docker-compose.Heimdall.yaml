@@ -13,15 +13,15 @@ services:
     volumes:
       - heimdall-config:/config
     environment: #just an alternative syntax for specifying environment
-      APP_NAME: "My Apps"
+      APP_NAME: ${HEIMDALL_APP_NAME:-"My Apps"}
       APP_URL: https://${HEIMDALL_DOMAIN:?Please copy template.env to .env and provide provide a value for HEIMDALL_DOMAIN}
       FORCE_HTTPS: "true"
-      MAIL_HOST: "mail-relay"
-      MAIL_PORT: "25"
+      MAIL_HOST: ${HEIMDALL_SMTP_SERVER:-mail-relay}
+      MAIL_PORT: ${HEIMDALL_SMTP_PORT:-25}
       #not used with mail-relay, but can be used
-      MAIL_USERNAME: "null"
-      MAIL_PASSWORD: "null"
-      MAIL_ENCRYPTION: "null"
+      MAIL_USERNAME: ${HEIMDALL_SMTP_USERNAME:-"null"}
+      MAIL_PASSWORD: ${HEIMDALL_SMTP_PASSWORD:-"null"}
+      MAIL_ENCRYPTION: ${HEIMDALL_SMTP_PASSWORD:-"null"}
       TZ: ${TZ}
     labels:
       - traefik.enable=true
@@ -43,7 +43,6 @@ services:
 
 networks:
   heimdall:
-    name: heimdall
 
 volumes:
   heimdall-config:

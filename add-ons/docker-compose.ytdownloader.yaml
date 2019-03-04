@@ -18,7 +18,6 @@ services:
       - "3000"
     labels:
       - traefik.enable=true
-      - traefik.backend=ytdownloader
       - traefik.frontend.rule=Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
       - traefik.docker.network=ytdownloader
       - traefik.port=3000
@@ -37,7 +36,6 @@ services:
 #      - ${HOME}/Videos/youtube:/home/app/public/temp
 #    labels:
 #      - traefik.enable=true
-#      - traefik.backend=ytdownloader
 #      - traefik.frontend.rule=Host:Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
 #      - traefik.docker.network=ytdownloader
 #      - traefik.port=3000

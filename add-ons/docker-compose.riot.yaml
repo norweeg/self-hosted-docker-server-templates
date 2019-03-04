@@ -40,7 +40,6 @@ services:
       - riot-matrix-server-uploads:/uploads
     labels:
       - traefik.enable=true
-      - traefik.backend=riot-matrix-server
       - traefik.frontend.passHostHeader=true
       - traefik.frontend.rule=Host:${RIOT_DOMAIN};PathPrefix:/_matrix/
       - traefik.docker.network=riot
@@ -67,7 +66,6 @@ services:
       - riot-data:/data
     labels:
         - traefik.enable=true
-        - traefik.backend=riot
         - traefik.frontend.rule=Host:${RIOT_DOMAIN}
         - traefik.docker.network=riot
         - traefik.port=8080
@@ -80,7 +78,6 @@ services:
 
 networks:
   riot:
-    name: riot
 
 volumes:
   riot-matrix-db:

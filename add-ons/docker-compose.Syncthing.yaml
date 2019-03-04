@@ -18,7 +18,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=8384
-      - traefik.backend=syncthing
       - traefik.frontend.rule=Host:${SYNCTHING_DOMAIN:?Please copy template.env to .env and provide provide a value for SYNCTHING_DOMAIN}
       - traefik.docker.network=syncthing
       - traefik.default.protocol=http
@@ -26,8 +25,6 @@ services:
     networks:
       - syncthing
     restart: unless-stopped
-    expose: #exposed only within network, reverse-proxy will proxy http requests to it
-      - "8384"
     ports: #mapped on the host PC, syncthing will use uPnP to forward these through router, if possible
       - "22000:22000"
       - "21027:21027/udp"
@@ -51,7 +48,6 @@ services:
 
 networks:
   syncthing:
-    name: syncthing
 
 volumes:
   syncthing-config:

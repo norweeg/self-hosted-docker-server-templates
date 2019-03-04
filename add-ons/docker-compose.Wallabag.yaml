@@ -19,7 +19,7 @@ services:
       - wallabag
     restart: unless-stopped
     env_file:
-      - ../configs/wallabag.env
+      - ./configs/wallabag.env
     expose:
       - "80"
     labels:

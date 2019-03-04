@@ -102,7 +102,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=mastodon-web
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN:?Please copy template.env to .env and provide provide a value for MASTODON_DOMAIN}
       - traefik.docker.network=mastodon-external
       - com.centurylinklabs.watchtower.enable=true
@@ -130,7 +129,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=4000
-      - traefik.backend=mastodon-streaming
       - traefik.docker.network=mastodon-external
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN};PathPrefixStrip:/api/v1/streaming
       - com.centurylinklabs.watchtower.enable=true
@@ -150,7 +148,7 @@ services:
     image: tootsuite/mastodon:v2.7.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
-    command: bundle exec sidekiq 
+    command: bundle exec sidekiq
     depends_on:
       - mastodon-db
       - mastodon-redis
@@ -167,9 +165,7 @@ services:
 
 networks:
   mastodon-external:
-    name: mastodon-external
   mastodon-internal:
-    name: mastodon-internal
     internal: true
 
 volumes:

@@ -1,0 +1,153 @@
+#This compose file adds the mailu suite https://mailu.io to your stack.
+#this file is based on the original compose file from the project github page, modified to fit this project
+#this file depends on ./configs/mailu.env
+#please refer to the setup documentation on the project homepage for explanation of configuration options
+version: '3.5'
+
+services:
+  reverse-proxy:
+    networks:
+      - mailu
+
+  mailu-front:
+    image: mailu/nginx:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    ports:
+    - "$BIND_ADDRESS4:8080:80"
+    - "$BIND_ADDRESS4:8443:443"
+    - "$BIND_ADDRESS4:110:110"
+    - "$BIND_ADDRESS4:143:143"
+    - "$BIND_ADDRESS4:993:993"
+    - "$BIND_ADDRESS4:995:995"
+    - "$BIND_ADDRESS4:25:25"
+    - "$BIND_ADDRESS4:465:465"
+    - "$BIND_ADDRESS4:587:587"
+    - "$BIND_ADDRESS6:80:80"
+    - "$BIND_ADDRESS6:443:443"
+    - "$BIND_ADDRESS6:110:110"
+    - "$BIND_ADDRESS6:143:143"
+    - "$BIND_ADDRESS6:993:993"
+    - "$BIND_ADDRESS6:995:995"
+    - "$BIND_ADDRESS6:25:25"
+    - "$BIND_ADDRESS6:465:465"
+    - "$BIND_ADDRESS6:587:587"
+    volumes:
+      - "$ROOT/certs:/certs"
+    networks:
+      - mailu
+    depends-on:
+      - mailu-certbot
+
+  mailu-certbot: #will automatically obtain and renew letsencrypt certs for the mail services
+    image: certbot/certbot:latest
+    restart: unless-stopped
+    volumes:
+      - "$ROOT/certs:/certs"
+    command: "./certbot-auto certonly --standalone --agree-tos --email admin@example.com -d smtp.example.com -d imap.example.com"
+
+  mailu-redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - "$ROOT/redis:/data"
+    networks:
+      - mailu
+
+  mailu-imap:
+    image: mailu/dovecot:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/data:/data"
+      - "$ROOT/mail:/mail"
+      - "$ROOT/overrides:/overrides"
+    depends_on:
+      - front
+    networks:
+      - mailu
+
+  mailu-smtp:
+    image: mailu/postfix:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/data:/data"
+      - "$ROOT/overrides:/overrides"
+    depends_on:
+      - front
+    networks:
+      - mailu
+
+  mailu-antispam:
+    image: mailu/rspamd:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/filter:/var/lib/rspamd"
+      - "$ROOT/dkim:/dkim"
+      - "$ROOT/overrides/rspamd:/etc/rspamd/override.d"
+    depends_on:
+      - front
+    networks:
+      - mailu
+
+  mailu-antivirus:
+    image: mailu/$ANTIVIRUS:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/filter:/data"
+    networks:
+      - mailu
+
+  mailu-webdav:
+    image: mailu/$WEBDAV:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/dav:/data"
+    networks:
+      - mailu
+
+  mailu-admin:
+    image: mailu/admin:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/data:/data"
+      - "$ROOT/dkim:/dkim"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - redis
+    networks:
+      - mailu
+
+  mailu-webmail:
+    image: "mailu/$WEBMAIL:$VERSION"
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/webmail:/data"
+    networks:
+      - mailu
+    labels:
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=mailu
+      - traefik.frontend.rule=Host:{MAILU_DOMAIN:?Please copy template.env to .env and provide provide a value for MAILU_DOMAIN}
+      - traefik.docker.network=mailu
+      - traefik.default.protocol=http
+      - com.centurylinklabs.watchtower.enable=true
+
+  mailu-fetchmail:
+    image: mailu/fetchmail:$VERSION
+    restart: unless-stopped
+    env_file: ./configs/mailu.env
+    volumes:
+      - "$ROOT/data:/data"
+    networks:
+      - mailu
+
+networks:
+  mailu:

@@ -21,7 +21,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
-      - "traefik.backend=piwigo"
       - "traefik.frontend.rule=Host:${PIWIGO_DOMAIN:?Please copy template.env to .env and provide provide a value for PIWIGO_DOMAIN}"
       - "traefik.docker.network=piwigo"
       - "traefik.default.protocol=http"
@@ -43,10 +42,10 @@ services:
     container_name: piwigo-db
     hostname: piwigo-db
     environment:
-      - MYSQL_DATABASE=piwigo
-      - MYSQL_USER=piwigo
-      - MYSQL_PASSWORD=SecureDBPa55w0rd
-      - MYSQL_ROOT_PASSWORD=SecureR00tDBPa55word
+      MYSQL_DATABASE: piwigo
+      MYSQL_USER: ${PIWIGO_DB_USERNAME:-piwigo}
+      MYSQL_PASSWORD: ${PIWIGO_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for PIWIGO_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PIWIGO_DB_ROOT_PASSWORD:-?Please copy template.env to .env and provide provide a value for PIWIGO_DB_ROOT_PASSWORD}
     volumes:
       - piwigo-database:/var/lib/mysql
     labels:
@@ -63,7 +62,6 @@ services:
 
 networks:
   piwigo:
-    name: piwigo
 
 volumes:
   piwigo-config:

@@ -18,13 +18,36 @@ services:
   discourse:
     image: bitnami/discourse:latest
     container_name: discourse
-    env_file: ./configs/discourse.env
+    environment:
+      DISCOURSE_EMAIL: ${DISCOURSE_EMAIL:?Please copy template.env to .env and provide provide a value for DISCOURSE_EMAIL}
+      DISCOURSE_HOST: discourse
+      DISCOURSE_PASSWORD: ${DISCOURSE_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_PASSWORD}
+      DISCOURSE_PORT: 3000
+      DISCOURSE_POSTGRESQL_NAME: ${DISCOURSE_POSTGRESQL_NAME:-discourse}
+      DISCOURSE_POSTGRESQL_PASSWORD: ${DISCOURSE_POSTGRESQL_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_PASSWORD}
+      DISCOURSE_POSTGRESQL_USERNAME: ${DISCOURSE_POSTGRESQL_USERNAME:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_NAME}
+      DISCOURSE_SITE_NAME: ${DISCOURSE_SITE_NAME:-"My Discourse Forum"}
+      DISCOURSE_USERNAME: ${DISCOURSE_ADMIN_USERNAME:?Please copy template.env to .env and provide provide a value for DISCOURSE_ADMIN_USERNAME}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_NAME: ${DISCOURSE_POSTGRESQL_NAME}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD: ${DISCOURSE_POSTGRESQL_PASSWORD}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME: ${DISCOURSE_POSTGRESQL_USERNAME}
+      POSTGRESQL_HOST: discourse-db
+      POSTGRESQL_PORT_NUMBER: 5432
+      POSTGRESQL_ROOT_PASSWORD: ${DISCOURSE_POSTGRESQL_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_ROOT_PASSWORD}
+      POSTGRESQL_ROOT_USER: postgres
+      REDIS_HOST: discourse-redis
+      REDIS_PASSWORD: ${DISCOURSE_REDIS_PASSWORD:-""}
+      REDIS_PORT_NUMBER: 6379
+      SMTP_HOST: ${DISCOURSE_SMTP_HOST:-mail-relay}
+      SMTP_PASSWORD: ${DISCOURSE_SMTP_PASSWORD:-""}
+      SMTP_PORT: ${DISCOURSE_SMTP_PORT:-25}
+      SMTP_TLS: ${DISCOURSE_SMTP_TLS:-true}
+      SMTP_USER: ${DISCOURSE_SMTP_USER:-""}
     volumes:
       - discourse-data:/bitnami
     labels:
       - traefik.enable=true
       - traefik.port=3000
-      - traefik.backend=discourse
       - traefik.frontend.rule=Host:${DISCOURSE_DOMAIN:?Please copy template.env to .env and provide provide a value for DISCOURSE_DOMAIN}
       - traefik.docker.network=discourse
       - traefik.default.protocol=http
@@ -50,25 +73,19 @@ services:
       start_period: 120s #this container takes a while to migrate its database ever time it starts
 
   discourse-db:
-    image: postgres:9.6.8 #Discourse not currently compatible with postgres 10.x
+    image: bitnami/postgresql:10
     container_name: discourse-db
     restart: unless-stopped
     networks:
       - discourse-internal
     volumes:
-      - discourse-db-data:/var/lib/postgresql/data
+      - discourse-db-data:/bitnami
     labels:
-      - "traefik.enable=false"
+      - traefik.enable=false
       #only ok because postgres version is fixed, otherwise should be false or manual migrations need to be done on major updates
-      - "com.centurylinklabs.watchtower.enable=true"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=SecureDBPa55w0rd
-      - POSTGRES_DB=postgres
-    expose:
-      - "5432"
+      - com.centurylinklabs.watchtower.enable=true
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
+      test: ["CMD-SHELL", "pg_isready -U ${DISCOURSE_POSTGRESQL_USERNAME:-postgres}"] #checking local connectivity
       interval: 10s
       timeout: 5s
       retries: 5
@@ -76,14 +93,17 @@ services:
   discourse-redis:
     restart: unless-stopped
     container_name: discourse-redis
-    image: redis:latest
+    image: bitnami/redis:4.0
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+      REDIS_PASSWORD: ${DISCOURSE_REDIS_PASSWORD:-""}
     networks:
       - discourse-internal
     labels:
       - traefik.enable=false
       - com.centurylinklabs.watchtower.enable=true
     volumes:
-      - discourse-redis-data:/data
+      - discourse-redis-data:/bitnami/redis/data
 
   discourse-sidekiq:
     container_name: discourse-sidekiq
@@ -107,10 +127,8 @@ services:
 
 networks:
   discourse-internal:
-    name: discourse-internal
     internal: true
   discourse-external:
-    name: discourse-external
 
 volumes:
   discourse-db-data:

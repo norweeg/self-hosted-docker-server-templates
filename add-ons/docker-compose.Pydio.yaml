@@ -22,7 +22,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=pydio
       - traefik.frontend.rule=Host:${PYDIO_DOMAIN:?Please copy template.env to .env and provide provide a value for PYDIO_DOMAIN}
       - traefik.docker.network=pydio
       - traefik.default.protocol=http
@@ -39,9 +38,9 @@ services:
     container_name: pydio-db
     environment:
       - MYSQL_DATABASE=pydio
-      - MYSQL_USER=pydio
-      - MYSQL_PASSWORD=yourSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=yourSecureDBR00tPass
+      - MYSQL_USER=${PYDIO_DB_USERNAME:-pydio}
+      - MYSQL_PASSWORD=${PYDIO_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for PYDIO_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${PYDIO_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for PYDIO_DB_ROOT_PASSWORD}
     volumes:
       - "pydio-database-data:/var/lib/mysql"
     labels:
@@ -53,7 +52,6 @@ services:
 
 networks:
   pydio:
-    name: pydio
 
 volumes:
   pydio-config:

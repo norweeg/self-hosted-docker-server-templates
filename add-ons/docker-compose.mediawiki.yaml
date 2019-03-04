@@ -26,12 +26,12 @@ services:
     environment:
     #only the DB variables matter.  The rest are either ignored or overwritten in setup anyway
       - MEDIAWIKI_DB_NAME=mediawiki
-      - MEDIAWIKI_DB_USER=mediawiki
-      - MEDIAWIKI_DB_PASSWORD=AS3curePa55word
+      - MEDIAWIKI_DB_USER=${MEDIAWIKI_DB_USERNAME:-mediawiki}
+      - MEDIAWIKI_DB_PASSWORD=${MEDIAWIKI_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_DB_PASSWORD}
       - MEDIAWIKI_DB_HOST=mediawiki-db #in the setup wizard, enter this as mediawiki-db:3306
-      - MEDIAWIKI_SITE_NAME=My Wiki
-      - MEDIAWIKI_ADMIN_USER=myadminuser
-      - MEDIAWIKI_ADMIN_PASS=MyS3cureAdminPa55word
+      - MEDIAWIKI_SITE_NAME=${MEDIAWIKI_SITE_NAME:-"My Wiki"}
+      - MEDIAWIKI_ADMIN_USER=${MEDIAWIKI_ADMIN_USERNAME:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_ADMIN_USERNAME}
+      - MEDIAWIKI_ADMIN_PASS=${MEDIAWIKI_ADMIN_PASSWORD:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_ADMIN_PASSWORD}
       - MEDIAWIKI_DB_TYPE=mysql
     volumes:
       - mediawiki-images:/var/www/html/images #location for image uploads
@@ -45,7 +45,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=mediawiki
       - traefik.frontend.rule=Host:${MEDIAWIKI_DOMAIN:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_DOMAIN}
       - traefik.docker.network=mediawiki
       - com.centurylinklabs.watchtower.enable=true
@@ -67,9 +66,9 @@ services:
     environment:
     #note these values, you will need them in the setup wizard
       - MYSQL_DATABASE=mediawiki
-      - MYSQL_USER=mediawiki
-      - MYSQL_PASSWORD=mysecureDBPa55word
-      - MYSQL_ROOT_PASSWORD=myS3cureDBR00tPa55word
+      - MYSQL_USER=${MEDIAWIKI_DB_USERNAME:-mediawiki}
+      - MYSQL_PASSWORD=${MEDIAWIKI_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MEDIAWIKI_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_DB_ROOT_PASSWORD}
     volumes:
       - "mediawiki-database:/var/lib/mysql"
     labels:
@@ -78,8 +77,6 @@ services:
     restart: unless-stopped
     networks:
       - mediawiki
-    expose:
-      - "3306"
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
       interval: 30s

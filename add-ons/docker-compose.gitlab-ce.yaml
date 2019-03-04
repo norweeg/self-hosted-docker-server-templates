@@ -22,7 +22,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.backend=gitlab
       - traefik.frontend.rule=Host:${GITLAB_DOMAIN:?Please copy template.env to .env and provide provide a value for GITLAB_DOMAIN}
       - traefik.docker.network=gitlab
       - traefik.default.protocol=http
@@ -35,7 +34,7 @@ services:
       - "443"
       - "8082"
     ports:
-      - "2224:22" #traefik not yet able to proxy non-http request, but ssh needed for git to function.  This port will need to be forwarded through your router
+      - "2224:22" #traefik not yet able to proxy non-http request, but ssh needed for git with ssh to function.  This port will need to be forwarded through your router
 
 volumes:
   gitlab-data:
@@ -44,4 +43,3 @@ volumes:
 
 networks:
   gitlab:
-    name: gitlab

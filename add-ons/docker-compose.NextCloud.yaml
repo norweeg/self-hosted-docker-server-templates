@@ -25,8 +25,8 @@ services:
     hostname: nextcloud
     environment:
       - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_USER=${NEXTCLOUD_DB_USERNAME:-nextcloud}
+      - MYSQL_PASSWORD=${NEXTCLOUD_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DB_PASSWORD}
       - MYSQL_HOST=nextcloud-db
     volumes:
       - nextcloud-html:/var/www/html
@@ -58,9 +58,9 @@ services:
     container_name: nextcloud-db
     environment:
       - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
+      - MYSQL_USER=${NEXTCLOUD_DB_USERNAME:-nextcloud}
+      - MYSQL_PASSWORD=${NEXTCLOUD_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${NEXTCLOUD_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DB_ROOT_PASSWORD}
     volumes:
       - nextcloud-database:/var/lib/mysql
     labels:

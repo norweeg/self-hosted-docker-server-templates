@@ -23,16 +23,16 @@ services:
       - 127.0.0.1
       - 1.1.1.1
     environment:
-      - "TZ=America/New_York" #default is UTC
-      - "DNS1=1.1.1.1" #8.8.8.8 is the default value
-      - "DNS2=1.0.0.1" #8.8.4.4 is the default value
-      - "WEBPASSWORD=yourAdminConsolePa55w0rd"
-      - "ServerIP=192.168.xxx.yyy" ###change this to your host's static ip address.  REQUIRED!!!!
-      - "IPv6=False" #Default is True
-      #- "ServerIPv6=fd5b:1fc7:11c5:71b1:xxxx:xxxx:xxxx:xxxx" #your IPv6 address, if IPv6=True
-      - "VIRTUAL_HOST=pi-hole.yourDynamicDomain.duckdns.org"
-      - "VIRTUAL_PORT=443"
-      - "PROXY_LOCATION=pihole"
+      TZ: ${TZ} #default is UTC
+      DNS1: 1.1.1.1 #8.8.8.8 is the default value
+      DNS2: 1.0.0.1 #8.8.4.4 is the default value
+      WEBPASSWORD: ${PI_HOLE_ADMIN_PASSWORD:?Please copy template.env to .env and provide provide a value for PI_HOLE_ADMIN_PASSWORD}
+      ServerIP: ${PI_HOLE_STATIC_IPV4:?:?Please copy template.env to .env and provide provide a value for PI_HOLE_STATIC_IPV4}
+      IPv6: ${PI_HOLE_IPV6_ENABLED:-False}
+      ServerIPv6: ${PI_HOLE_STATIC_IPV6}
+      VIRTUAL_HOST: ${PI_HOLE_DOMAIN:?Please copy template.env to .env and provide provide a value for PI_HOLE_DOMAIN}
+      VIRTUAL_PORT: "443"
+      PROXY_LOCATION: pihole
     cap_add:
       - NET_ADMIN #optional, neededed only if running pi hole for DHCP
     volumes:
@@ -41,7 +41,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.port=80"
-      - "traefik.backend=pihole"
       - "traefik.frontend.rule=Host:${PI_HOLE_DOMAIN:?Please copy template.env to .env and provide provide a value for PI_HOLE_DOMAIN}"
       - "traefik.docker.network=pihole"
       - "traefik.default.protocol=http"
@@ -54,10 +53,10 @@ services:
       - "53:53/udp"
     expose: #kept internal to network for serving via traefik proxy
       - "80"
+      - "443"
 
 networks:
   pihole:
-    name: pihole
 
 volumes:
   pihole-pihole:

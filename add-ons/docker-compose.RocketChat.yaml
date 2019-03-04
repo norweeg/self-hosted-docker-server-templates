@@ -27,7 +27,6 @@ services:
       - "3000"
     labels:
       - traefik.enable=true
-      - traefik.backend=rocketchat
       - traefik.frontend.rule=Host:${ROCKETCHAT_DOMAIN:?Please copy template.env to .env and provide provide a value for ROCKETCHAT_DOMAIN}
       - traefik.docker.network=rocketchat
       - traefik.port=3000
@@ -54,8 +53,6 @@ services:
     labels:
       - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
-    expose:
-      - 27017
     networks:
       - rocketchat
     healthcheck:

@@ -65,7 +65,6 @@ services:
 
 networks:
   bookstack:
-    name: bookstack
 
 volumes:
   bookstack-storage:

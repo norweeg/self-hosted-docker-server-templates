@@ -15,8 +15,8 @@ services:
     restart: unless-stopped
     environment:
       - MYSQL_DATABASE=guacamole_db
-      - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_USER=${GUACAMOLE_DB_USERNAME:-guacamole_user}
+      - MYSQL_PASSWORD=${GUACAMOLE_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for GUACAMOLE_DB_PASSWORD}
       - GUACD_HOSTNAME=guacd
       - MYSQL_HOSTNAME=guacamole-db
     expose:
@@ -54,9 +54,9 @@ services:
     container_name: guacamole-db
     environment:
       - MYSQL_DATABASE=guacamole_db
-      - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
-      - MYSQL_ROOT_PASSWORD=aSecureDBRootPassw0rd
+      - MYSQL_USER=${GUACAMOLE_DB_USERNAME:-guacamole_user}
+      - MYSQL_PASSWORD=${GUACAMOLE_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${GUACAMOLE_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for GUACAMOLE_DB_ROOT_PASSWORD}
     volumes:
       - "guacamole-db:/var/lib/mysql"
       - "guac-db-init-script:/docker-entrypoint-initdb.d"
@@ -79,8 +79,8 @@ services:
     container_name: init_guac_script
     environment:
       - MYSQL_DATABASE=guacamole_db
-      - MYSQL_USER=guacamole_user
-      - MYSQL_PASSWORD=aSecureDBPassw0rd
+      - MYSQL_USER=${GUACAMOLE_DB_USERNAME:-guacamole_user}
+      - MYSQL_PASSWORD=${GUACAMOLE_DB_PASSWORD}
     entrypoint: '/bin/bash -c "/opt/guacamole/bin/initdb.sh --mysql > /mnt/initdb.sql" '
     labels:
       - "traefik.enable=false"
