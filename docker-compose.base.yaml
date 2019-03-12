@@ -57,8 +57,8 @@ services:
       - "traefik.enable=false" #tells traefik reverse proxy to ignore this container, do not proxy requests to it
       - "com.centurylinklabs.watchtower.enable=true"
     restart: always #if this container stops for any reason, docker will restart it automatically
-    networks:
-      - default
+    volumes:
+      - duckdns-config:/config
 
 #A reverse proxy takes all requests it receives and, based on predfined rules, forwards the request to the appropriate
 #destination.  Since we may be hosting many servers with different names, but all competing for HTTP ports 80 and 8080
@@ -94,6 +94,8 @@ services:
     #The following section allows you to deifne services which must be started before this service can start
     depends_on:
       - dynamic-dns
+    environment: 
+      DUCKDNS_TOKEN: ${DUCKDNS_TOKEN}
     networks:
     #containers will default to the default bridge network if none is specified
       - docker-gui-network
@@ -143,13 +145,15 @@ services:
 
   docker-gui:
     image: portainer/portainer:latest
-    ports:
+    #ports:
       #by mapping this port to the host, we are also making this service available even if
       #traefik is not running at http://localhost:9000 on your host pc or
       #http://yourhostPCsnetworkname:9000 from other PCs on your network
       #note that it is an insecure http connection.  Comment out the ports section if
       #you do not trust the other devices on your network to not spy on you
-      - "9000:9000"
+    #  - "9000:9000"
+    expose:
+      - "9000"
     container_name: portainer-docker-gui
     labels:
       #tells Traefik to proxy requests to this container
@@ -246,6 +250,7 @@ networks:
 volumes:
   portainer-data: #persistent storage for portainer's configuration settings
   traefik-cert: #storage for the acme.json file that will hold your LetsEncrypt certs
+  duckdns-config:
   mail-relay-lib-postfix: #persistant storage for the mail-relay
   mail-relay-mail:
   mail-relay-spool-postfix:
