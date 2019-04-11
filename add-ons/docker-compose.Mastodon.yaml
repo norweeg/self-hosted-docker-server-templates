@@ -106,7 +106,7 @@ services:
       - traefik.docker.network=mastodon-external
       - com.centurylinklabs.watchtower.enable=true
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off mastodon-web:3000/api/v1/instance || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --no-proxy mastodon-web:3000/api/v1/instance || exit 1"]
       interval: 1m30s
       timeout: 10s
       retries: 5
@@ -137,7 +137,7 @@ services:
       - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off mastodon-streaming:4000/api/v1/streaming/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --no-proxy mastodon-streaming:4000/api/v1/streaming/health || exit 1"]
       interval: 1m30s
       timeout: 10s
       retries: 5
