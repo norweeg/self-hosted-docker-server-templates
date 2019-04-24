@@ -26,11 +26,19 @@ services:
       - traefik.enable=true
       - traefik.backend=wallabag
       - traefik.frontend.rule=Host:${WALLABAG_DOMAIN:?Please copy template.env to .env and provide provide a value for WALLABAG_DOMAIN}
+      # Wallabag's android app will not let you access a server if the server does not use https, which is smart from a security standpoint, however
+      # the Wallabag server stupidly redirects you to http when trying to redirect you to a different path (e.g. going to https://yourwallabagdomain.com)
+      # gets redirected to http://yourwallabag.com/login causing the android app to refuse to connect to it.  These frontend redirect rules detect when
+      # your request got redirected and downgraded to http by matching the pattern and redirecting you back up to the same address, except starting with https
+      # and does so permanently as to please the android app.
       - "traefik.frontend.redirect.regex=^http://${WALLABAG_DOMAIN}/(.*)"
       - "traefik.frontend.redirect.replacement=https://${WALLABAG_DOMAIN}/$$1"
       - traefik.frontend.redirect.permanent=true
       - traefik.frontend.passHostHeader=true
       - traefik.frontend.whiteList.useXForwardedFor=true
+      # Ideally, the wallabag server should be looking at this request header and, seeing that the request came in through a proxy as https, should preface
+      # all redirected address with https, but it doesn't.  I have already opened an issue on the project repository for this and provided my redirect solution
+      # above asa a work-around
       - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
       - traefik.docker.network=wallabag
       - traefik.port=80
