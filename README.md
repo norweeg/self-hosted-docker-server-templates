@@ -32,6 +32,7 @@ To-dos
 
 In no particular order, things I hope to add templates for.  Also taking requests.
 
+* [ ] [VSCode-server](https://coder.com/)
 * [ ] [Mailu](https://mailu.io)
 * [ ] [OpenVPN](https://openvpn.net/)
 * [ ] [Pinry](http://getpinry.com/)
@@ -175,6 +176,18 @@ Docker-compose can do more than just bring everything up or bring everything dow
 * [/r/DevOps on Reddit](https://www.reddit.com/r/devops/)
 
 Finally, please contact me if you find something wrong with any of these configs.  My ability to test them 100% is limited and I don't use 100% of them myself, so these compose files are my best attempt based on reading the documentation for the app or container.
+
+## Tools I Recommend
+
+* [Visual Studio Code](https://code.visualstudio.com/) or, alternatively, its 100% free and open source version [VSCodium](https://vscodium.com/)
+  * [Visual Studio Code/VSCodium's support for Docker and Docker-Compose](https://code.visualstudio.com/docs/azure/docker)
+  * [How to Run VSCode Remotely on your Server](https://coder.com/)
+* [Dockly](https://github.com/lirantal/dockly), a terminal-based Docker GUI which can be run as a container itself (an alternative to the Docker GUI Portainer used in these templates)
+* [Micro Text Editor](https://micro-editor.github.io/), a terminal-based text editor with a lot of features, for when you're using SSH to connect to your server
+* [Terminus](https://eugeny.github.io/terminus/), my favorite, cross-platform terminal with a support for a variety of shells, including bash on the Windows Subsystem for Linux, though micro and dockly behave strangely in it for some reason.
+* [PuTTY](https://www.putty.org/) for when stuff just won't work for me in Terminus
+* [Windows Subsystem for Linux](https://lifehacker.com/how-to-get-started-with-the-windows-subsystem-for-linux-1828952698) - enables Windows users have access to the same Unix/Unix-like tools that MacOS and Linux users take for granted
+* [GitExtensions](http://gitextensions.github.io/) I maintain this repository using this GUI for Git.  Sommetimes I just need to see what I'm doing graphically
 
 ### Notes
 
