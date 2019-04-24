@@ -33,7 +33,7 @@ services:
       retries: 5
 
   riot-matrix-server:
-    image: avhost/docker-matrix:v0.99.1.1
+    image: avhost/docker-matrix:v0.99.3
     container_name: riot-matrix-server
     volumes:
       - riot-matrix-server-data:/data
@@ -41,6 +41,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.frontend.passHostHeader=true
+      # notice that this redirect has a path component.  this is so you can use the same domain name for both the riot server (the web client) and
+      #the matrix messenging server that the web client uses to send messages
       - traefik.frontend.rule=Host:${RIOT_DOMAIN};PathPrefix:/_matrix/
       - traefik.docker.network=riot
       - traefik.port=8008
@@ -60,7 +62,7 @@ services:
       - riot-matrix-db
 
   riot:
-    image: avhost/docker-matrix-riot:v1.0.0
+    image: avhost/docker-matrix-riot:v1.0.8
     container_name: riot
     volumes:
       - riot-data:/data
