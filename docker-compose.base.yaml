@@ -81,7 +81,7 @@ services:
     labels:
       - "com.ouroboros.enable=true" #enables watchtower for auto updates
       - "traefik.enable=true" #set to false to disable admin dashboard
-      - "traefik.frontend.rule=Host:${TRAEFIK_DASHBOARD_URL:?Please set the value of TRAEFIK_DASHBOARD_URL in .env or comment this line out}"
+      - "traefik.frontend.rule=Host:${TRAEFIK_DASHBOARD_DOMAIN:?Please set the value of TRAEFIK_DASHBOARD_DOMAIN in .env or comment this line out}"
       - "traefik.port=8080"
       - "traefik.frontend.auth.digest.usersFile=/etc/traefik/dashboard-users-passwd"
     volumes:
