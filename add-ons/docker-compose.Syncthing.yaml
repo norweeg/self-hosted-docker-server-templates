@@ -21,7 +21,7 @@ services:
       - traefik.frontend.rule=Host:${SYNCTHING_DOMAIN:?Please copy template.env to .env and provide provide a value for SYNCTHING_DOMAIN}
       - traefik.docker.network=syncthing
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - syncthing
     restart: unless-stopped
@@ -35,7 +35,7 @@ services:
 #    container_name: syncthing-relay
 #    labels:
 #      - "traefik.enable=false"
-#      - "com.centurylinklabs.watchtower.enable=true"
+#      - "com.ouroboros.enable=true"
 #    networks:
 #      - syncthing
 #    restart: unless-stopped

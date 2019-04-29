@@ -20,7 +20,7 @@ services:
       - riot-matrix-db:/var/lib/postgresql/data
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     environment:
       - POSTGRES_USER=${RIOT_MATRIX_DB_USER:?Please copy template.env to .env and provide provide a value for RIOT_MATRIX_DB_USER}
       - POSTGRES_PASSWORD=${RIOT_MATRIX_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for RIOT_MATRIX_DB_PASSWORD}
@@ -71,7 +71,7 @@ services:
         - traefik.frontend.rule=Host:${RIOT_DOMAIN}
         - traefik.docker.network=riot
         - traefik.port=8080
-        - com.centurylinklabs.watchtower.enable=true
+        - com.ouroboros.enable=true
     networks:
       - riot
     depends_on:

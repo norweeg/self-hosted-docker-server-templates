@@ -42,7 +42,7 @@ services:
       - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
       - traefik.docker.network=wallabag
       - traefik.port=80
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis
@@ -71,7 +71,7 @@ services:
       - "3306"
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
       interval: 15s
@@ -86,7 +86,7 @@ services:
       - wallabag
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     volumes:
       - wallabag-redis:/data
     expose:
@@ -106,7 +106,7 @@ services:
       - ../configs/wallabag.env
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis
@@ -127,7 +127,7 @@ services:
       - ../configs/wallabag.env
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis
@@ -148,7 +148,7 @@ services:
       - ../configs/wallabag.env
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis
@@ -169,7 +169,7 @@ services:
       - ../configs/wallabag.env
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis
@@ -190,7 +190,7 @@ services:
       - ../configs/wallabag.env
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     depends_on:
       - wallabag-db
       - wallabag-redis

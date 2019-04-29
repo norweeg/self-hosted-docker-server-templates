@@ -22,7 +22,7 @@ services:
       - traefik.frontend.rule=Host:${PROJECTSEND_DOMAIN:?Please copy template.env to .env and provide provide a value for PROJECTSEND_DOMAIN}
       - traefik.docker.network=projectsend
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - projectsend
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       - projectsend-database:/var/lib/mysql
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: unless-stopped
     networks:
       - projectsend

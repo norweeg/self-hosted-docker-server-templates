@@ -25,7 +25,7 @@ services:
       - traefik.frontend.rule=Host:${GITLAB_DOMAIN:?Please copy template.env to .env and provide provide a value for GITLAB_DOMAIN}
       - traefik.docker.network=gitlab
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - gitlab
     restart: unless-stopped

@@ -41,7 +41,7 @@ services:
       - mastodon-db:/var/lib/postgresql/data
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=false #postgres needs a manual database migration on major version updates
+      - com.ouroboros.enable=false #postgres needs a manual database migration on major version updates
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"] #checking local connectivity
       interval: 10s
@@ -56,7 +56,7 @@ services:
       - mastodon-internal
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     volumes:
       - mastodon-redis:/data
     healthcheck:
@@ -76,7 +76,7 @@ services:
 #      - mastodon-elasticsearch:/usr/share/elasticsearch/data
 #    labels:
 #      - "traefik.enable=false"
-#      - "com.centurylinklabs.watchtower.enable=true"
+#      - "com.ouroboros.enable=true"
 #    healthcheck:
 #      test: ["CMD-SHELL", "curl --silent --fail mastodon-elasticsearch:9200/_cluster/health || exit 1"]
 
@@ -104,7 +104,7 @@ services:
       - traefik.port=80
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN:?Please copy template.env to .env and provide provide a value for MASTODON_DOMAIN}
       - traefik.docker.network=mastodon-external
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --no-proxy mastodon-web:3000/api/v1/instance || exit 1"]
       interval: 1m30s
@@ -131,7 +131,7 @@ services:
       - traefik.port=4000
       - traefik.docker.network=mastodon-external
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN};PathPrefixStrip:/api/v1/streaming
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     volumes:
       - mastodon-assets:/mastodon/public/assets
       - mastodon-packs:/mastodon/public/packs
@@ -161,7 +161,7 @@ services:
       - mastodon-system:/mastodon/public/system
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
 
 networks:
   mastodon-external:

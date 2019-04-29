@@ -28,7 +28,7 @@ services:
       - traefik.frontend.rule=Host:{BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
       - traefik.docker.network=bookstack
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - bookstack
     restart: unless-stopped
@@ -53,7 +53,7 @@ services:
       - "bookstack-database-data:/var/lib/mysql"
     labels:
       - traefik.enable=false
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     restart: unless-stopped
     networks:
       - bookstack

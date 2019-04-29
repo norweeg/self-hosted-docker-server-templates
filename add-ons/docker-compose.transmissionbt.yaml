@@ -23,7 +23,7 @@ services:
       - traefik.frontend.rule=Host:${TRANSMISSIONBT_DOMAIN:?Please copy template.env to .env and provide provide a value for TRANSMISSIONBT_DOMAIN}
       - traefik.docker.network=transmission
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - transmission
     restart: unless-stopped

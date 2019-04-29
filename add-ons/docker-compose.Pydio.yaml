@@ -25,7 +25,7 @@ services:
       - traefik.frontend.rule=Host:${PYDIO_DOMAIN:?Please copy template.env to .env and provide provide a value for PYDIO_DOMAIN}
       - traefik.docker.network=pydio
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     expose:
       - "80"
     networks:
@@ -45,7 +45,7 @@ services:
       - "pydio-database-data:/var/lib/mysql"
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: unless-stopped
     networks:
       - pydio

@@ -47,7 +47,7 @@ services:
       - traefik.port=80
       - traefik.frontend.rule=Host:${MEDIAWIKI_DOMAIN:?Please copy template.env to .env and provide provide a value for MEDIAWIKI_DOMAIN}
       - traefik.docker.network=mediawiki
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - mediawiki
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       - "mediawiki-database:/var/lib/mysql"
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: unless-stopped
     networks:
       - mediawiki

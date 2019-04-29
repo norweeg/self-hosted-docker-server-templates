@@ -44,7 +44,7 @@ services:
       - "traefik.frontend.rule=Host:${PI_HOLE_DOMAIN:?Please copy template.env to .env and provide provide a value for PI_HOLE_DOMAIN}"
       - "traefik.docker.network=pihole"
       - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     networks:
       - pihole
     restart: unless-stopped

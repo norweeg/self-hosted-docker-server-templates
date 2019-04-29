@@ -6,7 +6,7 @@ This repository contains what you need to get started self-hosting various servi
   * [DuckDNS](https://duckdns.org)
   * [Traefik](https://traefik.io)
   * [Portainer](https://portainer.io)
-  * [Watchtower](https://hub.docker.com/r/centurylink/watchtower/)
+  * [Ouroboros](https://github.com/pyouroboros/ouroboros)
   * [A Postfix Mail Relay](https://hub.docker.com/r/mwader/postfix-relay/)
 * [Pydio](https://pydio.com/)
 * [NextCloud](https://nextcloud.com/)
@@ -55,7 +55,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Friends Radio](https://github.com/xouabita/friends-radio)
 * [ ] [Volumio](https://volumio.org/)
 * [ ] [PeerTube](https://joinpeertube.org/en/)
-* [x] ~~[Pushjet](https://pushjet.io/)~~ (project seems to be inactive, homepage is unresponsive)
+* [ ] [PushFish](https://push.fish/)
 * [ ] [YouTransfer](http://www.youtransfer.io/)
 * [ ] [Onion Share](https://github.com/micahflee/onionshare)
 * [ ] [Tag Spaces](https://www.tagspaces.org/)
@@ -82,6 +82,12 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Logitech Media Server](http://www.mysqueezebox.com/download/)
 * [ ] [Moode](http://moodeaudio.org/)
 * [ ] A GUI to start and manage a stack created from these templates
+
+## What is Docker?
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_dfLOzuIg2o" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Watch this short video for a quick explanation of what Docker is, how it is different than a Virtual Machine, and why one would use Docker instead of a full virtual machine.
 
 ## Before You Begin
 
@@ -132,7 +138,7 @@ This will download the images for and start the base of your stack with basic se
 
 ## Updating Containers In Your Stack
 
-The service "auto-updater" is included and can automatically update containers who have the label "com.centurylinklabs.watchtower.enable=true".  If you would prefer to control when and to which version you update your containers to, or if the automatic updates are causing you issues taking services offline when they don't start up correctly (health checks have been included on most services to help mitigate this), you can disable the auto-updater on a per-service basis by setting the label "com.centurylinklabs.watchtower.enable=false" on that service.  You can also update services using a scheduled cron job that runs the following commands:
+The service "auto-updater" is included and can automatically update containers who have the label "com.ouroboros.enable=true".  If you would prefer to control when and to which version you update your containers to, or if the automatic updates are causing you issues taking services offline when they don't start up correctly (health checks have been included on most services to help mitigate this), you can disable the auto-updater on a per-service basis by setting the label "com.ouroboros.enable=false" on that service.  You can also update services using a scheduled cron job that runs the following commands:
 
 ```bash
 #This will pull the latest image for each service specified in the -f included yaml files
@@ -157,7 +163,7 @@ This will delete the entire stack, including data stored in Docker volumes, perm
 
 ## Other Docker-compose Commands
 
-Docker-compose can do more than just bring everything up or bring everything down.  To manage your stack from the command line, pleaes refer to the [Docker-compose CLI reference](https://docs.docker.com//compose/reference/)
+Docker-compose can do more than just bring everything up or bring everything down.  To manage your stack from the command line, pleaes refer to the [Docker-compose CLI reference](https://docs.docker.com/compose/reference/)
 
 ## For more about self-hosting your own online services
 
@@ -188,6 +194,15 @@ Finally, please contact me if you find something wrong with any of these configs
 * [PuTTY](https://www.putty.org/) for when stuff just won't work for me in Terminus
 * [Windows Subsystem for Linux](https://lifehacker.com/how-to-get-started-with-the-windows-subsystem-for-linux-1828952698) - enables Windows users have access to the same Unix/Unix-like tools that MacOS and Linux users take for granted
 * [GitExtensions](http://gitextensions.github.io/) I maintain this repository using this GUI for Git.  Sommetimes I just need to see what I'm doing graphically
+
+## Relevent Documentation
+
+I learned a lot from just reading Docker and Docker-compose's online documentation, so for your convenience, here it is:
+
+*[Docker command-line reference](https://docs.docker.com/engine/reference/run/)
+*[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+*[Docker-compose command-line reference](https://docs.docker.com/compose/reference/)
+*[Docker-compose file reference](https://docs.docker.com/compose/compose-file/)
 
 ### Notes
 

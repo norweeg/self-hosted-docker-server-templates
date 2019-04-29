@@ -55,7 +55,7 @@ services:
     #proxy about how or if to proxy requests to this service
     labels:
       - "traefik.enable=false" #tells traefik reverse proxy to ignore this container, do not proxy requests to it
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: always #if this container stops for any reason, docker will restart it automatically
     volumes:
       - duckdns-config:/config
@@ -79,7 +79,7 @@ services:
     expose:
       - "8080" #admin web UI port
     labels:
-      - "com.centurylinklabs.watchtower.enable=true" #enables watchtower for auto updates
+      - "com.ouroboros.enable=true" #enables watchtower for auto updates
       - "traefik.enable=true" #set to false to disable admin dashboard
       - "traefik.frontend.rule=Host:${TRAEFIK_DASHBOARD_URL:?Please set the value of TRAEFIK_DASHBOARD_URL in .env or comment this line out}"
       - "traefik.port=8080"
@@ -94,7 +94,7 @@ services:
     #The following section allows you to deifne services which must be started before this service can start
     depends_on:
       - dynamic-dns
-    environment: 
+    environment:
       DUCKDNS_TOKEN: ${DUCKDNS_TOKEN}
     networks:
     #containers will default to the default bridge network if none is specified
@@ -104,15 +104,33 @@ services:
 #Cons: You don't control the updates anymore, even if they happen quickly and seamlessly, but if an update breaks
 #something, you'll have to manually recreate the container with the specific version you wanted by replacing the tag
 #(to the right of : in the image line) with the tag corresponding to the version you want.  My recommendation is to
-#use it for everything, but if you want to change that, change all com.centurylinklabs.watchtower.enable labels to
+#use it for everything, but if you want to change that, change all com.ouroboros.enable labels to
 #"false"
   auto-updater:
-    image: v2tec/watchtower:latest
-    container_name: watchtower
+    image: pyouroboros/ouroboros:latest
+    container_name: ouroboros
     restart: unless-stopped
+    environment:
+    #For a full list of options for ouroboros, see https://github.com/pyouroboros/ouroboros/wiki/Usage
+      - CLEANUP=true #delete old images after update
+      - DOCKER_SOCKETS="unix://var/run/docker.sock" #comment this line out on windows
+      #- DOCKER_SOCKETS="npipe:////./pipe/docker_engine tcp://localhost:2375" #uncomment this line on windows
+      # Define how often to check for updates, defaults to a minimum of 300 (30 seconds)
+      - INTERVAL=300
+      - LOG_LEVEL=info
+      #make ouroboros self-updating
+      - SELF_UPDATE=true
+      #get auto-update config from labels and only labels.  If a container is not labeled to auto update, don't autoupdate
+      - LABEL_ENABLE=true
+      - LABELS_ONLY=true
+      - TZ=${TZ}
+      #optional alternative way to check interval (overriding INTERVAL)
+      #Specify how often to check for updates using a cron string (see https://devhints.io/cron)
+      #this string means every 30 minutes of every hour of every day of every month at every day of the week
+      - CRON="*/30 * * * *"
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true" #Yes, it can watch and update itself
+      - "com.ouroboros.enable=true" #Yes, it can watch and update itself
     #Docker images are a base file system with deltas (changes) representing the steps to go from a base to the
     #finished product overlayed on top of it.  As such, changes you make to data in an image is really happening
     #in yet another delta layer on top of the rest.  This layer is considered temporary and really only something
@@ -122,26 +140,8 @@ services:
     #to store data that persists between runs of a container and can be shared between multipe containers.
     #see https://docs.docker.com/compose/compose-file/#volumes for more information
     volumes:
-      #allows watchtower to monitor for changes and to read labels
+      #allows ouroboros to monitor for changes and to read labels
       - /var/run/docker.sock:/var/run/docker.sock ###Comment this line out in Windows
-###    environment: #uncomment this line in windows
-###      - "DOCKER_HOST=npipe:////./pipe/docker_engine" #uncomment this line in windows
-###      - "DOCKER_HOST=tcp://localhost:2375" #alternative to the last line.  Pick only 1!
-    #The following section allows us to add arguments to the container's entrypoint.  The entrypoint is the default
-    #command that is run inside the container when it starts
-    command: --schedule "0 0 4 * * *" --label-enable --cleanup
-    networks_mode: bridge #network aliases are incompatible with default bridge network, this disables them for this service
-
-#If you want email notifications when watchtower does something, uncomment the following section and update with your
-#settings
-#    environment:
-#      - WATCHTOWER_NOTIFICATIONS=email
-#      - WATCHTOWER_NOTIFICATION_EMAIL_FROM=fromaddress@gmail.com
-#      - WATCHTOWER_NOTIFICATION_EMAIL_TO=toaddress@gmail.com
-#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=smtp.gmail.com
-#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=fromaddress@gmail.com
-#      - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=app_password
-
 
   docker-gui:
     image: portainer/portainer:latest
@@ -163,14 +163,14 @@ services:
       - traefik.frontend.rule=Host:${PORTAINER_DOMAIN:?Please copy template.env to .env and provide provide a value for PORTAINER_DOMAIN}
       #the target port of the service that traefik should forward
       - traefik.port=9000
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - docker-gui-network
     volumes:
       - portainer-data:/data #map named volume to directory in container
       #allows portainer to control docker (Linux/Mac only)
       - /var/run/docker.sock:/var/run/docker.sock ###Comment this line out in Windows
-    #this section allows us to modify arguments passed to the default command executed inside this container
+    #this section allows us to modify arguments passed to the default command executed inside this container (AKA the entrypoint)
     #when it starts
 ###    command: -d /data -H npipe:////./pipe/docker_engine #uncomment this line in windows
 ###    command: -d /data -H tcp://localhost:2375 #alternative to the last line, pick only 1!
@@ -221,7 +221,7 @@ services:
     expose:
       - "25"
     labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
       - "traefik.enable=false"
     volumes:
       - mail-relay-lib-postfix:/var/lib/postfix

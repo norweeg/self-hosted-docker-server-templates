@@ -24,7 +24,7 @@ services:
       - "traefik.frontend.rule=Host:${PIWIGO_DOMAIN:?Please copy template.env to .env and provide provide a value for PIWIGO_DOMAIN}"
       - "traefik.docker.network=piwigo"
       - "traefik.default.protocol=http"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     networks:
       - piwigo
     restart: unless-stopped
@@ -50,7 +50,7 @@ services:
       - piwigo-database:/var/lib/mysql
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: unless-stopped
     networks:
       - piwigo

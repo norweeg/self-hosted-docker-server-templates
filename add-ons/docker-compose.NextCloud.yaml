@@ -39,7 +39,7 @@ services:
       - traefik.nextcloud-webfinger.frontend.rule=Host:${NEXTCLOUD_DOMAIN};Path:/.well-known/webfinger;ReplacePath:/public.php?service=webfinger
       - traefik.docker.network=nextcloud
       - traefik.frontend.headers.STSSeconds=15552000
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - nextcloud
     restart: unless-stopped
@@ -65,7 +65,7 @@ services:
       - nextcloud-database:/var/lib/mysql
     labels:
       - "traefik.enable=false"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.ouroboros.enable=true"
     restart: unless-stopped
     networks:
       - nextcloud
@@ -95,7 +95,7 @@ services:
       - traefik.frontend.headers.forceSTSHeader=true
       - traefik.frontend.headers.STSSeconds=15552000
       - traefik.frontend.headers.STSIncludeSubdomains=true
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     restart: unless-stopped
     networks:
       - nextcloud

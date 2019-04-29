@@ -30,7 +30,7 @@ services:
       - traefik.frontend.rule=Host:${HEIMDALL_DOMAIN:?Please copy template.env to .env and provide provide a value for HEIMDALL_DOMAIN}
       - traefik.docker.network=heimdall
       - traefik.default.protocol=http
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
     networks:
       - heimdall
     restart: unless-stopped

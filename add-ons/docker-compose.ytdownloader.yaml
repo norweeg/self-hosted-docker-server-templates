@@ -21,7 +21,7 @@ services:
       - traefik.frontend.rule=Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
       - traefik.docker.network=ytdownloader
       - traefik.port=3000
-      - com.centurylinklabs.watchtower.enable=true
+      - com.ouroboros.enable=true
 
 #  ytdownloader-alternate:
 #    #website: https://github.com/Algram/ytdl-webserver
@@ -39,7 +39,7 @@ services:
 #      - traefik.frontend.rule=Host:Host:${YTDOWNLOADER_DOMAIN:?Please copy template.env to .env and provide provide a value for YTDOWNLOADER_DOMAIN}
 #      - traefik.docker.network=ytdownloader
 #      - traefik.port=3000
-#      - com.centurylinklabs.watchtower.enable=true
+#      - com.ouroboros.enable=true
 
 networks:
   ytdownloader:
