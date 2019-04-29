@@ -85,7 +85,7 @@ In no particular order, things I hope to add templates for.  Also taking request
 
 ## What is Docker?
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/_dfLOzuIg2o" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![What is Docker in 5 minutes](https://img.youtube.com/vi/_dfLOzuIg2o/0.jpg)](http://www.youtube.com/watch?v=_dfLOzuIg2o "What is Docker in 5 minutes")
 
 Watch this short video for a quick explanation of what Docker is, how it is different than a Virtual Machine, and why one would use Docker instead of a full virtual machine.
 
