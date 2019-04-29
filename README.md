@@ -120,6 +120,23 @@ It may be helpful to understand the role of a reverse proxy.  In short, a revers
 
 The Traefik documentation is pretty clear and has examples, so my annotations regarding it will be brief.  They even provide a short ["cookbook" of example configurations](https://docs.traefik.io/user-guide/examples/)
 
+### Adding a login prompt to services which do not come with their own
+
+Not every service comes with its own login page to protect it from unauthorized access, but don't worry!  Traefik lets you add one by adding the traefik.frontend.auth.basic.users, traefik.frontend.auth.basic.usersFile, traefik.frontend.auth.digest.users, or traefik.frontend.auth.digest.usersFile labels to a container.  These labels rely on the output of [htpasswd](https://httpd.apache.org/docs/2.4/programs/htpasswd.html) and [htdigest](https://httpd.apache.org/docs/2.4/programs/htdigest.html) respectively, so if you don't have them installed, you will need to install them first.  On Ubuntu-like Linux distros, you would run `sudo apt-get install apache2-utils`
+
+#### traefik.frontend.auth.basic.users
+
+At your command line, run `htpassword -n yourusername | sed -e s/\\$/\\$\\$/g`.  This will prompt you to create a password for the user, yourusername, and display that username and a hash to be used with this label e.g. traefik.frontend.auth.basic.users="yourusername:$$apr1$$nbt0MXhi$$TKUDTJe3QPp.lUQFWkqo01" if you input it directly into a compose file, or run just `htpassword -n yourusername` if you want to put the output into your .env file instead and use an environment variable in the compose file e.g. MY_USERNAMES_AND_PASSWORDS="testuser:$apr1$nbt0MXhi$TKUDTJe3QPp.lUQFWkqo01"
+in your .env file and traefik.frontend.auth.basic.users=${MY_USERNAMES_AND_PASSWORDS} in your compose file (recommended).  Multiple username:hash combos should be separated by commas.
+
+#### traefik.frontend.auth.basic.usersFile
+
+Similar to the above, except instead of making a comma-separated list of users and password hashes, you run `htpassword -c /path/to/passwordfile/to/create yourusername` to create a new password file (overwriting the existing one, if it already exists), or `htpassword /path/to/existing/passwordfile anotheruser` to add or update the password for a user.  To delete a user from the file, run `htpassword -D /path/to/existing/passwordfile usertobedeleted`.  This file should be mounted into the traefik container as a volume e.g. /path/to/passwordfile/on/host:/path/to/passwordfile/in/traefik/container and referenced in that location inside the traefik container when applying this label e.g. traefik.frontend.auth.basic.usersFile=/path/to/passwordfile/in/traefik/container
+
+#### traefik.frontend.auth.digest.users and traefik.frontend.auth.digest.usersFile
+
+Similar to the above two sections, these labels work more-or-less the same, with .users being put as a comma-separated list in either directly into the compose file or into the .env file and referenced in the compose file, and .usersFile creating a file to mounted in the traefik container and referenced in that location by the label.  To create the file, run `htdigest -c /path/to/passwordfile youruserrealm yourusername` where realm is a what will be displayed to the user to let them know what they're signing into.  For more info, see [this page](https://tools.ietf.org/html/rfc2617#section-3.2.1).  To update the file without overwriting it, run the same command but drop the -c flag e.g. `htdigest /path/to/passwordfile youruserrealm yourusername`
+
 ## Starting Your Stack
 
 At your system's command prompt, change directory to the base directory your local copy of this repository and run the following command:
