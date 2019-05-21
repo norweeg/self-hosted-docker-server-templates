@@ -20,6 +20,10 @@ services:
     restart: unless-stopped
     env_file:
       - ./configs/wallabag.env
+    environment:
+      #setting this should make the labels redirecting http back to https unnecessary, but leaving them in place just in case
+      #Wallabag will honor the X-Forwarded-Proto header from a *TRUSTED* proxy only.
+      TRUSTED_PROXIES=10.0.0.0/8,192.168.0.0/16
     expose:
       - "80"
     labels:
