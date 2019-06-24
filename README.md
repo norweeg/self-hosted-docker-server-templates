@@ -27,6 +27,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Transmission Bittorrent Client Webserver](https://transmissionbt.com/)
 * [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
 * [Riot.im](https://riot.im) (see also: [Riot.im Setup](docs/riot.md))
+* [Pinry](http://getpinry.com/)
 
 To-dos
 
@@ -35,7 +36,6 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [VSCode-server](https://coder.com/)
 * [ ] [Mailu](https://mailu.io)
 * [ ] [OpenVPN](https://openvpn.net/)
-* [ ] [Pinry](http://getpinry.com/)
 * [ ] [ymarks](https://bitbucket.org/ymarks/ymarks-server)
 * [ ] [Mozilla Firefox Sync](https://docs.services.mozilla.com/howtos/run-sync-1.5.html)
 * [ ] [Lobsters (link aggregation)](https://lobste.rs/)

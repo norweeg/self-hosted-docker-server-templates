@@ -1,0 +1,88 @@
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - pinry
+  mail-relay:
+    networks:
+      - pinry
+  pinry:
+  #Pinry doesn't publish an official docker image, and the unnofficial builds seem unmaintained so
+  #we will build an image using the Dockerfile and code in their official GitHub repository
+  #Behind the scenes, it will be using docker build to build the container.
+  #see https://docs.docker.com/engine/reference/commandline/build/#git-repositories and
+  #https://docs.docker.com/compose/compose-file/#build
+    build:
+    #context specifies what git repository to build from.
+      context: "https://github.com/pinry/pinry.git"
+      #if no dockerfile is specified, the file named "Dockerfile" in the root directory of the repo will be built
+      dockerfile: Dockerfile.autobuild
+    command: bash -c "/scripts/start.sh"
+    container_name: "pinry"
+    environment:
+      - SECRET_KEY=${PINRY_SECRET_KEY:?Please copy template.env to .env and provide provide a value for PINRY_SECRET_KEY}
+    labels:
+    # This container has two different traefik frontends, one that forwards requests for static files to the embedded webserver on port 80
+    # The other forwards API requests directly to the application
+      - traefik.enable=true
+      - traefik.static.port=80
+      - traefik.default.port=8000
+      - traefik.static.frontend.rule=Host:${PINRY_DOMAIN:?Please copy template.env to .env and provide a value for PINRY_DOMAIN};PathPrefix:/static,/media
+      - traefik.default.frontend.rule=Host:${PINRY_DOMAIN}
+      - traefik.docker.network=pinry
+      - traefik.protocol=http
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.headers.hostsProxyHeaders=X-CSRFToken
+      #because this container image is being built locally, it cannot be autoupdated by ouroboros.  It must be manually re-built to update.
+      #use `docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.pinry.yaml build pinry` to rebuild the image and 
+      #`docker-compose -f docker-compose.base.yaml -f ... -f add-ons/docker-compose.pinry.yaml up -d` to recreate the container using the 
+      #newly rebuilt image
+      - com.ouroboros.enable=false
+    volumes:
+      - ./configs/pinry_local_settings.py:/srv/www/pinry/pinry/settings/local_settings.py
+      - pinry-data:/data/
+    restart: unless-stopped
+    networks:
+      - pinry
+    depends_on:
+      - pinry-db
+    expose:
+    #this container has a built-in nginx server to serve static files (on port 80)
+    #the API is accessed directly at 8000
+      - "8000"
+      - "80"
+
+  pinry-db:
+    image: mariadb:latest
+    container_name: pinry-db
+    environment:
+      - MYSQL_DATABASE=pinry
+      # make sure to update the contents of configs/pinry_local_settings.py with the username and password from your .env file
+      - MYSQL_USER=${PINRY_DB_USERNAME:-pinry}
+      - MYSQL_PASSWORD=${PINRY_DB_PASSWORD:?Please copy template.env to .env and enter a value for PINRY_DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${PINRY_DB_ROOT_PASSWORD:?Please copy template.env to .env and enter a value for PINRY_DB_ROOT_PASSWORD}
+    volumes:
+      - pinry-db-data:/var/lib/mysql
+    labels:
+      - traefik.enable=false
+      - com.ouroboros.enable=true
+    restart: unless-stopped
+    networks:
+      - pinry
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+networks:
+  pinry:
+    name: pinry
+
+volumes:
+  pinry-data:
+  pinry-db-data:
+  
