@@ -91,7 +91,7 @@ Watch this short video for a quick explanation of what Docker is, how it is diff
 
 ## Before You Begin
 
-You will need a computer, preferably running Linux, but anything will do. [&#178;](#notes)  Download and install Docker and Docker-compose following the instructions for your OS
+You will need a computer, preferably running Linux, but anything will do. [&#178;](#notes)  Download and install Docker and Docker-compose following the instructions for your OS.  These templates were written using the Docker-compose 3.5 file format, therefore you must have docker version 17.12.0 or greater and a recent docker-compose version, ideally the most recent.  If you installed docker or docker-compose from your distro's standard software sources, it is likely you are using an old version of one or both of them.  It is recommended that you install both following the directions below.
 
 * [Docker](https://www.docker.com/community-edition) (or [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) if you do not have Windows 10 Professional or Enterprise.  See description below.)
 * [Docker-Compose](https://docs.docker.com/compose/install/)
@@ -216,10 +216,10 @@ Finally, please contact me if you find something wrong with any of these configs
 
 I learned a lot from just reading Docker and Docker-compose's online documentation, so for your convenience, here it is:
 
-*[Docker command-line reference](https://docs.docker.com/engine/reference/run/)
-*[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
-*[Docker-compose command-line reference](https://docs.docker.com/compose/reference/)
-*[Docker-compose file reference](https://docs.docker.com/compose/compose-file/)
+* [Docker command-line reference](https://docs.docker.com/engine/reference/run/)
+* [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+* [Docker-compose command-line reference](https://docs.docker.com/compose/reference/)
+* [Docker-compose file reference](https://docs.docker.com/compose/compose-file/)
 
 ### Notes
 
