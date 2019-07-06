@@ -1,0 +1,186 @@
+#This compose file adds Taiga https://taiga.io/ to your stack
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - taiga
+
+  mail-relay:
+    networks:
+      - taiga
+
+  taiga-back:
+    image: dockertaiga/back:latest
+    container_name: taiga-back
+    restart: unless-stopped
+    depends_on:
+      - taiga-db
+      - taiga-events
+    networks:
+      - taiga
+    volumes:
+      - taiga-media:/taiga-media
+      - taiga-conf-back:/taiga-conf
+      # This config file is copied to taiga-conf volume on initial setup ONLY!  The initial setup value will populate all required values
+      # Any changes to config after initial setup will need to be made directly to /taiga-conf/config.py in the container
+      # (located in the taiga-conf-back volume)
+      - ./configs/taiga/config.py:/tmp/taiga-conf/config.py
+    environment: 
+      - TAIGA_HOST=${TAIGA_DOMAIN:?Please copy template.env to .env and provide provide a value for TAIGA_DOMAIN}
+      - TAIGA_SCHEME=https
+      - TAIGA_BACK_HOST=taiga-back
+      - TAIGA_FRONT_HOST=taiga-front
+      - EVENTS_HOST=taiga-events
+      - POSTGRES_HOST=taiga-db
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${TAIGA_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${TAIGA_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_DB_PASSWORD}
+      - RABBIT_PASSWORD=${TAIGA_RABBIT_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_RABBIT_PASSWORD}
+      - RABBIT_HOST=taiga-rabbit
+      - RABBIT_USER=${TAIGA_RABBIT_USER:-taiga}
+      - RABBIT_VHOST=${TAIGA_RABBIT_VHOST:-taiga}
+      - ENABLE_SSL='no'
+      - STARTUP_TIMEOUT=15s
+    labels:
+      - com.ouroboros.enable=true
+      - traefik.enable=true
+      - traefic.port=80
+      - traefik.protocol=http
+      - traefik.frontend.rule=Host:${TAIGA_DOMAIN};PathPrefix:/media,/admin,/static,/api
+      - traefik.docker.network=taiga
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.hostsProxyHeaders=X-CSRFToken
+      - traefik.frontend.headers.STSSeconds=15552000
+      - traefik.frontend.headers.referrerPolicy=no-referrer
+
+  taiga-front:
+    image: dockertaiga/front:latest
+    container_name: taiga-front
+    restart: unless-stopped
+    networks:
+      - taiga
+    volumes:
+      - taiga-conf-front:/taiga-conf
+    environment: 
+      - TAIGA_HOST=${TAIGA_DOMAIN:?Please copy template.env to .env and provide provide a value for TAIGA_DOMAIN}
+      - TAIGA_SCHEME=https
+      - TAIGA_BACK_HOST=taiga-back
+      - TAIGA_FRONT_HOST=taiga-front
+      - EVENTS_HOST=taiga-events
+      - POSTGRES_HOST=taiga-db
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${TAIGA_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${TAIGA_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_DB_PASSWORD}
+      - RABBIT_PASSWORD=${TAIGA_RABBIT_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_RABBIT_PASSWORD}
+      - RABBIT_HOST=taiga-rabbit
+      - RABBIT_USER=${TAIGA_RABBIT_USER:-taiga}
+      - RABBIT_VHOST=${TAIGA_RABBIT_VHOST:-taiga}
+      - ENABLE_SSL='no'
+      - STARTUP_TIMEOUT=15s
+    labels:
+      - com.ouroboros.enable=true
+      - traefik.enable=true
+      - traefic.port=80
+      - traefik.protocol=http
+      - traefik.frontend.rule=Host:${TAIGA_DOMAIN}
+      - traefik.docker.network=taiga
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.hostsProxyHeaders=X-CSRFToken
+      - traefik.frontend.headers.STSSeconds=15552000
+      - traefik.frontend.headers.referrerPolicy=no-referrer
+
+  taiga-db:
+    image: postgres:alpine
+    container_name: taiga-db
+    restart: unless-stopped
+    networks:
+      - taiga
+    environment: 
+      - POSTGRES_HOST=taiga-db
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${TAIGA_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${TAIGA_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_DB_PASSWORD}
+    volumes:
+      - taiga-db-data:/var/lib/postgresql/data
+    labels:
+      - com.ouroboros.enable=true
+
+  taiga-rabbit:
+    image: dockertaiga/rabbit:latest
+    container_name: taiga-rabbit
+    restart: unless-stopped
+    networks:
+      - taiga
+    environment: 
+      - TAIGA_HOST=${TAIGA_DOMAIN:?Please copy template.env to .env and provide provide a value for TAIGA_DOMAIN}
+      - TAIGA_SCHEME=https
+      - TAIGA_BACK_HOST=taiga-back
+      - TAIGA_FRONT_HOST=taiga-front
+      - EVENTS_HOST=taiga-events
+      - POSTGRES_HOST=taiga-db
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${TAIGA_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${TAIGA_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_DB_PASSWORD}
+      - RABBIT_PASSWORD=${TAIGA_RABBIT_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_RABBIT_PASSWORD}
+      - RABBIT_HOST=taiga-rabbit
+      - RABBIT_USER=${TAIGA_RABBIT_USER:-taiga}
+      - RABBIT_VHOST=${TAIGA_RABBIT_VHOST:-taiga}
+      - ENABLE_SSL='no'
+      - STARTUP_TIMEOUT=15s
+    labels:
+      - com.ouroboros.enable=true
+    volumes:
+      - taiga-rabbit-data:/var/lib/rabbitmq
+
+  taiga-events:
+    image: dockertaiga/events:latest
+    container_name: taiga-events
+    restart: unless-stopped
+    depends_on:
+      - taiga-rabbit
+    networks:
+      - taiga
+    environment: 
+      - TAIGA_HOST=${TAIGA_DOMAIN:?Please copy template.env to .env and provide provide a value for TAIGA_DOMAIN}
+      - TAIGA_SCHEME=https
+      - TAIGA_BACK_HOST=taiga-back
+      - TAIGA_FRONT_HOST=taiga-front
+      - EVENTS_HOST=taiga-events
+      - POSTGRES_HOST=taiga-db
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${TAIGA_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${TAIGA_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_DB_PASSWORD}
+      - RABBIT_PASSWORD=${TAIGA_RABBIT_PASSWORD:?Please copy template.env to .env and provide provide a value for TAIGA_RABBIT_PASSWORD}
+      - RABBIT_HOST=taiga-rabbit
+      - RABBIT_USER=${TAIGA_RABBIT_USER:-taiga}
+      - RABBIT_VHOST=${TAIGA_RABBIT_VHOST:-taiga}
+      - ENABLE_SSL='no'
+      - STARTUP_TIMEOUT=15s
+    labels:
+      - com.ouroboros.enable=true
+      - traefik.enable=true
+      - traefic.port=8888
+      - traefik.protocol=http
+      - traefik.frontend.rule=${TAIGA_DOMAIN};PathPrefix:/events
+      - traefik.docker.network=taiga
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.whiteList.useXForwardedFor=true
+      - traefik.frontend.headers.hostsProxyHeaders=X-CSRFToken
+      - traefik.frontend.headers.STSSeconds=15552000
+      - traefik.frontend.headers.referrerPolicy=no-referrer
+
+networks:
+  taiga:
+    name: taiga
+
+volumes: 
+  taiga-media:
+  taiga-conf-back:
+  taiga-conf-front:
+  taiga-db-data:
+  taiga-rabbit-data:

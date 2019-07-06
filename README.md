@@ -28,6 +28,7 @@ This repository contains what you need to get started self-hosting various servi
 * [ytdl (Youtube Downloader)](https://github.com/Algram/ytdl-webserver)
 * [Riot.im](https://riot.im) (see also: [Riot.im Setup](docs/riot.md))
 * [Pinry](http://getpinry.com/)
+* [Taiga.io](https://taiga.io/)
 
 To-dos
 
@@ -78,7 +79,6 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Rainloop](https://www.rainloop.net/)
 * [ ] [Known](https://withknown.com/)
 * [ ] [SoGo](https://sogo.nu/)
-* [ ] [Taiga.io](https://taiga.io/)
 * [ ] [Logitech Media Server](http://www.mysqueezebox.com/download/)
 * [ ] [Moode](http://moodeaudio.org/)
 * [ ] A GUI to start and manage a stack created from these templates
