@@ -29,6 +29,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Riot.im](https://riot.im) (see also: [Riot.im Setup](docs/riot.md))
 * [Pinry](http://getpinry.com/)
 * [Taiga.io](https://taiga.io/)
+* [Grocy](https://grocy.info/)
 
 To-dos
 

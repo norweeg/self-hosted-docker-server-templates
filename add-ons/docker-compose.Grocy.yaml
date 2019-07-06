@@ -1,0 +1,38 @@
+#This file adds Grocy https://grocy.info/ to your stack.
+version: "3.5"
+services:
+  reverse-proxy:
+    networks:
+      - grocy
+  mail-relay:
+    networks:
+      - grocy
+  grocy:
+    image: linuxserver/grocy:latest
+    container_name: grocy
+    environment:
+      - TZ=${TZ}
+      - PGID=${UID}
+      - PUID=${UID}
+    volumes:
+      - grocy-data:/config
+    labels:
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.backend=grocy
+      - traefik.frontend.rule=Host:${GROCY_DOMAIN:?Please copy template.env to .env and provide provide a value for GROCY_DOMAIN}
+      - traefik.docker.network=grocy
+      - traefik.default.protocol=http
+      - com.ouroboros.enable=true
+    expose:
+      - "80"
+    restart: unless-stopped
+    networks:
+      - grocy
+
+networks:
+  grocy:
+    name: grocy
+
+volumes: 
+  grocy-data:
