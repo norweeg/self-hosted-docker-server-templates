@@ -96,8 +96,6 @@ services:
       - mastodon-redis
  #     - mastodon-elasticsearch
     volumes:
-      - mastodon-assets:/mastodon/public/assets
-      - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     labels:
       - traefik.enable=true
@@ -169,8 +167,6 @@ networks:
     internal: true
 
 volumes:
-  mastodon-assets:
-  mastodon-packs:
   mastodon-system:
   mastodon-db:
   #mastodon-elasticsearch:
