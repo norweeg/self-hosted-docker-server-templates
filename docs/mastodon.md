@@ -11,8 +11,6 @@ docker-compose run --rm mastodon-web bundle exec rake secret
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:webpush:generate_vapid_key
 #copy the output into configs/mastodon.env for the values of VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web chown -R 991:991 /mastodon/public/assets /mastodon/public/packs /mastodon/public/system
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:add_user
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:confirm_email USER_EMAIL=your@email
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake mastodon:make_admin USERNAME=yourname
@@ -25,7 +23,6 @@ To update mastodon, change the version in the image: clause of mastodon-web, mas
 ```bash
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml stop mastodon-web mastodon-streaming mastodon-sidekiq
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake db:migrate
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml run --rm mastodon-web bundle exec rake assets:precompile
 ###after running all of the above commands, you can now bring your entire stack up with the up -d command.  Make sure to -f all of your compose files!
 docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.Mastodon.yaml up -d
 ```
