@@ -41,7 +41,7 @@ services:
       start_period: 30s
 
   rocketchat-mongo:
-    image: mongo:latest
+    image: mongo:4.0
     restart: unless-stopped
     container_name: rocketchat-mongo
     hostname: rocketchat-mongo #needs to be manually defined so init-replica command can find it
