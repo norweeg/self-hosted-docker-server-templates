@@ -38,6 +38,9 @@ services:
       - traefik.nextcloud-dav.frontend.rule=Host:${NEXTCLOUD_DOMAIN};Path:/.well-known/carddav,/.well-known/caldav;ReplacePath:/remote.php/dav
       - traefik.nextcloud-webfinger.frontend.rule=Host:${NEXTCLOUD_DOMAIN};Path:/.well-known/webfinger;ReplacePath:/public.php?service=webfinger
       - traefik.docker.network=nextcloud
+      - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.whiteList.useXForwardedFor=true
       - traefik.frontend.headers.STSSeconds=15552000
       - com.ouroboros.enable=true
     networks:
@@ -92,9 +95,14 @@ services:
       - traefik.protocol=http
       - traefik.docker.network=nextcloud
       - traefik.frontend.passHostHeader=true
+      - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
+      - traefik.frontend.whiteList.useXForwardedFor=true
       - traefik.frontend.headers.forceSTSHeader=true
       - traefik.frontend.headers.STSSeconds=15552000
       - traefik.frontend.headers.STSIncludeSubdomains=true
+      - traefik.frontend.headers.referrerPolicy=no-referrer
+      - traefik.frontend.headers.contentTypeNosniff=true
+      - traefik.frontend.headers.browserXSSFilter=true
       - com.ouroboros.enable=true
     restart: unless-stopped
     networks:
