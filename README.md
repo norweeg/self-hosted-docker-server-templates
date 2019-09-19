@@ -1,5 +1,7 @@
 # Self-hosted Docker Server Templates
 
+**Due to Traefik's recent upgrade to version 2.0, all traefik configuration in these templates will not work with the traefik:latest image.  If you pulled, forked, cloned, or otherwise used these templates in your own project/organization, it is recommended that you `git pull` to get the latest commit in which I changed the traefik image used to traefik:v1.7-alpine, the last traefik version compatible with these templates as currently written, while I read [Traefik's migration guide](https://docs.traefik.io/v2.0/migration/v1-to-v2/), rewrite and test these templates to make them compatible with Traefik 2.0 (and hopefully onward!).**
+
 This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.  The templates will set up the following:
 
 * Base
@@ -44,7 +46,8 @@ In no particular order, things I hope to add templates for.  Also taking request
 * [ ] [Wordpress](https://wordpress.org/)
 * [ ] [docker-mailserver](https://github.com/tomav/docker-mailserver)
 * [ ] [RSS Monster](https://github.com/pietheinstrengholt/rssmonster)
-* [ ] [Nunux Reader](https://reader.nunux.org/welcome)
+* [x] ~~[Nunux Reader](https://reader.nunux.org/)~~ *(discontinued)*
+* [ ] [Readflow](https://about.readflow.app/)
 * [ ] [Nunux Keeper](https://keeper.nunux.org/)
 * [ ] [Apache OpenMeetings](https://openmeetings.apache.org/index.html)
 * [ ] [Cozy Cloud](https://github.com/cozy/cozy-stack)
