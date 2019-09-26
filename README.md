@@ -32,6 +32,7 @@ This repository contains what you need to get started self-hosting various servi
 * [Pinry](http://getpinry.com/)
 * [Taiga.io](https://taiga.io/)
 * [Grocy](https://grocy.info/)
+* [RhodeCode](https://rhodecode.com)
 
 To-dos
 

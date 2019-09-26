@@ -1,0 +1,84 @@
+#This adds Rhodecode (https://rhodecode.com/) to your stack.  Consider this a lighter-weight alternative to Gitlab
+
+version: '3.5'
+services:
+  reverse-proxy:
+    networks:
+      - rhodecode
+  mail-relay:
+    networks:
+      - rhodecode
+  rhodecode:
+    container_name: rhodecode
+    #this image isn't official, however, it was recommended on RhodeCode's own page for docker install
+    image: josh5/rhodecode:4.15.1 #a manual process must be run each time you upgrade this service https://github.com/Josh5/docker-rhodecode#upgrading-from-a-previous-version
+    restart: unless-stopped
+    environment:
+      - PGID=${GID}
+      - PUID=${GID}
+      - RHODECODE_USER=${RHODECODE_ADMIN_USER:-admin}
+      - RHODECODE_USER_PASS=${RHODECODE_ADMIN_PASSWORD:-password}
+      - RHODECODE_USER_EMAIL=${RHODECODE_ADMIN_USER_EMAIL:-support@email.com}
+      - RHODECODE_DB=${RHODECODE_DB:-sqlite}
+    volumes:
+      - rhodecode-config:/config
+      - rhodecode-repos:/repos
+      - rhodecode-tmp:/tmp
+      # you *will* need to read and edit settings in this file, specifically search for the following:
+      # app_email_from
+      # sqlalchemy.db1.url (if you want to use an external database) set it to mysql://RHODECODE_DB_USERNAME:RHODECODE_DB_PASSWORD@rhodecode-db/rhodecode?charset=utf8
+      # substituting the values you put in your .env file.  You will need to uncomment the rhodecode-db service below
+      # be sure to edit or comment out the default value sqlalchemy.db1.url = sqlite:////root/.rccontrol/community-1/rhodecode.db on line 478
+      - ./configs/rhodecode.ini:/config/.rccontrol/community-1/rhodecode.ini
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=10020"
+      - "traefik.frontend.rule=Host:${RHODECODE_DOMAIN:?Please copy template.env to .env and provide provide a value for RHODECODE_DOMAIN}"
+      - traefik.docker.network=rhodecode
+      - com.ouroboros.enable=true
+    expose:
+      - 10020
+      - 10021
+    networks:
+      - rhodecode
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://rhodecode:10020 > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+#  Using an external database for this service is optional, as it will use SQLite by default.  If you would like to use a true database,
+#  uncomment this section and provide the connection credentials in the database section of configs/rhodecode.ini
+#  rhodecode-db:
+#    image: mariadb:latest
+#    container_name: rhodecode-db
+#    environment:
+#      - MYSQL_DATABASE=rhodecode
+#      - MYSQL_USER=${RHODECODE_DB_USERNAME:-rhodecode}
+#      - MYSQL_PASSWORD=${RHODECODE_DB_PASSWORD}
+#      - MYSQL_ROOT_PASSWORD=${RHODECODE_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for RHODECODE_DB_ROOT_PASSWORD}
+#    volumes:
+#      - rhodecode-database:/var/lib/mysql
+#    labels:
+#      - "traefik.enable=false"
+#      - "com.ouroboros.enable=true"
+#    restart: unless-stopped
+#    networks:
+#      - rhodecode
+#    healthcheck:
+#      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+#
+
+volumes:
+  rhodecode-config:
+  rhodecode-repos:
+  rhodecode-tmp:
+  #rhodecode-database:
+
+networks:
+  rhodecode:
+    name: rhodecode
