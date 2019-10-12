@@ -1,0 +1,76 @@
+#This adds Gitea (https://gitea.io/) to your stack.  Consider this a lighter-weight alternative to Gitlab and nearly a clone of Github
+version: '3.7'
+services:
+  reverse-proxy:
+    networks:
+      - gitea
+  mail-relay:
+    networks:
+      - gitea
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    restart: unless-stopped
+    volumes:
+      - gitea-data:/data
+    environment:
+      #see https://docs.gitea.io/en-us/install-with-docker/ for a full list of environment variables
+      #smtp (mail) server doesn't seem to be configurable by environment.  use mail-relay:25 as the smtp server address
+      #at the gitea installation page after brining this service up
+      - USER_UID=${UID}
+      - USER_GID=${UID}
+      - DISABLE_SSH=true
+      - RUN_MODE=prod
+      - ROOT_URL="https://${GITEA_DOMAIN:?Please copy template.env to .env and provide provide a value for GITEA_DOMAIN}/"
+      - LFS_START_SERVER=true
+#      - DB_TYPE=mysql
+#      - DB_HOST=gitea-db
+#      - DB_NAME=gitea
+#      - DB_USER=${GITEA_DB_USERNAME:-gitea}
+#      - DB_PASSWD=${GITEA_DB_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.frontend.rule=Host:${GITEA_DOMAIN}"
+      - traefik.docker.network=gitea
+      - com.ouroboros.enable=true
+    networks:
+      - gitea
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://gitea:3000 > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+#  Using an external database for this service is optional, as it will use SQLite by default.  If you would like to use a true database,
+#  uncomment this section and the other sections that reference the database
+#  gitea-db:
+#    image: mariadb:latest
+#    container_name: gitea-db
+#    environment:
+#      - MYSQL_DATABASE=gitea
+#      - MYSQL_USER=${GITEA_DB_USERNAME:-gitea}
+#      - MYSQL_PASSWORD=${GITEA_DB_PASSWORD}
+#      - MYSQL_ROOT_PASSWORD=${GITEA_DB_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for GITEA_DB_ROOT_PASSWORD}
+#    volumes:
+#      - gitea-database:/var/lib/mysql
+#    labels:
+#      - "traefik.enable=false"
+#      - "com.ouroboros.enable=true"
+#    restart: unless-stopped
+#    networks:
+#      - gitea
+#    healthcheck:
+#      test: ["CMD-SHELL", "mysqladmin -u $$MYSQL_USER --password=$$MYSQL_PASSWORD ping || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+#
+
+networks:
+  gitea:
+    name: gitea
+
+volumes:
+  gitea-data:
+#  gitea-database:
