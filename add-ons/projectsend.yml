@@ -1,5 +1,5 @@
 #This compose file adds ProjectSend Application Dashboard https://www.projectsend.org/ to your stack
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

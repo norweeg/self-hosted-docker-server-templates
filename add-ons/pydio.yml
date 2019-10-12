@@ -3,7 +3,7 @@
 #database name, and database username/password.  Despite what it says, use the
 #hostname pydio-db (or whatever you name the pydio-db service below).
 #https://store.docker.com/community/images/linuxserver/pydio
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

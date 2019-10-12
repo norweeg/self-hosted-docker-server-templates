@@ -5,7 +5,7 @@
 #RAILS_ENV=production bundle exec rake yourcommand
 #run RAILS_ENV=production bundle exec rake -T inside container for available commands
 #useful for forcing administrative actions without email confirmation
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

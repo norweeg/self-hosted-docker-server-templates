@@ -1,6 +1,6 @@
 #This adds a Slack-like chat server, Rocket.Chat https://rocket.chat/ to your stack
 
-version: '3.5'
+version: '3.7'
 
 services:
   reverse-proxy:

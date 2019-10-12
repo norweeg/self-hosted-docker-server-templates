@@ -4,7 +4,7 @@
 #log in after brining this online and change the name and password to your own to make yourself the administrator
 #also, as the administrator go to internal settings->import and enable redis to allow the asynchronous import workers to function.
 
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -19,7 +19,7 @@ services:
       - wallabag
     restart: unless-stopped
     env_file:
-      - ./configs/wallabag.env
+      - ./configs/wallabag/wallabag.env
     environment:
       #setting this should make the labels redirecting http back to https unnecessary, but leaving them in place just in case
       #Wallabag will honor the X-Forwarded-Proto header from a *TRUSTED* proxy only.

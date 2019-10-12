@@ -1,5 +1,5 @@
 #This compose file adds Heimdall Application Dashboard https://heimdall.site/ to your stack
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

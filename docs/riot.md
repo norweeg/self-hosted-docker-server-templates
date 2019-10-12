@@ -1,27 +1,27 @@
 # Riot.im Setup
 
-Before running `docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml up -d` to bring up your Riot/Matrix servers, you must first generate their config files by running the following:
+Before running `docker-compose -f base.yml -f add-ons/riot.yml up -d` to bring up your Riot/Matrix servers, you must first generate their config files by running the following:
 
 ```bash
 #generate the matrix messenge server config files in volume riot-matrix-server-data or the directory mapped to /data in service riot-matrix-server
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot-matrix-server generate
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot-matrix-server generate
 #download a template config.json file and create a blank conf file for the riot service
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot wget -O /data/config.json https://riot.im/develop/config.json
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot touch /data/riot.im.conf
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot wget -O /data/config.json https://riot.im/develop/config.json
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot touch /data/riot.im.conf
 ```
 
 Now, you must configure the options in each of these files.  Using your preferred text editor (if you used bind mounts instead of docker volumes for these services), or [vi](https://www.howtogeek.com/102468/a-beginners-guide-to-editing-text-files-with-vi/) via the following commands:
 
 ```bash
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot-matrix-server vi /data/homeserver.yaml
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot vi /data/config.json
-docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml run --rm riot vi /data/riot.im.conf
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot-matrix-server vi /data/homeserver.yml
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot vi /data/config.json
+docker-compose -f base.yml -f add-ons/riot.yml run --rm riot vi /data/riot.im.conf
 ```
 
 At the very minimum, you must change some options to match your config in your [.env](../template.env) file.
 
 ```yaml
-#homeserver.yaml.  This is not the complete file, just the minimum edits you will need to make
+#homeserver.yml.  This is not the complete file, just the minimum edits you will need to make
 server_name: "riotdomain.example.com" #change to match RIOT_DOMAIN
 listeners:
   - port: 8008
@@ -77,4 +77,4 @@ Similarly, you must make edits in the config.json file.  Below are the minimum s
 
 Finally, riot.im.conf.  The author of the container image [did not document this at all](https://github.com/AVENTER-UG/docker-matrix-riot#example-riotimconf), but it seems to work as long as the file exists but is blank, so go figure!
 
-Once you have fully configured your server by editing these files, you can bring it up with  `docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.riot.yaml up -d`
+Once you have fully configured your server by editing these files, you can bring it up with  `docker-compose -f base.yml -f ./add-ons/riot.yml up -d`

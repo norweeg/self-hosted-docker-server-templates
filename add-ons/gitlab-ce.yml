@@ -2,7 +2,7 @@
 #The majority of the configuration is in .configs/gitlab.rb.  Do your configuration in that file
 #be sure to replace placeholder values.  Enabling currently disabled options e.g. a gitlab docker image
 #registry will need additional settings not currently in this docker-compose file
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -18,7 +18,7 @@ services:
       - gitlab-data:/var/opt/gitlab
       - gitlab-logs:/var/log/gitlab
       - gitlab-config:/var/opt/gitlab
-      - ./configs/gitlab.rb:/etc/gitlab/gitlab.rb
+      - ./configs/gitlab/gitlab.rb:/etc/gitlab/gitlab.rb
     labels:
       - traefik.enable=true
       - traefik.port=80

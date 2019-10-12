@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -36,12 +36,12 @@ services:
       - traefik.frontend.headers.SSLProxyHeaders=X-Forwarded-Proto:https
       - traefik.frontend.headers.hostsProxyHeaders=X-CSRFToken
       #because this container image is being built locally, it cannot be autoupdated by ouroboros.  It must be manually re-built to update.
-      #use `docker-compose -f docker-compose.base.yaml -f add-ons/docker-compose.pinry.yaml build pinry` to rebuild the image and 
-      #`docker-compose -f docker-compose.base.yaml -f ... -f add-ons/docker-compose.pinry.yaml up -d` to recreate the container using the 
+      #use `docker-compose -f base.yml -f add-ons/docker-compose.pinry.yml build pinry` to rebuild the image and
+      #`docker-compose -f base.yml -f ... -f add-ons/docker-compose.pinry.yml up -d` to recreate the container using the
       #newly rebuilt image
       - com.ouroboros.enable=false
     volumes:
-      - ./configs/pinry_local_settings.py:/srv/www/pinry/pinry/settings/local_settings.py
+      - ./configs/pinry/pinry_local_settings.py:/srv/www/pinry/pinry/settings/local_settings.py
       - pinry-data:/data/
     restart: unless-stopped
     networks:
@@ -85,4 +85,3 @@ networks:
 volumes:
   pinry-data:
   pinry-db-data:
-  

@@ -22,7 +22,7 @@
 #      also be writable by the user who launches the container for some reason     #
 ####################################################################################
 
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -34,7 +34,7 @@ services:
   mastodon-db:
     restart: unless-stopped
     container_name: mastodon-db
-    image: postgres:latest
+    image: postgres:12-alpine
     networks:
       - mastodon-internal
     volumes:
@@ -82,9 +82,9 @@ services:
 
   mastodon-web:
     container_name: mastodon-web
-    image: tootsuite/mastodon:v2.7.1
+    image: tootsuite/mastodon:v3.0.1
     restart: unless-stopped
-    env_file: ./configs/mastodon.env
+    env_file: ./configs/mastodon/mastodon.env
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
     networks:
       - mastodon-external
@@ -112,7 +112,7 @@ services:
 
   mastodon-streaming:
     container_name: mastodon-streaming
-    image: tootsuite/mastodon:v2.7.1
+    image: tootsuite/mastodon:v3.0.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: yarn start
@@ -131,8 +131,6 @@ services:
       - traefik.frontend.rule=Host:${MASTODON_DOMAIN};PathPrefixStrip:/api/v1/streaming
       - com.ouroboros.enable=true
     volumes:
-      - mastodon-assets:/mastodon/public/assets
-      - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --no-proxy mastodon-streaming:4000/api/v1/streaming/health || exit 1"]
@@ -143,7 +141,7 @@ services:
 
   mastodon-sidekiq:
     container_name: mastodon-sidekiq
-    image: tootsuite/mastodon:v2.7.1
+    image: tootsuite/mastodon:v3.0.1
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: bundle exec sidekiq
@@ -154,8 +152,6 @@ services:
       - mastodon-external
       - mastodon-internal
     volumes:
-      - mastodon-assets:/mastodon/public/assets
-      - mastodon-packs:/mastodon/public/packs
       - mastodon-system:/mastodon/public/system
     labels:
       - traefik.enable=false

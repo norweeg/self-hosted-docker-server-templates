@@ -1,6 +1,6 @@
 #This compose file adds Syncthing https://syncthing.net/ to your stack
 #make sure you set a password on this after you get it started in the web GUI
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

@@ -2,7 +2,7 @@
 #This service has a setup wizard that will produce a file which will be mapped in the volumes
 #section when that you will need to uncomment AFTER you've downloaded the LocalSettings.php
 #file from the setup wizard
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

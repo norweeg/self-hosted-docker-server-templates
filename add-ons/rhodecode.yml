@@ -1,6 +1,6 @@
 #This adds Rhodecode (https://rhodecode.com/) to your stack.  Consider this a lighter-weight alternative to Gitlab
 
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -29,7 +29,7 @@ services:
       # sqlalchemy.db1.url (if you want to use an external database) set it to mysql://RHODECODE_DB_USERNAME:RHODECODE_DB_PASSWORD@rhodecode-db/rhodecode?charset=utf8
       # substituting the values you put in your .env file.  You will need to uncomment the rhodecode-db service below
       # be sure to edit or comment out the default value sqlalchemy.db1.url = sqlite:////root/.rccontrol/community-1/rhodecode.db on line 478
-      - ./configs/rhodecode.ini:/config/.rccontrol/community-1/rhodecode.ini
+      - ./configs/rhodecode/rhodecode.ini:/config/.rccontrol/community-1/rhodecode.ini
     labels:
       - "traefik.enable=true"
       - "traefik.port=10020"

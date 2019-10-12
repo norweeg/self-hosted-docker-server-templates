@@ -2,7 +2,7 @@
 #a video from youtube using a browser.  Service ytdownloader-alternate is more polished, but can only download videos as mp3s and only to
 #a directory on the machine hosting it.  Both use environment variable  YTDOWNLOADER_DOMAIN, so only have one service active at any time.
 
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

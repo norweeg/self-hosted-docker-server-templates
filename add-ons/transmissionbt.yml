@@ -1,6 +1,6 @@
 #This compose file adds a transmission bittorrent client webserver https://transmissionbt.com/ to your stack
 #make sure you set a password by changing everything in quotation marks for rpc-password in .config/transmissionbt-settings.json to your desired password
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -9,12 +9,12 @@ services:
     image: linuxserver/transmission:latest
     container_name: transmission
     environment:
-      - PUID=${UID} #your UID
-      - PGID=${UID} #your primary GID which should equal your UID
+      - PUID=${GID} #your UID
+      - PGID=${GID} #your primary GID which should equal your UID
       - TZ=${TZ}
     volumes:
       - transmission-config:/config
-      - ${PWD}/configs/transmissionbt-settings.json:/config/settings.json #server settings can be changed in this file.
+      - ./configs/transmissionbt/transmissionbt-settings.json:/config/settings.json #server settings can be changed in this file.
       - ${HOME}/Downloads:/downloads
       - ${HOME}/Downloads:/watch
     labels:

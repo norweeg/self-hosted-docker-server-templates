@@ -2,7 +2,7 @@
 #To be useful, you will need a working VNC or RDP server or servers for it to connect to.
 #The VNC or RDP servers do not have to be running on the local machine to be accessed
 #via Guacamole.  The admin console address will be https://guac.yourDynamicDomain.duckdns.org/#/settings/
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

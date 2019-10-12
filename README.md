@@ -101,16 +101,16 @@ You will need a computer, preferably running Linux, but anything will do. [&#178
 * [Docker](https://www.docker.com/community-edition) (or [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) if you do not have Windows 10 Professional or Enterprise.  See description below.)
 * [Docker-Compose](https://docs.docker.com/compose/install/)
 
-Please also, in a developer's text editor e.g. NotePad++, read through docker-compose.base.yaml as it contains detailed instructions in the form of comments.  Before starting your stack, you will need to
+Please also, in a developer's text editor e.g. NotePad++, read through base.yml as it contains detailed instructions in the form of comments.  Before starting your stack, you will need to
 
 * Register for [DuckDNS](https://www.duckdns.org/) and have your subdomain name and token ready
 * Forwarded ports 80 and 443 through your router to your host machine
-* Read through and get a basic understanding of the configuration options in every .yaml file you intend to use
+* Read through and get a basic understanding of the configuration options in every .yml file you intend to use
 * Copy template.env to .env with `cp template.env .env` and edit .env to contain your configuration **WARNING: Never commit and push your changes to .env to a public git repository unless you want to get hacked!! You would basically be telling everyone where to find you and telling them your adminstrative passwords if you do!**
 * Replace **ALL** placeholder values with your desired configuration following the model of the placeholder in ./configs/traefik.toml and any files in ./configs that are referenced in the docker-compose YAML files you intend to use.  **WARNING: Don't commit and push the changes you make to these files to a public git repository!  See above!**
-* Made any other changes to the configuration of a service in a docker-compose .yaml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
+* Made any other changes to the configuration of a service in a docker-compose .yml file that you desire e.g. changing the domains to a custom domain that is not a subdomain of duckdns.org
 * If your service utilizes email to send registration confirmations, forgotten passwords, user notifications, etc., you will either need to setup and a [gmail account alias](https://support.google.com/mail/answer/22370?hl=en) and use [Google's SMTP server](https://www.digitalocean.com/community/tutorials/how-to-use-google-s-smtp-server) to send emails or use a custom domain with [Mailgun](https://www.mailgun.com/), following their directions to verify your domain and then use their SMTP to send emails.  Alternatively, you can also setup and use [Mailu](https://mailu.io/), but be aware spam email filters *might* think your domain is spammy because they won't recognize it.  If you use Mailgun, you will need to upgrade from free to basic (which is still free if you're forwarding 10,000 emails or less per month) in order to be able to deliver to email addresses other than the one you registered with.  You will need to enter a credit card to upgrade.
-* If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yaml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
+* If using Docker for Windows, you must comment out all Linux/Mac specific lines in all docker-compose .yml files you intend to use and un-comment all Windows-specific lines.  To help you spot them, I have used ### to designate comments in lines you will need to change.
 * Docker for Windows requires Hyper-V, which is only available on Windows 10 Professional or Enterprise.  Follow these instructions to [enable Hyper-V](https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v).  If you use Windows 10 Home, you will need to install and use [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) to run your containers in a VirtualBox Virtual Machine instead.  Both run your containers inside of a Linux Virtual Machine, which is not as lightweight as a container would be on Linux.
 * Many if not most of these templates are written assuming you're running from a Linux environment.  Attempts were made to make the templates compatible with windows, but there is no guarantee that they will work and you're probably better off using Linux, or at least a linux environment.  You can emulate this in Windows using the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).  To control Docker for Windows from WSL, follow [these instructions](https://blogs.msdn.microsoft.com/commandline/2017/12/08/cross-post-wsl-interoperability-with-docker/).  Provided helper scripts will be written in Bash shell because that is what I know, therefore, they will only run in a Linux environment.  Docker for windows has a Linux container mode, which runs the containers in a Linux virtual machine using Hyper-V, but this requires Hyper-V and Hyper-V requires a Windows 10 professional or enterprise license and is not available in Windows 10 Home.
 
@@ -146,17 +146,17 @@ Similar to the above two sections, these labels work more-or-less the same, with
 
 At your system's command prompt, change directory to the base directory your local copy of this repository and run the following command:
 
-`docker-compose -f docker-compose.base.yaml config`
+`docker-compose -f base.yml config`
 
 This will check to make sure that the edits you made to any relevant .env files are valid.  You can also do this later as you add more files to your stack with the -f option. (see below)
 
-`docker-compose -f docker-compose.base.yaml up -d`
+`docker-compose -f base.yml up -d`
 
 This will download the images for and start the base of your stack with basic services.  To add additional services from this repository, add them to the command with additional -f flags e.g.
 
-`docker-compose -f docker-compose.base.yaml -f ./add-ons/docker-compose.NextCloud.yaml -f ./add-ons/docker-compose.RocketChat.yaml up -d`
+`docker-compose -f base.yml -f ./add-ons/nextcloud.yml -f ./add-ons/rocketchat.yml up -d`
 
-**Please note:** docker-compose.base.yaml must come first on this list.  All the add-ons build upon this base.  The order of the rest of the files does not matter.
+**Please note:** base.yml must come first on this list.  All the add-ons build upon this base.  The order of the rest of the files does not matter.
 
 ## Updating Containers In Your Stack
 
@@ -164,22 +164,22 @@ The service "auto-updater" is included and can automatically update containers w
 
 ```bash
 #This will pull the latest image for each service specified in the -f included yaml files
-docker-compose -f docker-compose.base.yaml -f ... pull
+docker-compose -f base.yml -f ... pull
 #This will recreate containers for any service whose image was updated in the previous command
-docker-compose -f docker-compose.base.yaml -f ... up -d
+docker-compose -f base.yml -f ... up -d
 #This will cleanup images which are no longer tagged i.e. a newer version of the image was pulled and the untagged image is not in use by any containers, even if the container itself is not running.  -f here means "force" i.e. do not ask for confirmation before deleting the old image, just do it
 docker image prune -f
 ```
 
 ## Making Changes to Services/Containers in Your Stack
 
-To make a change to any service or container in your stack without bringing down and recreating them all, simply edit the docker-compose .yaml file that defines it, save, and re-run your docker-compose command from above.  Docker-compose is inteligent enough to only recreate containers/services you edited in the file.  You can also make changes using the edit functionality in the Portainer Docker GUI (included in the base .yaml file), however, it will not be able to automatically resolve if any dependant containers also need to be recreated.
+To make a change to any service or container in your stack without bringing down and recreating them all, simply edit the docker-compose .yml file that defines it, save, and re-run your docker-compose command from above.  Docker-compose is inteligent enough to only recreate containers/services you edited in the file.  You can also make changes using the edit functionality in the Portainer Docker GUI (included in the base .yml file), however, it will not be able to automatically resolve if any dependant containers also need to be recreated.
 
 ## Removing Your Stack
 
-If you want to bring everything down and remove all service/containers, Docker networks, and Docker volumes, simply run the following, specifying each docker-compose .yaml file you used to create it.
+If you want to bring everything down and remove all service/containers, Docker networks, and Docker volumes, simply run the following, specifying each docker-compose .yml file you used to create it.
 
-`docker-compose -f docker-compose.base.yaml -f ... -f ... down`
+`docker-compose -f base.yml -f ... -f ... down`
 
 This will delete the entire stack, including data stored in Docker volumes, permanently.  This will not affect volumes which are bind mounted to a container.  Data in bind mounted volumes must be manually deleted.
 

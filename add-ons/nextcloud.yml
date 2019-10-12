@@ -9,7 +9,7 @@
 #(e.g. "https://office.yourDynamicDomain.duckdns.org")
 #Your Collabora's admin settings can be accessed at
 #https://office.yourDynamicDomain.duckdns.org/loleaflet/dist/admin/admin.html
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:

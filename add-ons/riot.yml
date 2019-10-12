@@ -1,5 +1,5 @@
 #This compose file adds Riot.im (https://about.riot.im/) and a Matrix messenger server (https://matrix.org/blog/home/) to your stack
-version: '3.5'
+version: '3.7'
 services:
 
   reverse-proxy:

@@ -1,5 +1,5 @@
 #This compose file adds BookStack https://www.bookstackapp.com to your stack
-version: '3.5'
+version: '3.7'
 services:
   reverse-proxy:
     networks:
@@ -19,6 +19,7 @@ services:
       - MAIL_PORT=25
       - MAIL_FROM=${FROM_ADDRESS:?Please copy template.env to .env and provide provide a value for FROM_ADDRESS}
       - APP_URL=https://${BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
+    #env_file: ./configs/bookstack/bookstack.env #for advanced configuration, comment out environment section and use the env file instead
     volumes:
       - bookstack-storage:/var/www/bookstack/public/storage
       - bookstack-uploads:/var/www/bookstack/public/uploads
