@@ -14,8 +14,8 @@ services:
     image: josh5/rhodecode:${RHODECODE_VERSION:-latest}
     restart: unless-stopped
     environment:
-      - PGID=${GID}
-      - PUID=${GID}
+      - PGID=${UID}
+      - PUID=${UID}
       - RHODECODE_USER=${RHODECODE_ADMIN_USER:-admin}
       - RHODECODE_USER_PASS=${RHODECODE_ADMIN_PASSWORD:-password}
       - RHODECODE_USER_EMAIL=${RHODECODE_ADMIN_USER_EMAIL:-support@email.com}

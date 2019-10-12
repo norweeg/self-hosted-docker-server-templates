@@ -9,8 +9,8 @@ services:
     image: linuxserver/transmission:latest
     container_name: transmission
     environment:
-      - PUID=${GID} #your UID
-      - PGID=${GID} #your primary GID which should equal your UID
+      - PUID=${UID} #your UID
+      - PGID=${UID} #your primary GID which should equal your UID
       - TZ=${TZ}
     volumes:
       - transmission-config:/config
