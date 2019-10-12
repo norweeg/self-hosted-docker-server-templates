@@ -13,11 +13,12 @@ services:
   riot-matrix-db:
     restart: unless-stopped
     container_name: riot-matrix-db
-    image: postgres:11
+    image: postgres:${RIOT_MATRIX_DB_VERSION:-latest}
     networks:
       - riot
     volumes:
       - riot-matrix-db:/var/lib/postgresql/data
+      - riot-matrix-db-upgrade:var/lib/postgresql/upgrade
     labels:
       - "traefik.enable=false"
       - "com.ouroboros.enable=true"
@@ -33,7 +34,7 @@ services:
       retries: 5
 
   riot-matrix-server:
-    image: avhost/docker-matrix:v1.3.0
+    image: avhost/docker-matrix:${RIOT_MATRIX_VERSION:-latest}
     container_name: riot-matrix-server
     volumes:
       - riot-matrix-server-data:/data
@@ -62,7 +63,7 @@ services:
       - riot-matrix-db
 
   riot:
-    image: avhost/docker-matrix-riot:v1.3.3
+    image: avhost/docker-matrix-riot:${RIOT_VERSION:-latest}
     container_name: riot
     volumes:
       - riot-data:/data
@@ -86,4 +87,4 @@ volumes:
   riot-matrix-server-data:
   riot-matrix-server-uploads:
   riot-data:
-
+  riot-matrix-db-upgrade:

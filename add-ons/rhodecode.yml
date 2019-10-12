@@ -11,7 +11,7 @@ services:
   rhodecode:
     container_name: rhodecode
     #this image isn't official, however, it was recommended on RhodeCode's own page for docker install
-    image: josh5/rhodecode:4.15.1 #a manual process must be run each time you upgrade this service https://github.com/Josh5/docker-rhodecode#upgrading-from-a-previous-version
+    image: josh5/rhodecode:${RHODECODE_VERSION:-latest}
     restart: unless-stopped
     environment:
       - PGID=${GID}

@@ -172,6 +172,8 @@ docker-compose -f base.yml -f ... up -d
 docker image prune -f
 ```
 
+For services, such as pinry, which must be built prior to running, run `docker-compose -f base.yml -f ./add-ons/pinry.yml -f ... -f ... build --pull` which will rebuild any containers in your stack that were built from source when you created them, regardless of whather or not there have been any updates to their source, to update them.  See the [docker-compose build](https://docs.docker.com/compose/reference/build/) documentation for more information.
+
 ## Making Changes to Services/Containers in Your Stack
 
 To make a change to any service or container in your stack without bringing down and recreating them all, simply edit the docker-compose .yml file that defines it, save, and re-run your docker-compose command from above.  Docker-compose is inteligent enough to only recreate containers/services you edited in the file.  You can also make changes using the edit functionality in the Portainer Docker GUI (included in the base .yml file), however, it will not be able to automatically resolve if any dependant containers also need to be recreated.

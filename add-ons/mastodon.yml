@@ -34,11 +34,12 @@ services:
   mastodon-db:
     restart: unless-stopped
     container_name: mastodon-db
-    image: postgres:12-alpine
+    image: postgres:${MASTODON_DB_VERSION:-latest}
     networks:
       - mastodon-internal
     volumes:
       - mastodon-db:/var/lib/postgresql/data
+      - mastodon-db-upgrade:/var/lib/postgresql/upgrade
     labels:
       - traefik.enable=false
       - com.ouroboros.enable=false #postgres needs a manual database migration on major version updates
@@ -82,7 +83,7 @@ services:
 
   mastodon-web:
     container_name: mastodon-web
-    image: tootsuite/mastodon:v3.0.1
+    image: tootsuite/mastodon:${MASTODON_VERSION:-latest}
     restart: unless-stopped
     env_file: ./configs/mastodon/mastodon.env
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
@@ -112,7 +113,7 @@ services:
 
   mastodon-streaming:
     container_name: mastodon-streaming
-    image: tootsuite/mastodon:v3.0.1
+    image: tootsuite/mastodon:${MASTODON_VERSION:-latest}
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: yarn start
@@ -141,7 +142,7 @@ services:
 
   mastodon-sidekiq:
     container_name: mastodon-sidekiq
-    image: tootsuite/mastodon:v3.0.1
+    image: tootsuite/mastodon:${MASTODON_VERSION:-latest}
     restart: unless-stopped
     env_file: ./configs/mastodon.env
     command: bundle exec sidekiq
@@ -167,3 +168,4 @@ volumes:
   mastodon-db:
   #mastodon-elasticsearch:
   mastodon-redis:
+  mastodon-db-upgrade:

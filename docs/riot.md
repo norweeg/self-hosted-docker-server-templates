@@ -78,3 +78,22 @@ Similarly, you must make edits in the config.json file.  Below are the minimum s
 Finally, riot.im.conf.  The author of the container image [did not document this at all](https://github.com/AVENTER-UG/docker-matrix-riot#example-riotimconf), but it seems to work as long as the file exists but is blank, so go figure!
 
 Once you have fully configured your server by editing these files, you can bring it up with  `docker-compose -f base.yml -f ./add-ons/riot.yml up -d`
+
+## Upgrading PostgreSQL Database
+
+Before you update the version of the riot-matrix-db service, you must first run the following:
+
+```bash
+docker-compose -f base.yml -f add-ons/riot.yml stop riot riot-matrix-server
+docker-compose -f base.yml -f add-ons/riot.yml exec -u postgres riot-matrix-db /bin/bash -c "/usr/local/bin/pg_dumpall > /var/lib/postgresql/upgrade/riot && rm -Rf /var/lib/postgresql/data/*"
+```
+
+This makes a backup of the database and removes the database data so that it can be reinitiallized before restoring the data from the backup.  After doing this, set RIOT_MATRIX_DB_VERSION in your .env file to your desired version then run:
+
+```bash
+docker-compose -f base.yml -f add-ons/riot.yml riot-matrix-db up -d
+docker-compose -f base.yml -f add-ons/riot.yml exec -u postgres riot-matrix-db /bin/bash -c "/usr/local/bin/psql --username=synapse -d postgres -f /var/lib/postgresql/upgrade/riot"
+docker-compose -f base.yml -f add-ons/riot.yml up -d riot riot-matrix-server
+```
+
+This reinitializes the database for the new PostgreSQL version, then restores the data from the backup and bringing Riot back up
