@@ -28,6 +28,8 @@ services:
       - MYSQL_USER=${NEXTCLOUD_DB_USERNAME:-nextcloud}
       - MYSQL_PASSWORD=${NEXTCLOUD_DB_PASSWORD:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DB_PASSWORD}
       - MYSQL_HOST=nextcloud-db
+      - REDIS_HOST=nextcloud-redis
+      - REDIS_HOST_PORT=6379
     volumes:
       - nextcloud-html:/var/www/html
       - nextcloud-ssl:/etc/ssl
@@ -113,6 +115,20 @@ services:
       - "9980"
     tty: true
 
+  nextcloud-redis:
+    restart: unless-stopped
+    container_name: nextcloud-redis
+    image: redis:latest
+    networks:
+      - nextcloud
+    labels:
+      - "traefik.enable=false"
+      - "com.ouroboros.enable=true"
+    volumes:
+      - nextcloud-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
 networks:
   nextcloud:
 
@@ -121,4 +137,4 @@ volumes:
   nextcloud-html:
   nextcloud-ssl:
   nextcloud-database:
-
+  nextcloud-redis:

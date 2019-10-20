@@ -23,6 +23,8 @@ services:
       MAIL_PASSWORD: ${HEIMDALL_SMTP_PASSWORD:-"null"}
       MAIL_ENCRYPTION: ${HEIMDALL_SMTP_PASSWORD:-"null"}
       TZ: ${TZ}
+      REDIS_HOST: heimdall-redis
+      REDIS_PORT: 6379
     labels:
       - traefik.enable=true
       - traefik.port=80
@@ -41,10 +43,25 @@ services:
       retries: 5
       start_period: 5s
 
+  heimdall-redis:
+    restart: unless-stopped
+    container_name: heimdall-redis
+    image: redis:latest
+    networks:
+      - heimdall
+    labels:
+      - "traefik.enable=false"
+      - "com.ouroboros.enable=true"
+    volumes:
+      - heimdall-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
 networks:
   heimdall:
 
 volumes:
   heimdall-config:
+  heimdall-redis:
 
 
