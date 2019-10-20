@@ -180,7 +180,7 @@ services:
     #this container to wait for indicate that it is in status "healthy" before begining to start themselves, which is useful to
     #guarantee a database server is up and responding to connections before starting the application server.
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://portainer-docker-gui:9000 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://docker-gui:9000 || exit 1"]
       interval: 1m30s
       timeout: 10s
       retries: 5
