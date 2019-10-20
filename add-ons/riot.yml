@@ -18,7 +18,7 @@ services:
       - riot
     volumes:
       - riot-matrix-db:/var/lib/postgresql/data
-      - riot-matrix-db-upgrade:var/lib/postgresql/upgrade
+      - riot-matrix-db-upgrade:/var/lib/postgresql/upgrade
     labels:
       - "traefik.enable=false"
       - "com.ouroboros.enable=true"

@@ -115,7 +115,7 @@ services:
     container_name: mastodon-streaming
     image: tootsuite/mastodon:${MASTODON_VERSION:-latest}
     restart: unless-stopped
-    env_file: ./configs/mastodon.env
+    env_file: ./configs/mastodon/mastodon.env
     command: yarn start
     networks:
       - mastodon-external
@@ -144,7 +144,7 @@ services:
     container_name: mastodon-sidekiq
     image: tootsuite/mastodon:${MASTODON_VERSION:-latest}
     restart: unless-stopped
-    env_file: ./configs/mastodon.env
+    env_file: ./configs/mastodon/mastodon.env
     command: bundle exec sidekiq
     depends_on:
       - mastodon-db

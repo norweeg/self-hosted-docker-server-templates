@@ -108,7 +108,31 @@ services:
   discourse-sidekiq:
     container_name: discourse-sidekiq
     image: bitnami/discourse:latest
-    env_file: ./configs/discourse.env
+    environment:
+      DISCOURSE_EMAIL: ${DISCOURSE_EMAIL:?Please copy template.env to .env and provide provide a value for DISCOURSE_EMAIL}
+      DISCOURSE_HOST: discourse
+      DISCOURSE_PASSWORD: ${DISCOURSE_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_PASSWORD}
+      DISCOURSE_PORT: 3000
+      DISCOURSE_POSTGRESQL_NAME: ${DISCOURSE_POSTGRESQL_NAME:-discourse}
+      DISCOURSE_POSTGRESQL_PASSWORD: ${DISCOURSE_POSTGRESQL_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_PASSWORD}
+      DISCOURSE_POSTGRESQL_USERNAME: ${DISCOURSE_POSTGRESQL_USERNAME:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_NAME}
+      DISCOURSE_SITE_NAME: ${DISCOURSE_SITE_NAME:-"My Discourse Forum"}
+      DISCOURSE_USERNAME: ${DISCOURSE_ADMIN_USERNAME:?Please copy template.env to .env and provide provide a value for DISCOURSE_ADMIN_USERNAME}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_NAME: ${DISCOURSE_POSTGRESQL_NAME}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_PASSWORD: ${DISCOURSE_POSTGRESQL_PASSWORD}
+      POSTGRESQL_CLIENT_CREATE_DATABASE_USERNAME: ${DISCOURSE_POSTGRESQL_USERNAME}
+      POSTGRESQL_HOST: discourse-db
+      POSTGRESQL_PORT_NUMBER: 5432
+      POSTGRESQL_ROOT_PASSWORD: ${DISCOURSE_POSTGRESQL_ROOT_PASSWORD:?Please copy template.env to .env and provide provide a value for DISCOURSE_POSTGRESQL_ROOT_PASSWORD}
+      POSTGRESQL_ROOT_USER: postgres
+      REDIS_HOST: discourse-redis
+      REDIS_PASSWORD: ${DISCOURSE_REDIS_PASSWORD:-""}
+      REDIS_PORT_NUMBER: 6379
+      SMTP_HOST: ${DISCOURSE_SMTP_HOST:-mail-relay}
+      SMTP_PASSWORD: ${DISCOURSE_SMTP_PASSWORD:-""}
+      SMTP_PORT: ${DISCOURSE_SMTP_PORT:-25}
+      SMTP_TLS: ${DISCOURSE_SMTP_TLS:-true}
+      SMTP_USER: ${DISCOURSE_SMTP_USER:-""}
     restart: unless-stopped
     command: nami start --foreground discourse-sidekiq
     depends_on:

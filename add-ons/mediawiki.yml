@@ -41,7 +41,7 @@ services:
       #### https://www.mediawiki.org/wiki/Manual:LocalSettings.php for more options.  The container
       #### likely change the owner of this file to root after you restart with it mapped, so you
       #### will need to edit it with admin privileges afterwards.
-#      - ./configs/LocalSettings.php:/var/www/html/LocalSettings.php
+#      - ./configs/mediawiki/LocalSettings.php:/var/www/html/LocalSettings.php
     labels:
       - traefik.enable=true
       - traefik.port=80
