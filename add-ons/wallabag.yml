@@ -107,7 +107,7 @@ services:
       - wallabag
     restart: unless-stopped
     env_file:
-      - ../configs/wallabag.env
+      - ./configs/wallabag/wallabag.env
     labels:
       - traefik.enable=false
       - com.ouroboros.enable=true
