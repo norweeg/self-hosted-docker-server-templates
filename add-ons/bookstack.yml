@@ -26,7 +26,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.frontend.rule=Host:{BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
+      - traefik.frontend.rule=Host:${BOOKSTACK_DOMAIN:?Please copy template.env to .env and provide provide a value for BOOKSTACK_DOMAIN}
       - traefik.docker.network=bookstack
       - traefik.default.protocol=http
       - com.ouroboros.enable=true
