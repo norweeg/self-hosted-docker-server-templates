@@ -36,7 +36,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=80
-      - traefik.frontend.rule=Host:${NEXTCLOUD_DOMAIN:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DOMAIN}
+      - traefik.nextcloud.frontend.rule=Host:${NEXTCLOUD_DOMAIN:?Please copy template.env to .env and provide provide a value for NEXTCLOUD_DOMAIN}
       - traefik.nextcloud-dav.frontend.rule=Host:${NEXTCLOUD_DOMAIN};Path:/.well-known/carddav,/.well-known/caldav;ReplacePath:/remote.php/dav
       - traefik.nextcloud-webfinger.frontend.rule=Host:${NEXTCLOUD_DOMAIN};Path:/.well-known/webfinger;ReplacePath:/public.php?service=webfinger
       - traefik.docker.network=nextcloud
