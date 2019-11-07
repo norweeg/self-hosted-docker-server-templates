@@ -48,7 +48,7 @@ services:
     container_name: duckdns #optional, but recommended, otherwise defaults to a generated name
     environment: #configuration options defined by environment variables go here
       - TZ=${TZ}
-      - SUBDOMAINS=${DUCKNS_SUBDOMAIN:?Please copy template.env to .env and provide provide a value for DUCKDNS_SUBDOMAIN}
+      - SUBDOMAINS=${DUCKDNS_SUBDOMAIN:?Please copy template.env to .env and provide provide a value for DUCKDNS_SUBDOMAIN}
       - TOKEN=${DUCKDNS_TOKEN:?Please copy template.env to .env and provide provide a value for DUCKDNS_TOKEN}
     #Container metadata can be put in labels.  This is sometimes used to communicate information to other containers
     #or services e.g. to docker compose about what other services depend on this service, or to traefik reverse
