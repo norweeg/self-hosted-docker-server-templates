@@ -144,7 +144,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock ###Comment this line out in Windows
 
   docker-gui:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer:latest
     #ports:
       #by mapping this port to the host, we are also making this service available even if
       #traefik is not running at http://localhost:9000 on your host pc or
