@@ -1,5 +1,9 @@
 # Self-hosted Docker Server Templates
 
+## Announcement
+
+Thank you, everyone for your interest in my project!  What started as a learning opportunity/something to build for my friends got a lot more popular than I ever expected.  That said, I am discontinuing work on this project and archiving it.  The project is just too much for me to manage on my own and there are already other projects that are much more polished, with CLI and GUIs for launching far more self-hosted services than I could ever hope to develop on my own.  If this project has been useful to you, I recommend checking out [HomelabOS](https://homelabos.com/), [DockSTARTer](https://dockstarter.com/), and [Yacht](https://yacht.sh/).
+
 **Due to Traefik's recent upgrade to version 2.0, all traefik configuration in these templates will not work with the traefik:latest image.  If you pulled, forked, cloned, or otherwise used these templates in your own project/organization, it is recommended that you `git pull` to get the latest commit in which I changed the traefik image used to traefik:v1.7-alpine, the last traefik version compatible with these templates as currently written, while I read [Traefik's migration guide](https://docs.traefik.io/v2.0/migration/v1-to-v2/), rewrite and test these templates to make them compatible with Traefik 2.0 (and hopefully onward!).**
 
 This repository contains what you need to get started self-hosting various services while also giving you a little knowledge around docker and docker-compose.  The templates will set up the following:
